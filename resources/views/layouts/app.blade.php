@@ -19,13 +19,13 @@
 </head>
 
 <body>
-    <div id="app">
-        <nav class="d-flex container-fluid flex-wrap flex-sm-nowrap">
+    <div id="app" class="container-xxl">
+        <nav class="d-flex flex-wrap flex-sm-nowrap" id="nav">
             <div class="order-1 p-2 align-self-center">
                 <a class="navbar-brand" href="{{ url('/') }}">{{ config('app.name', 'Laravel') }}</a>
             </div>
-            <div id="products-btn" class="order-1 p-2 align-self-center user-select-none" role="button">
-                <span>{{ __('Products') }}</span>
+            <div id="menu-btn" class="order-1 p-2 align-self-center user-select-none" role="button">
+                <span>{{ __('Menu') }}</span>
             </div>
             <div class="order-1 order-sm-2 ms-auto align-self-center">
                 <a id="navbarDropdown" class="nav-link dropdown-toggle p-2" href="#" role="button"
@@ -62,21 +62,19 @@
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
         </nav>
-        <main class="py-4">
-            <div class="container-fluid row">
-                <div id="menu" class="col-2 d-none">
-                    menu
-                </div>
-                <div id="content" class="col-10">
-                    @yield('content')
-                </div>
+        <main id="main" class="d-flex align-items-stretch">
+            <div id="menu" class="d-none p-2" style="min-width: 200px">
+                menuss<br>
+            </div>
+            <div id="content" class="flex-grow-1">
+                @yield('content')
             </div>
         </main>
     </div>
     <script type="module">
-        var productsBtn = document.getElementById('products-btn');
+        var menuBtn = document.getElementById('menu-btn');
         var menu = document.getElementById('menu');
-        productsBtn.addEventListener('click', function() {
+        menuBtn.addEventListener('click', function() {
             menu.classList.toggle('d-none');
         });
     </script>

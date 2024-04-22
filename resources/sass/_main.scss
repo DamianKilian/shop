@@ -1,0 +1,26 @@
+#nav{
+    height: 60px;
+}
+#main{
+    min-height: calc(100vh - 60px);
+}
+#menu{
+    overflow-y: auto;
+}
+
+
+@include media-breakpoint-only(xs) {
+    #nav{
+        height: 100px;
+    }
+    #main{
+        min-height: calc(100vh - 100px);
+    }
+    #menu{
+        position: absolute;
+        min-height: calc(100vh - 100px);
+        background: #fff;
+        z-index: 10;
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    }
+}
