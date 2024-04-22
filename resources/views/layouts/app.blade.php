@@ -56,14 +56,13 @@
                     @endguest
                 </div>
             </div>
-            <div class="order-1 w-100 d-sm-none"></div>
-            <form class="order-1 p-2 flex-grow-1 d-flex" role="search" style="min-width: 250px">
+            <form class="order-1 p-2 flex-grow-1 d-flex" role="search" style="min-width: 250px" id="search">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
         </nav>
         <main id="main" class="d-flex align-items-stretch">
-            <div id="menu" class="d-none p-2" style="min-width: 200px">
+            <div id="menu" class="d-none p-2">
                 menuss<br>
             </div>
             <div id="content" class="flex-grow-1">
