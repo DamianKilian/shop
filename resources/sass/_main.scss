@@ -4,6 +4,7 @@ $topHeight: 60px;
     height: $topHeight;
 }
 #main{
+    position: relative;
     min-height: calc(100vh - $topHeight);
 }
 #menu{
@@ -14,15 +15,19 @@ $topHeight: 60px;
 
 @include media-breakpoint-only(xs) {
     $topHeight: 100px;
-
-    #nav{
-        height: $topHeight;
-    }
-    #main{
-        min-height: calc(100vh - $topHeight);
+    .shop {
+        #nav{
+            height: $topHeight;
+        }
+        #main{
+            min-height: calc(100vh - $topHeight);
+        }
     }
     #menu{
         position: absolute;
+        margin: auto;
+        top: 0;
+        bottom: 0;
         min-height: calc(100vh - 100px);
         background: #fff;
         z-index: 10;

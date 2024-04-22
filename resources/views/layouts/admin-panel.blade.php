@@ -18,7 +18,7 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 
-<body class="shop">
+<body>
     <div id="app" class="container-xxl">
         <nav class="d-flex flex-wrap flex-sm-nowrap" id="nav">
             <div class="order-1 p-2 align-self-center">
@@ -56,13 +56,9 @@
                     @endguest
                 </div>
             </div>
-            <form class="order-1 p-2 flex-grow-1 d-flex" role="search" style="min-width: 250px" id="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
         </nav>
         <main id="main" class="d-flex align-items-stretch">
-            <div id="menu" class="d-none p-2">
+            <div id="menu" class="p-2">
                 menuss<br>
             </div>
             <div id="content" class="flex-grow-1">
