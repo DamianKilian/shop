@@ -20,12 +20,12 @@
 
 <body>
     <div id="app">
-        <nav class="d-flex container flex-wrap flex-sm-nowrap">
+        <nav class="d-flex container-fluid flex-wrap flex-sm-nowrap">
             <div class="order-1 p-2 align-self-center">
                 <a class="navbar-brand" href="{{ url('/') }}">{{ config('app.name', 'Laravel') }}</a>
             </div>
-            <div class="order-1 p-2 align-self-center">
-                <a href="{{ url('') }}">{{ __('Products') }}</a>
+            <div id="products-btn" class="order-1 p-2 align-self-center user-select-none" role="button">
+                <span>{{ __('Products') }}</span>
             </div>
             <div class="order-1 order-sm-2 ms-auto align-self-center">
                 <a id="navbarDropdown" class="nav-link dropdown-toggle p-2" href="#" role="button"
@@ -44,6 +44,7 @@
                             <li><a class="dropdown-item" href="{{ route('register') }}">{{ __('Register') }}</a></li>
                         @endif
                     @else
+                        <a class="dropdown-item" href="{{ route('admin-panel') }}">{{ __('Admin panel') }}</a>
                         <a class="dropdown-item" href="{{ route('logout') }}"
                             onclick="event.preventDefault();
                          document.getElementById('logout-form').submit();">
@@ -62,9 +63,23 @@
             </form>
         </nav>
         <main class="py-4">
-            @yield('content')
+            <div class="container-fluid row">
+                <div id="menu" class="col-2 d-none">
+                    menu
+                </div>
+                <div id="content" class="col-10">
+                    @yield('content')
+                </div>
+            </div>
         </main>
     </div>
+    <script type="module">
+        var productsBtn = document.getElementById('products-btn');
+        var menu = document.getElementById('menu');
+        productsBtn.addEventListener('click', function() {
+            menu.classList.toggle('d-none');
+        });
+    </script>
 </body>
 
 </html>
