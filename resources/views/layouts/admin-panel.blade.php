@@ -15,6 +15,7 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Scripts -->
+    @yield('scriptsHead')
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 
@@ -44,7 +45,7 @@
                             <li><a class="dropdown-item" href="{{ route('register') }}">{{ __('Register') }}</a></li>
                         @endif
                     @else
-                        <a class="dropdown-item" href="{{ route('admin-panel') }}">{{ __('Admin panel') }}</a>
+                        <a class="dropdown-item" href="{{ route('admin-panel-products') }}">{{ __('Admin panel') }}</a>
                         <a class="dropdown-item" href="{{ route('logout') }}"
                             onclick="event.preventDefault();
                          document.getElementById('logout-form').submit();">
@@ -59,13 +60,23 @@
         </nav>
         <main id="main" class="d-flex align-items-stretch">
             <div id="menu" class="p-2">
-                menuss<br>
+                <nav class="nav flex-column">
+                    <a class="nav-link _products" aria-current="page"
+                        href="{{ route('admin-panel-products') }}">Products</a>
+                    <a class="nav-link _categories" href="{{ route('admin-panel-categories') }}">Categories</a>
+                </nav>
             </div>
-            <div id="content" class="flex-grow-1">
+            <div id="content" class="flex-grow-1 pb-4">
                 @yield('content')
             </div>
         </main>
     </div>
+    <script>
+        if (window.activeLink) {
+            var link = document.querySelector('#menu .' + window.activeLink);
+            link.classList.add('active');
+        }
+    </script>
     <script type="module">
         var menuBtn = document.getElementById('menu-btn');
         var menu = document.getElementById('menu');
@@ -73,6 +84,7 @@
             menu.classList.toggle('d-none');
         });
     </script>
+    @yield('scripts')
 </body>
 
 </html>

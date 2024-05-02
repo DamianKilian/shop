@@ -1,0 +1,10 @@
+#menu {
+    a {
+        font-weight: bolder;
+        &.active {
+            text-decoration: underline;
+            background-color: lightgray;
+            text-shadow: 0 0 2px #fff;
+        }
+    }
+}

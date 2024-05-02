@@ -1,29 +1,28 @@
 $topHeight: 60px;
 
-#nav{
+#nav {
     height: $topHeight;
 }
-#main{
+#main {
     position: relative;
     min-height: calc(100vh - $topHeight);
 }
-#menu{
+#menu {
     overflow-y: auto;
-    width: 250px
+    width: 250px;
 }
-
 
 @include media-breakpoint-only(xs) {
     $topHeight: 100px;
     .shop {
-        #nav{
+        #nav {
             height: $topHeight;
         }
-        #main{
+        #main {
             min-height: calc(100vh - $topHeight);
         }
     }
-    #menu{
+    #menu {
         position: absolute;
         margin: auto;
         top: 0;
@@ -32,8 +31,9 @@ $topHeight: 60px;
         background: #fff;
         z-index: 10;
         box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+        left: -12px;
     }
-    #search{
+    #search {
         width: 100%;
     }
 }

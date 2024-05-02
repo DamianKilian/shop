@@ -15,6 +15,7 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Scripts -->
+    @yield('scriptsHead')
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 
@@ -44,7 +45,7 @@
                             <li><a class="dropdown-item" href="{{ route('register') }}">{{ __('Register') }}</a></li>
                         @endif
                     @else
-                        <a class="dropdown-item" href="{{ route('admin-panel') }}">{{ __('Admin panel') }}</a>
+                        <a class="dropdown-item" href="{{ route('admin-panel-products') }}">{{ __('Admin panel') }}</a>
                         <a class="dropdown-item" href="{{ route('logout') }}"
                             onclick="event.preventDefault();
                          document.getElementById('logout-form').submit();">
@@ -65,7 +66,7 @@
             <div id="menu" class="d-none p-2">
                 menuss<br>
             </div>
-            <div id="content" class="flex-grow-1">
+            <div id="content" class="flex-grow-1 pb-4">
                 @yield('content')
             </div>
         </main>
@@ -77,6 +78,7 @@
             menu.classList.toggle('d-none');
         });
     </script>
+    @yield('scripts')
 </body>
 
 </html>
