@@ -16,6 +16,12 @@
 
     <!-- Scripts -->
     @yield('scriptsHead')
+    @php
+        $locale = app()->getLocale();
+    @endphp
+    @if (request()->getDefaultLocale() !== $locale)
+        @vite("resources/js/locale/$locale.js")
+    @endif
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 
@@ -25,10 +31,31 @@
             <div class="order-1 p-2 align-self-center">
                 <a class="navbar-brand" href="{{ url('/') }}">{{ config('app.name', 'Laravel') }}</a>
             </div>
-            <div id="menu-btn" class="order-1 p-2 align-self-center user-select-none" role="button">
+            <div id="menu-btn" class="order-1 p-2 align-self-center user-select-none flex-grow-1">
                 <span>{{ __('Menu') }}</span>
             </div>
             <div class="order-1 order-sm-2 ms-auto align-self-center">
+                @php
+                    $locales = [
+                        'pl' => 'Polski',
+                        'en' => 'English',
+                    ];
+                @endphp
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                        {{ $locales[app()->getLocale()] }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        @foreach ($locales as $locale => $lang)
+                            <li>
+                                <a class="dropdown-item set-locale-link"
+                                    data-locale='{{ $locale }}'>{{ $lang }}</a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+            <div class="order-1 order-sm-2 align-self-center">
                 <a id="navbarDropdown" class="nav-link dropdown-toggle p-2" href="#" role="button"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                     @guest {{ __('Guest') }}
@@ -78,11 +105,8 @@
         }
     </script>
     <script type="module">
-        var menuBtn = document.getElementById('menu-btn');
-        var menu = document.getElementById('menu');
-        menuBtn.addEventListener('click', function() {
-            menu.classList.toggle('d-none');
-        });
+        toggleMenu();
+        localeSwitcher();
     </script>
     @yield('scripts')
 </body>

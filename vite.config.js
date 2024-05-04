@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
+import { glob } from 'glob';
 
 export default defineConfig({
     plugins: [
@@ -8,6 +9,7 @@ export default defineConfig({
             input: [
                 'resources/sass/app.scss',
                 'resources/js/app.js',
+                ...glob.sync("resources/js/locale/*.js"),
             ],
             refresh: true,
         }),

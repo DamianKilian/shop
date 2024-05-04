@@ -5,6 +5,12 @@
  */
 
 import './bootstrap';
+
+import { __, toggleMenu, localeSwitcher } from './app-scripts.js';
+window.toggleMenu = toggleMenu;
+window.localeSwitcher = localeSwitcher;
+window.__ = __;
+
 import { createApp } from 'vue';
 
 /**
@@ -14,6 +20,7 @@ import { createApp } from 'vue';
  */
 
 const app = createApp({});
+app.config.globalProperties.__ = window.__;
 
 import ExampleComponent from './components/ExampleComponent.vue';
 app.component('example-component', ExampleComponent);
