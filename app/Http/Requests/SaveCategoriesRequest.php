@@ -41,7 +41,7 @@ class SaveCategoriesRequest extends FormRequest
                     }
                     $subCategoryName = trim($subCategory['name']);
                     if (1 < $namesArr[$subCategoryName]) {
-                        $fail('Category name is repeated');
+                        $fail(__('Category name is repeated'));
                     }
                 },
             ],

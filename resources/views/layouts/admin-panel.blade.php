@@ -89,8 +89,9 @@
             <div id="menu" class="p-2">
                 <nav class="nav flex-column">
                     <a class="nav-link _products" aria-current="page"
-                        href="{{ route('admin-panel-products') }}">Products</a>
-                    <a class="nav-link _categories" href="{{ route('admin-panel-categories') }}">Categories</a>
+                        href="{{ route('admin-panel-products') }}">{{ __('Products') }}</a>
+                    <a class="nav-link _categories"
+                        href="{{ route('admin-panel-categories') }}">{{ __('Categories') }}</a>
                 </nav>
             </div>
             <div id="content" class="flex-grow-1 pb-4">

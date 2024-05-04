@@ -19,7 +19,7 @@
             <AdminPanelCategoriesList :currentCategories="currentCategories" :breadcrumb="breadcrumb"
                 :categories="categories" />
             <div class="clearfix">
-                <button type="button" class="btn btn-success float-end" @click="saveCategories">Save</button>
+                <button class="btn btn-success float-end" @click="saveCategories">{{ __('Save') }}</button>
             </div>
             <div v-if="globalError" class="text-bg-danger float-end mt-1">{{ globalError }}</div>
             <div v-if="globalSuccess" class="text-bg-success float-end mt-1">{{ globalSuccess }}</div>
@@ -67,7 +67,7 @@ export default {
             axios.post(this.adminPanelSaveCategoriesUrl, { categories: this.categories })
                 .then(function (response) {
                     that.arrangeCategories(response.data.categories);
-                    that.globalSuccess = 'Saved!';
+                    that.globalSuccess = __('Saved!');
                 })
                 .catch(function (error) {
                     if (_.has(error, 'response.data.failedValidation')) {
@@ -103,7 +103,7 @@ export default {
         },
         setBreadcrumb: function () {
             this.breadcrumb.push({
-                name: 'Main menu',
+                name: __('Main menu'),
                 id: this.mainMenuId,
             });
         },

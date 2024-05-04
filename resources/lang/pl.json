@@ -1,3 +1,20 @@
 {
-
+    "Confirm Password": "Potwierdź hasło",
+    "Email Address": "Adres email",
+    "Name": "Nazwa",
+    "Forgot Your Password?": "Zapomniałeś hasła?",
+    "Remember Me": "Zapamiętaj mnie",
+    "Password": "Hasło",
+    "Register": "Rejestracja",
+    "Login": "Logowanie",
+    "Guest": "Gość",
+    "Admin panel": "Panel administracyjny",
+    "Logout": "Wyloguj",
+    "Saved!": "Zapisano!",
+    "Save": "Zapisz",
+    "Main menu": "Menu główne",
+    "Search": "Szukaj",
+    "Products": "Produkty",
+    "Categories": "Kategorie",
+    "Category name is repeated": "Nazwa kategorii się powtarza"
 }
