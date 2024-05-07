@@ -20,3 +20,4 @@ yarn-error.log
 
 
 /dockerfiles/mysql
+/app/Http/Controllers/TestController.php
