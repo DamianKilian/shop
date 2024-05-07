@@ -96,8 +96,6 @@ export default {
                 this.categories[item.parent_id].push({
                     name: item.name,
                     id: item.id,
-                    initialPosition: this.categories[item.parent_id].length,
-                    initialName: item.name,
                 });
             });
         },
@@ -113,6 +111,7 @@ export default {
         this.arrangeCategories();
     },
     mounted() {
+        console.debug(this.categoriesProp);//mmmyyy
     }
 }
 </script>

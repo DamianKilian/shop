@@ -18,7 +18,6 @@ return new class extends Migration
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->foreign('parent_id')->references('id')->on('categories')->onDelete('cascade');
             $table->unique(['name', 'parent_id']);
-            $table->unique(['position', 'parent_id']);
             $table->timestamps();
         });
     }

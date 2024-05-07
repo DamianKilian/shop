@@ -47,12 +47,10 @@ class AdminPanelController extends Controller
             $categoryDb = Category::create($categoryPrepared);
         } else {
             $categoryDb = Category::whereId($category['id'])->first();
-            if ($category['initialPosition'] !== $categoryPrepared['position'] || $category['initialName'] !== $categoryPrepared['name']) {
-                $categoryDb->update([
-                    'name' => $categoryPrepared['name'],
-                    'position' => $categoryPrepared['position'],
-                ]);
-            }
+            $categoryDb->update([
+                'name' => $categoryPrepared['name'],
+                'position' => $categoryPrepared['position'],
+            ]);
         }
         if (isset($categories[$category['id']])) {
             foreach ($categories[$category['id']] as $index => $category) {
