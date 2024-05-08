@@ -8,7 +8,7 @@
         <li v-for="(category, index) in currentCategories" :key="category.id" draggable="true"
             :class="{ 'new-category': category.new, 'text-bg-danger': category.removed, 'mb-4': category.failedValidation }"
             class="d-flex">
-            {{ category.name }}
+            {{ category.name }}&nbsp;
             <div class="btn-group btn-group-sm float-end" role="group" aria-label="Small button group">
                 <button class="btn btn-secondary" @click="showEditCategoryNameInput($event, category)"><i
                         class="fa-solid fa-pen-to-square"></i></button>
@@ -139,6 +139,14 @@ export default {
             if (!sortableLi || !sortableLi.querySelector("#editCategoryName")) {
                 this.editCategoryName();
             }
+        });
+    },
+    mounted() {
+        document.querySelector("#editCategoryName > input").addEventListener('keypress', (e) => {
+            if (e.keyCode !== 13) {
+                return;
+            }
+            this.editCategoryName();
         });
     },
 }
