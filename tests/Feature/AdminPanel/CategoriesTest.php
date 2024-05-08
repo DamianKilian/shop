@@ -196,6 +196,46 @@ class CategoriesTest extends TestCase
         $this->assertTrue($categoriesTree === $categoriesExpectedTree);
     }
 
+    public function test_saveCategories_validation_errors(): void
+    {
+        $user = User::factory()->create();
+        $categoriesInitial = [
+            "main-menu" => [
+                ["id" => 1, "name" => "p1"],
+                ["id" => 5, "name" => "p2"],
+                ["id" => 10, "name" => "p3"],
+            ],
+            "1" => [
+                ["id" => 2, "name" => "p1ch1"],
+                ["id" => 3, "name" => "p1ch2"],
+            ],
+        ];
+        $id = [];
+        foreach ($categoriesInitial["main-menu"] as $position => $parent) {
+            $parent['position'] = $position;
+            $categoryCreated = Category::create($parent);
+            $id[$parent['id']] = $categoryCreated->id;
+            $id = $this->addSubCategories($parent, $id, $categoriesInitial);
+        }
+        $categoriesToSave = [
+            "main-menu" => [
+                ["id" => $id['1'], "name" => "p1"],
+                ["id" => $id['5'], "name" => "p2"],
+                ["id" => $id['10'], "name" => "p3"],
+            ],
+            $id["1"] => [
+                ["id" => $id['2'], "name" => "p1ch1"],
+                ["id" => $id['3'], "name" => "p1ch2"],
+                ["id" => "new_5376972801700572", "name" => "p1ch2", "new" => true],
+            ],
+        ];
+
+        $response = $this->actingAs($user)->postJson('/admin-panel/saveCategories', ['categories' => $categoriesToSave]);
+        $failedValidation = $response->getData()->failedValidation;
+
+        $this->assertTrue($failedValidation->{'categories.1.1'} && $failedValidation->{'categories.1.2'});
+    }
+
     protected function addChildren($parentCategory, $categories)
     {
         $subCategories = [];
