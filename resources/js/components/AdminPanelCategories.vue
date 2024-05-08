@@ -15,6 +15,10 @@
                 <button type="button" class="btn btn-success float-end" @click="addCategory">
                     <i class="fa-solid fa-plus"></i>
                 </button>
+                <button type="button" class="btn btn-secondary float-end me-1"
+                    @click="goToCategory($event, breadcrumb.length - 2)">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
             </div>
             <AdminPanelCategoriesList :currentCategories="currentCategories" :breadcrumb="breadcrumb"
                 :categories="categories" />
@@ -24,7 +28,6 @@
             <div v-if="globalError" class="text-bg-danger float-end mt-1">{{ globalError }}</div>
             <div v-if="globalSuccess" class="text-bg-success float-end mt-1">{{ globalSuccess }}</div>
         </div>
-
     </div>
 </template>
 
@@ -50,6 +53,9 @@ export default {
     },
     methods: {
         goToCategory: function (e, index) {
+            if (1 === this.breadcrumb.length) {
+                return;
+            }
             this.breadcrumb = this.breadcrumb.slice(0, index + 1);
         },
         addCategory: function () {
