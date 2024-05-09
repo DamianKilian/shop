@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
 }
 
-.sortable-list {
+.app-list {
     max-width: 300px;
     margin: 0 auto;
 }
@@ -12,13 +12,12 @@ ul {
     padding: 0;
 }
 
-#sortable {
+.app-list-ul {
     li {
         position: relative;
         background-color: #f0f0f0;
         padding: 10px;
         margin: 5px 0;
-        cursor: grab;
         &.new-category {
             background-color: green;
             color: #f0f0f0;
@@ -37,6 +36,9 @@ ul {
             left: 2px;
             height: calc(100% - 4px);
         }
+    }
+    &#sortable li {
+        cursor: grab;
     }
 }
 

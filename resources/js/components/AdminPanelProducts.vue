@@ -12,35 +12,25 @@
         </nav>
         <div class="app-list">
             <div class="actions-global clearfix">
-                <button type="button" class="btn btn-success float-end" @click="addCategory">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-                <button type="button" class="btn btn-secondary float-end me-1"
+                <button type="button" class="btn btn-secondary float-end"
                     @click="goToCategory($event, breadcrumb.length - 2)">
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
             </div>
-            <AdminPanelCategoriesList :currentCategories="currentCategories" :breadcrumb="breadcrumb"
+            <AdminPanelProductsList :currentCategories="currentCategories" :breadcrumb="breadcrumb"
                 :categories="categories" />
-            <div class="clearfix">
-                <button class="btn btn-success float-end" @click="saveCategories">{{ __('Save') }}</button>
-            </div>
-            <div v-if="globalError" class="text-bg-danger float-end mt-1">{{ globalError }}</div>
-            <div v-if="globalSuccess" class="text-bg-success float-end mt-1">{{ globalSuccess }}</div>
         </div>
     </div>
 </template>
 
 <script>
-import AdminPanelCategoriesList from './AdminPanelCategoriesList.vue'
+import AdminPanelProductsList from './AdminPanelProductsList.vue'
 
 export default {
-    components: { AdminPanelCategoriesList },
-    props: ['categoriesProp', 'adminPanelSaveCategoriesUrl'],
+    components: { AdminPanelProductsList },
+    props: ['categoriesProp'],
     data() {
         return {
-            globalError: '',
-            globalSuccess: '',
             mainMenuId: 'main-menu',
             breadcrumb: [],
             categories: {},
@@ -57,34 +47,6 @@ export default {
                 return;
             }
             this.breadcrumb = this.breadcrumb.slice(0, index + 1);
-        },
-        addCategory: function () {
-            var id = Math.random().toString().replace('0.', 'new_');
-            this.currentCategories.push({
-                name: id,
-                id: id,
-                new: true,
-            });
-        },
-        saveCategories: function () {
-            var that = this;
-            that.globalSuccess = '';
-            that.globalError = '';
-            axios.post(this.adminPanelSaveCategoriesUrl, { categories: this.categories })
-                .then(function (response) {
-                    that.arrangeCategories(response.data.categories);
-                    that.globalSuccess = __('Saved!');
-                })
-                .catch(function (error) {
-                    if (_.has(error, 'response.data.failedValidation')) {
-                        _.forEach(error.response.data.failedValidation, function (value, key) {
-                            let parentIds = key.split('.');
-                            that.categories[parentIds[1]][parentIds[2]].failedValidation = value;
-                        });
-                    } else {
-                        that.globalError = error.message;
-                    }
-                });
         },
         arrangeCategories: function (categoriesDb = null) {
             categoriesDb = categoriesDb || this.categoriesProp;

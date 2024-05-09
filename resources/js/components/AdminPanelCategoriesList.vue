@@ -1,5 +1,5 @@
 <template>
-    <ul id="sortable" @dragstart="dragstart" @dragend="dragend" @dragover="dragover" ref="sortable">
+    <ul id="sortable" class="app-list-ul" @dragstart="dragstart" @dragend="dragend" @dragover="dragover" ref="sortable">
         <div id="editCategoryName" class="input-group mb-3 edit-category d-none">
             <input type="text" class="form-control"
                 :value="editCategoryData.category ? editCategoryData.category.name : ''"

@@ -20,14 +20,15 @@ class AdminPanelController extends Controller
 
     public function products()
     {
-        return view('adminPanel.products');
+        return view('adminPanel.products', [
+            'categories' => Category::orderBy('parent_id')->orderBy('position')->get(),
+        ]);
     }
 
     public function categories()
     {
         return view('adminPanel.categories', [
             'categories' => Category::orderBy('parent_id')->orderBy('position')->get(),
-
         ]);
     }
 
