@@ -4,15 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveCategoriesRequest;
 use App\Models\Category;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AdminPanelController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth');
@@ -25,37 +21,50 @@ class AdminPanelController extends Controller
         ]);
     }
 
-    public function categories()
+    public function getProducts(Request $request)
     {
-        return view('adminPanel.categories', [
-            'categories' => Category::orderBy('parent_id')->orderBy('position')->get(),
+        return response()->json([
+            'category' => $request->category,
+            'products' => [],
         ]);
     }
 
-    protected function saveCategory($category, $categories, $index, $parent_id)
+    public function categories()
     {
-        if (isset($category['removed']) && $category['removed']) {
-            Category::whereId($category['id'])->forceDelete();
-            return;
-        }
-        $categoryPrepared = [
-            'parent_id' => $parent_id,
-            'name' => $category['name'],
-            'position' => $index,
-            'new' => isset($category['new']) && $category['new'],
-        ];
-        if ($categoryPrepared['new']) {
-            $categoryDb = Category::create($categoryPrepared);
-        } else {
+        return view('adminPanel.categories', [
+            'categories' => Category::withTrashed()->orderBy('parent_id')->orderBy('position')->get(),
+        ]);
+    }
+
+    protected function saveCategory($category, $categories, $index, $parent_id, $parent_remove = false)
+    {
+        $new = isset($category['new']) && $category['new'];
+        $remove = $parent_remove || (isset($category['remove']) && $category['remove']);
+        if ($new) {
+            $categoryDb = Category::create([
+                'parent_id' => $parent_id,
+                'name' => $category['name'],
+                'position' => $index,
+            ]);
+        } elseif ($remove) {
             $categoryDb = Category::whereId($category['id'])->first();
+            $categoryDb->delete();
+        } else {
+            $restore = isset($category['restore']) && $category['restore'];
+            $deletedAt = isset($category['deleted_at']) && $category['deleted_at'];
+            if (!$restore && $deletedAt) {
+                return;
+            }
+            $categoryDb = $restore ? Category::onlyTrashed()->whereId($category['id'])->first() : Category::whereId($category['id'])->first();
             $categoryDb->update([
-                'name' => $categoryPrepared['name'],
-                'position' => $categoryPrepared['position'],
+                'name' => $category['name'],
+                'position' => $index,
+                'deleted_at' => null,
             ]);
         }
         if (isset($categories[$category['id']])) {
             foreach ($categories[$category['id']] as $index => $category) {
-                $this->saveCategory($category, $categories, $index, $categoryDb->id);
+                $this->saveCategory($category, $categories, $index, $categoryDb->id, $remove);
             }
         }
     }
@@ -68,7 +77,7 @@ class AdminPanelController extends Controller
             }
         });
         return response()->json([
-            'categories' => Category::orderBy('parent_id')->orderBy('position')->get(),
+            'categories' => Category::withTrashed()->orderBy('parent_id')->orderBy('position')->get(),
         ]);
     }
 }

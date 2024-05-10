@@ -10,7 +10,7 @@
                 </li>
             </ol>
         </nav>
-        <div class="app-list">
+        <div class="app-list clearfix">
             <div class="actions-global clearfix">
                 <button type="button" class="btn btn-success float-end" @click="addCategory">
                     <i class="fa-solid fa-plus"></i>
@@ -21,12 +21,18 @@
                 </button>
             </div>
             <AdminPanelCategoriesList :currentCategories="currentCategories" :breadcrumb="breadcrumb"
-                :categories="categories" />
+                :categories="categories" :showDeletedCategories='showDeletedCategories' />
             <div class="clearfix">
                 <button class="btn btn-success float-end" @click="saveCategories">{{ __('Save') }}</button>
             </div>
             <div v-if="globalError" class="text-bg-danger float-end mt-1">{{ globalError }}</div>
             <div v-if="globalSuccess" class="text-bg-success float-end mt-1">{{ globalSuccess }}</div>
+        </div>
+        <div class="text-center">
+            <button class="btn btn-sm btn-outline-danger" :class='{ "btn-outline-dark": !showDeletedCategories }'
+                @click='showDeletedCategories = !showDeletedCategories'>
+                {{ __('Show deleted categories') }}
+            </button>
         </div>
     </div>
 </template>
@@ -39,6 +45,7 @@ export default {
     props: ['categoriesProp', 'adminPanelSaveCategoriesUrl'],
     data() {
         return {
+            showDeletedCategories: false,
             globalError: '',
             globalSuccess: '',
             mainMenuId: 'main-menu',
@@ -102,6 +109,7 @@ export default {
                 this.categories[item.parent_id].push({
                     name: item.name,
                     id: item.id,
+                    deleted_at: item.deleted_at,
                 });
             });
         },
@@ -116,8 +124,11 @@ export default {
         this.setBreadcrumb();
         this.arrangeCategories();
     },
+    updated() {
+        console.debug('updated');//mmmyyy
+    },
     mounted() {
-        console.debug(this.categoriesProp);//mmmyyy
+        // console.debug(this.categoriesProp);//mmmyyy
     }
 }
 </script>
