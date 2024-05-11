@@ -7,7 +7,7 @@
         </div>
         <template v-for="(category, index) in currentCategories" :key="category.id">
             <li :set="removeStatus = category.remove || (category.deleted_at && !category.restore)"
-                v-if="!category.deleted_at || showDeletedCategories"
+                v-if="!category.deleted_at || category.restore || showDeletedCategories"
                 :class="{ 'new-category': category.new, 'text-bg-danger': removeStatus, 'mb-4': category.failedValidation }"
                 class="d-flex" draggable="true">
                 {{ category.name }}&nbsp;

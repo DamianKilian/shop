@@ -21,7 +21,7 @@ class CategoriesTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->get('/admin-panel/categories');
-
+        // dd($response);//mmmyyy
         $response->assertStatus(200);
         $response->assertViewHas('categories', function ($collection) use ($category) {
             return $collection->contains($category);
@@ -48,12 +48,15 @@ class CategoriesTest extends TestCase
     public function test_saveCategories(): void
     {
         $user = User::factory()->create();
+        $now = date('Y-m-d H:i:s');
         $categoriesInitial = [
             "main-menu" => [
                 ["id" => 1, "name" => "p1"],
                 ["id" => 5, "name" => "p2"],
                 ["id" => 10, "name" => "p3"],
-                ["id" => 13, "name" => "p4"]
+                ["id" => 13, "name" => "p4"],
+                ["id" => 17, "name" => "p6", "deleted_at" => $now],
+                ["id" => 21, "name" => "p7", "deleted_at" => $now],
             ],
             "1" => [
                 ["id" => 2, "name" => "p1ch1"],
@@ -76,6 +79,14 @@ class CategoriesTest extends TestCase
                 ["id" => 14, "name" => "p4ch1"],
                 ["id" => 15, "name" => "p4ch2"],
                 ["id" => 16, "name" => "p4ch3"]
+            ],
+            "17" => [
+                ["id" => 18, "name" => "p6ch1", "deleted_at" => $now],
+                ["id" => 19, "name" => "p6ch2", "deleted_at" => $now],
+                ["id" => 20, "name" => "p6ch3", "deleted_at" => $now]
+            ],
+            "21" => [
+                ["id" => 22, "name" => "p7ch1", "deleted_at" => $now],
             ],
         ];
         $id = [];
@@ -109,16 +120,26 @@ class CategoriesTest extends TestCase
                 ["id" => $id['15'], "name" => "p4ch2_name_changed"],
                 ["id" => $id['16'], "name" => "p4ch3"]
             ],
+            $id["17"] => [
+                ["id" => $id["18"], "name" => "p6ch1", "deleted_at" => $now, "restore" => true],
+                ["id" => $id["19"], "name" => "p6ch2", "deleted_at" => $now, "restore" => false],
+                ["id" => $id["20"], "name" => "p6ch3", "deleted_at" => $now, "restore" => false]
+            ],
+            $id["21"] => [
+                ["id" => $id["22"], "name" => "p7ch1", "deleted_at" => $now, "restore" => true],
+            ],
             "main-menu" => [
                 ["id" => $id['5'], "name" => "p2"],
                 ["id" => $id['1'], "name" => "p1"],
-                ["id" => $id['10'], "name" => "p3", "removed" => true],
+                ["id" => $id['10'], "name" => "p3", "remove" => true],
                 ["id" => "new_6287336174597907", "name" => "p5", "new" => true],
-                ["id" => $id['13'], "name" => "p4"]
+                ["id" => $id['13'], "name" => "p4"],
+                ["id" => $id['17'], "name" => "p6", "deleted_at" => $now, "restore" => true],
+                ["id" => $id['21'], "name" => "p7", "deleted_at" => $now],
             ],
             "new_6287336174597907" => []
         ];
-        $response = $this->actingAs($user)->postJson('/admin-panel/saveCategories', ['categories' => $categoriesToSave]);
+        $response = $this->actingAs($user)->postJson('/admin-panel/save-categories', ['categories' => $categoriesToSave]);
         $categoriesExpectedTree = [
             "p2" => [
                 "p2ch1" => [
@@ -133,29 +154,50 @@ class CategoriesTest extends TestCase
                 "p1ch4" => [],
                 "p1ch3" => [],
             ],
+            "p3" => [
+                "p3ch1" => [],
+                "p3ch2" => []
+            ],
             "p5" => [],
             "p4" => [
                 "p4ch1" => [],
                 "p4ch2_name_changed" => [],
                 "p4ch3" => []
+            ],
+            "p6" => [
+                "p6ch1" => [],
+                "p6ch2" => [],
+                "p6ch3" => [],
+            ],
+            "p7" => [
+                "p7ch1" => [],
             ]
         ];
 
         $categories = $response->getData()->categories;
         $categoriesTree = [];
+        $categoriesByName = [];
         foreach ($categories as $category) {
+            $categoriesByName[$category->name] = $category;
             if (null === $category->parent_id) {
                 $categoriesTree[$category->name] = $this->addChildren($category, $categories);
             }
         }
 
+        $this->assertTrue(null !== $categoriesByName['p3']->deleted_at);
+        $this->assertTrue(null !== $categoriesByName['p3ch1']->deleted_at);
+        $this->assertTrue(null !== $categoriesByName['p3ch2']->deleted_at);
+        $this->assertTrue(null === $categoriesByName['p6']->deleted_at);
+        $this->assertTrue(null === $categoriesByName['p6ch1']->deleted_at);
+        $this->assertTrue(null !== $categoriesByName['p6ch2']->deleted_at);
+        $this->assertTrue(null !== $categoriesByName['p7ch1']->deleted_at);
         $this->assertTrue($categoriesTree === $categoriesExpectedTree);
     }
 
     public function test_saveCategories_all_new(): void
     {
         $user = User::factory()->create();
-        $response = $this->actingAs($user)->postJson('/admin-panel/saveCategories', ['categories' => [
+        $response = $this->actingAs($user)->postJson('/admin-panel/save-categories', ['categories' => [
             "main-menu" => [
                 ["name" => "p1", "id" => "new_7831638039189243", "new" => true,],
                 ["name" => "p2", "id" => "new_03850895405535737", "new" => true,],
@@ -230,7 +272,7 @@ class CategoriesTest extends TestCase
             ],
         ];
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/saveCategories', ['categories' => $categoriesToSave]);
+        $response = $this->actingAs($user)->postJson('/admin-panel/save-categories', ['categories' => $categoriesToSave]);
         $failedValidation = $response->getData()->failedValidation;
 
         $this->assertTrue($failedValidation->{'categories.1.1'} && $failedValidation->{'categories.1.2'});
