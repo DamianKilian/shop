@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import { goToSubCategory } from './commonFunctions.js'
+
 export default {
     props: ['currentCategories', 'breadcrumb', 'categories', 'showDeletedCategories'],
     data() {
@@ -41,12 +43,7 @@ export default {
         }
     },
     methods: {
-        goToSubCategory: function (e, category) {
-            this.breadcrumb.push(category);
-            if (!this.categories[category.id]) {
-                this.categories[category.id] = [];
-            }
-        },
+        goToSubCategory,
         arraymove: function (arr, fromIndex, toIndex) {
             var element = arr[fromIndex];
             arr.splice(fromIndex, 1);

@@ -39,6 +39,7 @@
 
 <script>
 import AdminPanelCategoriesList from './AdminPanelCategoriesList.vue'
+import { goToCategory, arrangeCategories, setBreadcrumb } from './commonFunctions.js'
 
 export default {
     components: { AdminPanelCategoriesList },
@@ -59,12 +60,7 @@ export default {
         },
     },
     methods: {
-        goToCategory: function (e, index) {
-            if (1 === this.breadcrumb.length) {
-                return;
-            }
-            this.breadcrumb = this.breadcrumb.slice(0, index + 1);
-        },
+        goToCategory,
         addCategory: function () {
             var id = Math.random().toString().replace('0.', 'new_');
             this.currentCategories.push({
@@ -93,32 +89,8 @@ export default {
                     }
                 });
         },
-        arrangeCategories: function (categoriesDb = null) {
-            categoriesDb = categoriesDb || this.categoriesProp;
-            this.categories = {
-                [this.mainMenuId]: []
-            };
-            if (!categoriesDb) {
-                return;
-            }
-            categoriesDb.forEach((item) => {
-                item.parent_id = item.parent_id || this.mainMenuId;
-                if (!this.categories[item.parent_id]) {
-                    this.categories[item.parent_id] = [];
-                }
-                this.categories[item.parent_id].push({
-                    name: item.name,
-                    id: item.id,
-                    deleted_at: item.deleted_at,
-                });
-            });
-        },
-        setBreadcrumb: function () {
-            this.breadcrumb.push({
-                name: __('Main menu'),
-                id: this.mainMenuId,
-            });
-        },
+        arrangeCategories,
+        setBreadcrumb,
     },
     created() {
         this.setBreadcrumb();
