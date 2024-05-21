@@ -14,4 +14,9 @@ class Category extends Model
     use SoftDeletes;
 
     protected $fillable = ['parent_id', 'name', 'position', 'deleted_at',];
+
+    public function products()
+    {
+        return $this->hasMany('App\Product');
+    }
 }
