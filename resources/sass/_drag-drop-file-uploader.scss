@@ -1,0 +1,15 @@
+#drop-area {
+    position: relative;
+    &.highlight {
+        border-color: green !important;
+    }
+    .files-preview {
+        .file-preview {
+            height: 70px;
+            width: 70px;
+        }
+    }
+}
+.content {
+    margin-bottom: 10px;
+}

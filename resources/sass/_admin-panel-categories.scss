@@ -37,9 +37,16 @@ ul {
             height: calc(100% - 4px);
         }
     }
-    &#sortable li {
-        cursor: grab;
+    &.products-list li {
+        cursor: pointer;
+        &:hover {
+            background-color: #ddd;
+        }
     }
+}
+
+.draggableElement {
+    cursor: grab;
 }
 
 .breadcrumb-item + .breadcrumb-item::before {

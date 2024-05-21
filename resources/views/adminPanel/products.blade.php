@@ -3,7 +3,8 @@
 @section('content')
     <div class="container">
         <admin-panel-products :categories-prop='@json($categories)'
-            admin-panel-save-categories-url="{{ route('admin-panel-save-categories') }}">
+            admin-panel-get-products-url="{{ route('admin-panel-get-products') }}"
+            admin-panel-add-product-url="{{ route('admin-panel-add-product') }}">
         </admin-panel-products>
     </div>
 @endsection

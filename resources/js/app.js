@@ -22,12 +22,11 @@ import { createApp } from 'vue';
 const app = createApp({});
 app.config.globalProperties.__ = window.__;
 
-import ExampleComponent from './components/ExampleComponent.vue';
-app.component('example-component', ExampleComponent);
+// import ExampleComponent from './components/ExampleComponent.vue';
+// app.component('example-component', ExampleComponent);
 
 import AdminPanelCategories from './components/AdminPanelCategories.vue';
 app.component('admin-panel-categories', AdminPanelCategories);
-
 import AdminPanelProducts from './components/AdminPanelProducts.vue';
 app.component('admin-panel-products', AdminPanelProducts);
 

@@ -61,6 +61,8 @@ export default {
     },
     methods: {
         goToCategory,
+        arrangeCategories,
+        setBreadcrumb,
         addCategory: function () {
             var id = Math.random().toString().replace('0.', 'new_');
             this.currentCategories.push({
@@ -89,8 +91,6 @@ export default {
                     }
                 });
         },
-        arrangeCategories,
-        setBreadcrumb,
     },
     created() {
         this.setBreadcrumb();
@@ -100,7 +100,6 @@ export default {
         console.debug('updated');//mmmyyy
     },
     mounted() {
-        // console.debug(this.categoriesProp);//mmmyyy
     }
 }
 </script>

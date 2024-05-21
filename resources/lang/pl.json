@@ -1,5 +1,9 @@
 {
-
+    "Close": "Zamknij",
+    "Title": "Tytuł",
+    "Photos": "Zdjęcia",
+    "Remove": "Usuń",
+    "Select category": "Wybierz kategorię",
     "Show deleted categories": "Pokaż usunięte Kategorie",
     "Confirm Password": "Potwierdź hasło",
     "Email Address": "Adres email",
