@@ -27,7 +27,7 @@ class AddProductRequest extends FormRequest
             'title' => 'required|max:255',
             'price' => ['required', 'regex:/^\d+((\.|\,)\d{1,2})?$/'],
             'quantity' => 'required|integer',
-            'description.blocks' => 'required',
+            'description' => 'required',
             'files.*' => 'nullable|mimes:jpg,jpeg,png,bmp,gif,webp|max:2048',
         ];
     }
@@ -39,9 +39,7 @@ class AddProductRequest extends FormRequest
             'price.required' => __('Price is required'),
             'price.regex' => __('The price is invalid'),
             'quantity.required' => __('Quantity is required'),
-            'description.blocks' => [
-                'required' => __('Description is required'),
-            ],
+            'description.required' => __('Description is required'),
             'files.*' => [
                 'mimes' => __('Accepted types are: jpg, jpeg, png, bmp, gif, webp'),
                 'max' => __('Max file size is 2MB'),

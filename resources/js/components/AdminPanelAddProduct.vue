@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="modalLabel">{{ selectedCategory ? (__('Add product to: ') +
+                    <h1 class="modal-title fs-5" id="modalLabel">{{ selectedCategory ? (__('Add product to') + ': ' +
                         selectedCategory.name) : __('Select category') }}</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -21,16 +21,16 @@
                         <div class="clearfix">
                             <div class="form-floating mb-3 float-start" style="width: 49%;">
                                 <input name='price' :class='{ "is-invalid": failedValidation.price }'
-                                    class="form-control" id="price" placeholder="Price">
-                                <label for="price">Price</label>
+                                    class="form-control" id="price" :placeholder="__('Price')">
+                                <label for="price">{{ __('Price') }}</label>
                                 <div class="invalid-feedback">
                                     {{ failedValidation.price ? failedValidation.price[0] : '' }}
                                 </div>
                             </div>
                             <div class="form-floating mb-3 float-end" style="width: 49%; margin-left: 2%;">
                                 <input name='quantity' :class='{ "is-invalid": failedValidation.quantity }'
-                                    class="form-control" id="quantity" placeholder="Quantity">
-                                <label for="quantity">Quantity</label>
+                                    class="form-control" id="quantity" :placeholder="__('Quantity')">
+                                <label for="quantity">{{ __('Quantity') }}</label>
                                 <div class="invalid-feedback">
                                     {{ failedValidation.quantity ? failedValidation.quantity[0] : '' }}
                                 </div>
@@ -39,17 +39,16 @@
                         <DragDropFileUploader :failedValidation='failedValidation' :filesArr='filesArr' />
                         <div class="border border-2 padding-form-control">
                             <label class="form-label"><b>{{ __('Description') }}</b></label>
-                            <div id="editorjs"
-                                :class='{ "is-invalid border-danger": failedValidation["description.blocks"] }'
+                            <div id="editorjs" :class='{ "is-invalid border-danger": failedValidation.description }'
                                 class='border color bg-white padding-form-control' style="max-width: 725px;"></div>
-                            <div class="invalid-feedback">{{ failedValidation['description.blocks'] ?
-                                failedValidation['description.blocks'][0] : '' }}</div>
+                            <div class="invalid-feedback">{{ failedValidation.description ?
+                                failedValidation.description[0] : '' }}</div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-success">
-                            <i class="fa-solid fa-plus"></i> {{ selectedCategory ? (__('Add product to: ') +
+                            <i class="fa-solid fa-plus"></i> {{ selectedCategory ? (__('Add product to') + ': ' +
                                 selectedCategory.name) : __('Select category') }}
                         </button>
                         <div v-if="globalError" class="text-bg-danger float-end mt-1">{{ globalError }}</div>
@@ -88,7 +87,9 @@ export default {
             let formData = new FormData(this.$refs.addProduct);
             formData.append("filesArr", JSON.stringify(this.filesArr));
             this.editor.save().then((description) => {
-                formData.append("description", JSON.stringify(description));
+                if (description.blocks.length) {
+                    formData.append("description", JSON.stringify(description));
+                }
                 that.globalSuccess = '';
                 that.globalError = '';
                 axios.post(this.adminPanelAddProductUrl, formData)
