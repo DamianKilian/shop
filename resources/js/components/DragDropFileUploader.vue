@@ -11,9 +11,13 @@
         <div class='files-preview d-flex flex-row' @dragstart="dragstart" @dragend="dragend($event, 'filesArr')"
             @dragover="dragover($event, true)" ref="sortable">
             <div v-if="newFiles" v-for="(file, index) in filesArr" :key="file.src"
-                class="file-preview me-1 draggableElement" draggable="true">
-                <img class="preview-img mw-100 mh-100 new-element" :src="file.src" style='pointer-events: none;'
-                    :data-position-in-input="file.positionInInput" />
+                class="file-preview me-1 draggableElement position-relative"
+                :class='{ "border-danger border": file.validationErr }' draggable="true">
+                <img class="preview-img mw-100 mh-100 new-element" :class='{ "is-invalid": file.validationErr }'
+                    :src="file.src" style='pointer-events: none;' :data-position-in-input="file.positionInInput" />
+                <div class="invalid-tooltip" style="max-width: 125%;">
+                    {{ file.validationErr ? file.validationErr[0] : '' }}
+                </div>
             </div>
         </div>
     </div>
@@ -25,12 +29,21 @@ import { arraymove } from './commonFunctions.js'
 
 export default {
     mixins: [sortable],
-    props: ['validationError', 'filesArr'],
+    props: ['failedValidation', 'filesArr'],
     data() {
         return {
             dropAreaHighlight: false,
             currFiles: this.currFilesProp,
             newFiles: null,
+        }
+    },
+    watch: {
+        failedValidation(newVal) {
+            _.forEach(this.filesArr, function (file, key) {
+                if (newVal['files.' + key]) {
+                    file.validationErr = newVal['files.' + key];
+                }
+            });
         }
     },
     methods: {
