@@ -9,6 +9,7 @@
                 </div>
                 <form @submit='addProduct' ref='addProduct' method="post" enctype="multipart/form-data"
                     class='position-relative'>
+                    <input v-if='selectedCategory' :value='selectedCategory.id' name='categoryId' type='hidden' />
                     <div class="modal-body">
                         <div class="form-floating mb-3">
                             <input name='title' :class='{ "is-invalid": failedValidation.title }' class="form-control"

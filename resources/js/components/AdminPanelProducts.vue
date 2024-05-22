@@ -10,7 +10,7 @@
                 </li>
             </ol>
         </nav>
-        <div class="app-list clearfix">
+        <div class="app-list clearfix" v-show='showCategories'>
             <div class="actions-global clearfix">
                 <button v-if='Object.keys(products).length !== 0' type="button" class="btn btn-success float-end"
                     @click="addCategory">
@@ -26,17 +26,14 @@
                 :breadcrumb="breadcrumb" :categories="categories" :products="products"
                 :adminPanelGetProductsUrl="adminPanelGetProductsUrl" :selectedCategory='selectedCategory' />
         </div>
-        <div class="text-center">
-            <button class="btn btn-sm btn-outline-danger" :class='{ "btn-outline-dark": !showDeletedCategories }'
-                @click=''>
-                {{ __('Select category') }}
-            </button>
-        </div>
         <div class="mt-3 actions-global clearfix">
             <b>{{ selectedCategory ? selectedCategory.name : '' }}</b>
             <button data-bs-toggle="modal" data-bs-target="#addProduct" :disabled="!selectedCategory"
                 class="btn btn-success float-end" @click="addCategory">
                 <i class="fa-solid fa-plus"></i> {{ selectedCategory ? __('Add product') : __('Select category') }}
+            </button>
+            <button class="btn float-end me-1 btn-outline-dark" @click="showCategories = !showCategories">
+                {{ __('Select category') }}
             </button>
             <button class="btn btn-danger float-end me-1" @click="goToCategory($event, breadcrumb.length - 2)">
                 <i class="fa-solid fa-trash"></i> {{ __('Remove') }}
@@ -64,6 +61,7 @@ export default {
             mainMenuId: 'main-menu',
             breadcrumb: [],
             categories: {},
+            showCategories: false,
         }
     },
     computed: {
