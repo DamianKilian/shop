@@ -66,6 +66,9 @@
 import DragDropFileUploader from './DragDropFileUploader.vue'
 import LoadingOverlay from './LoadingOverlay.vue'
 import EditorJS from '@editorjs/editorjs';
+import Header from '@editorjs/header';
+import SimpleImage from "@editorjs/simple-image";
+import List from "@editorjs/list";
 
 export default {
     components: { DragDropFileUploader, LoadingOverlay },
@@ -116,7 +119,27 @@ export default {
     },
     created() { },
     mounted() {
-        this.editor = new EditorJS();
+        this.editor = new EditorJS({
+            tools: {
+                list: {
+                    class: List,
+                    inlineToolbar: true,
+                    config: {
+                        defaultStyle: 'unordered'
+                    }
+                },
+                image: SimpleImage,
+                header: {
+                    class: Header,
+                    config: {
+                        placeholder: __('Enter a header'),
+                        levels: [2, 3, 4],
+                        defaultLevel: 2
+                    }
+                }
+            }
+
+        });
     }
 }
 </script>
