@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->softDeletes();
             $table->string('title');
-            $table->text('description');
+            $table->json('description');
             $table->decimal('price');
             $table->integer('quantity');
             $table->string('gtin')->nullable();
@@ -25,6 +23,21 @@ return new class extends Migration
                 ->references('id')
                 ->on('categories')
                 ->onCascade('delete');
+            $table->softDeletes();
+            $table->timestamps();
+        });
+        Schema::create('product_photos', function (Blueprint $table) {
+            $table->id();
+            $table->string('url');
+            $table->integer('position');
+            $table->unsignedBigInteger('size');
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')
+                ->references('id')
+                ->on('products')
+                ->onCascade('delete');
+            $table->softDeletes();
+            $table->timestamps();
         });
     }
 
@@ -34,5 +47,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('products');
+        Schema::dropIfExists('product_photos');
     }
 };

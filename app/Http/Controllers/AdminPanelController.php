@@ -6,12 +6,56 @@ use App\Http\Requests\SaveCategoriesRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\AddProductRequest;
+use App\Models\Product;
+use App\Models\ProductPhoto;
+use Illuminate\Support\Facades\Storage;
 
 class AdminPanelController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    public function addProduct(AddProductRequest $request)
+    {
+        DB::transaction(function () use ($request) {
+            $this->createProduct($request);
+        });
+    }
+
+    protected function createProduct($request)
+    {
+        $product = Product::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'price' => str_replace(',', '.', $request->price),
+            'quantity' => $request->quantity,
+            'category_id' => $request->categoryId,
+        ]);
+        $filesArr = json_decode($request->filesArr);
+        foreach ($request->file('files') as $key => $file) {
+            foreach ($filesArr as &$value) {
+                if ($value->positionInInput === $key) {
+                    $value->file = $file;
+                }
+            }
+            unset($value);
+        }
+        $position = 0;
+        $productId = $product->id;
+        foreach ($filesArr as $value) {
+            $file = $value->file;
+            $name = $file->hashName();
+            Storage::disk('public')->put("products/", $file);
+            ProductPhoto::create([
+                'url' => "products/$name",
+                'position' => $position++,
+                'size' => $file->getSize(),
+                'product_id' => $productId,
+            ]);
+        }
     }
 
     public function products()
@@ -24,7 +68,6 @@ class AdminPanelController extends Controller
     public function getProducts(Request $request)
     {
         return response()->json([
-            'category' => $request->category,
             'products' => [],
         ]);
     }
