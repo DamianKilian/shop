@@ -11,7 +11,7 @@ class ProductPhoto extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['url', 'position', 'size', 'product_id'];
+    protected $fillable = ['url', 'url_small', 'position', 'size', 'product_id'];
 
     public function product()
     {

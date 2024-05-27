@@ -10,6 +10,8 @@ use App\Http\Requests\AddProductRequest;
 use App\Models\Product;
 use App\Models\ProductPhoto;
 use Illuminate\Support\Facades\Storage;
+use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
+use Spatie\Image\Image;
 
 class AdminPanelController extends Controller
 {
@@ -48,9 +50,22 @@ class AdminPanelController extends Controller
         foreach ($filesArr as $value) {
             $file = $value->file;
             $name = $file->hashName();
-            Storage::disk('public')->put("products/", $file);
+            $publicStorage = Storage::disk('public');
+            $url = "products/$name";
+            $urlAbsolute = $publicStorage->path($url);
+            $urlSmall = "products/small/$name";
+            $urlSmallAbsolute = $publicStorage->path($urlSmall);
+            $publicStorage->put("products", $file);
+            $publicStorage->copy($url, $urlSmall);
+            Image::load($urlSmallAbsolute)
+                ->width(400)
+                ->height(400)
+                ->save();
+            ImageOptimizer::optimize($urlAbsolute);
+            ImageOptimizer::optimize($urlSmallAbsolute);
             ProductPhoto::create([
-                'url' => "products/$name",
+                'url' => $url,
+                'url_small' => $urlSmall,
                 'position' => $position++,
                 'size' => $file->getSize(),
                 'product_id' => $productId,

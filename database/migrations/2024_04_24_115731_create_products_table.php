@@ -28,6 +28,7 @@ return new class extends Migration
         Schema::create('product_photos', function (Blueprint $table) {
             $table->id();
             $table->string('url');
+            $table->string('url_small');
             $table->integer('position');
             $table->unsignedBigInteger('size');
             $table->unsignedBigInteger('product_id');

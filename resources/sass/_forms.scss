@@ -2,7 +2,7 @@
     padding: 1rem 0.75rem;
 }
 #app {
-    input {
+    input:not([type='checkbox']) {
         background-color: white;
     }
 }
