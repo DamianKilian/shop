@@ -21,10 +21,8 @@
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
             </div>
-            <AdminPanelProductsList :arrangeProducts='arrangeProducts' :getProducts='getProducts'
-                :getCategoryProducts='getCategoryProducts' :currentCategories="currentCategories"
-                :breadcrumb="breadcrumb" :categories="categories" :products="products"
-                :adminPanelGetProductsUrl="adminPanelGetProductsUrl" :selectedCategory='selectedCategory' />
+            <AdminPanelProductsList :breadcrumb="breadcrumb" :currentCategories="currentCategories"
+                :selectedCategory='selectedCategory' :adminPanelGetProductsUrl='adminPanelGetProductsUrl' />
         </div>
         <div class="mt-3 actions-global clearfix">
             <b>{{ selectedCategory ? selectedCategory.name : '' }}</b>
@@ -46,11 +44,7 @@
 <script>
 import AdminPanelProductsList from './AdminPanelProductsList.vue'
 import AdminPanelAddProduct from './AdminPanelAddProduct.vue'
-
-import {
-    goToCategory, arrangeCategories, setBreadcrumb, getCategoryProducts, getProducts,
-    getSelectedCategory
-} from './commonFunctions.js'
+import { goToCategory, arrangeCategories, setBreadcrumb } from './commonFunctions.js'
 
 export default {
     components: { AdminPanelProductsList, AdminPanelAddProduct },
@@ -73,9 +67,16 @@ export default {
         },
     },
     methods: {
-        getSelectedCategory,
-        getProducts,
-        getCategoryProducts,
+        getSelectedCategory: function () {
+            var selectedCategory = null;
+            _.forEach(this.currentCategories, function (category, key) {
+                if (category.selected) {
+                    selectedCategory = category;
+                    return;
+                }
+            });
+            return selectedCategory;
+        },
         goToCategory,
         arrangeCategories,
         setBreadcrumb,
