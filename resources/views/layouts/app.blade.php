@@ -31,7 +31,7 @@
             <div class="order-1 p-2 align-self-center">
                 <a class="navbar-brand" href="{{ url('/') }}">{{ config('app.name', 'Laravel') }}</a>
             </div>
-            <div id="menu-btn" class="order-1 p-2 align-self-center user-select-none flex-grow-1 flex-sm-grow-0">
+            <div class="menu-btn d-sm-none order-1 p-2 align-self-center user-select-none flex-grow-1 flex-sm-grow-0">
                 <span>{{ __('Menu') }}</span>
             </div>
             <div class="order-1 order-sm-2 ms-auto align-self-center">
@@ -90,14 +90,16 @@
             </form>
         </nav>
         <main id="main" class="d-flex align-items-stretch">
-            <div id="menu" class="d-none p-2">
-                menuss<br>
+            <div id="menu" class="p-2 d-none d-sm-block">
+                menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>
             </div>
             <div id="content" class="flex-grow-1 pb-4">
                 @yield('content')
+                menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>
             </div>
         </main>
     </div>
+    <div id="menu-overlay" class="overlay d-none menu-btn"></div>
     <script type="module">
         toggleMenu();
         localeSwitcher();

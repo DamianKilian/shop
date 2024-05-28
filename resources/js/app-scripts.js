@@ -9,10 +9,21 @@ function __($key) {
 }
 
 function toggleMenu() {
-    var menuBtn = document.getElementById('menu-btn');
+    var menuBtns = document.getElementsByClassName('menu-btn');
+    var menuOverlay = document.getElementById('menu-overlay');
     var menu = document.getElementById('menu');
-    menuBtn.addEventListener('click', function () {
-        menu.classList.toggle('d-none');
+    _.forEach(menuBtns, function (menuBtn, key) {
+        menuBtn.addEventListener('click', function () {
+            if (menu.classList.contains('d-none')) {
+                menu.classList.remove('d-none');
+                menuOverlay.classList.remove('d-none');
+                document.body.classList.add('overflow-hidden');
+            } else {
+                menu.classList.add('d-none');
+                menuOverlay.classList.add('d-none');
+                document.body.classList.remove('overflow-hidden');
+            }
+        });
     });
 }
 

@@ -31,7 +31,7 @@
             <div class="order-1 p-2 align-self-center">
                 <a class="navbar-brand" href="{{ url('/') }}">{{ config('app.name', 'Laravel') }}</a>
             </div>
-            <div id="menu-btn" class="order-1 p-2 align-self-center user-select-none flex-grow-1">
+            <div class="menu-btn d-sm-none order-1 p-2 align-self-center user-select-none flex-grow-1">
                 <span>{{ __('Menu') }}</span>
             </div>
             <div class="order-1 order-sm-2 ms-auto align-self-center">
@@ -86,7 +86,7 @@
             </div>
         </nav>
         <main id="main" class="d-flex align-items-stretch">
-            <div id="menu" class="p-2">
+            <div id="menu" class="p-2 d-none d-sm-block">
                 <nav class="nav flex-column">
                     <a class="nav-link _products" aria-current="page"
                         href="{{ route('admin-panel-products') }}">{{ __('Products') }}</a>
@@ -99,6 +99,7 @@
             </div>
         </main>
     </div>
+    <div id="menu-overlay" class="overlay d-none menu-btn"></div>
     <script>
         if (window.activeLink) {
             var link = document.querySelector('#menu .' + window.activeLink);
