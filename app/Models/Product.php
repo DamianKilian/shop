@@ -20,6 +20,6 @@ class Product extends Model
 
     public function productPhotos()
     {
-        return $this->hasMany('App\productPhoto');
+        return $this->hasMany(ProductPhoto::class);
     }
 }

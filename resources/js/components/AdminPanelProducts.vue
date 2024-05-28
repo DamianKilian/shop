@@ -21,24 +21,42 @@
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
             </div>
-            <AdminPanelProductsList :breadcrumb="breadcrumb" :currentCategories="currentCategories"
-                :selectedCategory='selectedCategory' :adminPanelGetProductsUrl='adminPanelGetProductsUrl' />
+            <AdminPanelProductsList @get-products-global-error="setGlobalError" :products="products"
+                :breadcrumb="breadcrumb" :currentCategories="currentCategories" :selectedCategory='selectedCategory'
+                :adminPanelGetProductsUrl='adminPanelGetProductsUrl' />
         </div>
         <div class="mt-3 actions-global clearfix">
             <b>{{ selectedCategory ? selectedCategory.name : '' }}</b>
             <button data-bs-toggle="modal" data-bs-target="#addProduct" :disabled="!selectedCategory"
-                class="btn btn-success float-end" @click="addCategory">
+                class="btn btn-success float-end mt-1 mt-sm-0" @click="addCategory">
                 <i class="fa-solid fa-plus"></i> {{ selectedCategory ? __('Add product') : __('Select category') }}
             </button>
-            <button class="btn float-end me-1 btn-outline-dark" @click="showCategories = !showCategories">
+            <button class="btn float-end me-1 mt-1 mt-sm-0 btn-outline-dark" @click="showCategories = !showCategories">
                 {{ __('Select category') }}
             </button>
-            <button class="btn btn-danger float-end me-1" @click="goToCategory($event, breadcrumb.length - 2)">
+            <button class="btn btn-danger float-end me-1 mt-1 mt-sm-0"
+                @click="goToCategory($event, breadcrumb.length - 2)">
                 <i class="fa-solid fa-trash"></i> {{ __('Remove') }}
             </button>
         </div>
+        <div v-if="globalError" class="text-bg-danger float-start mt-1">{{ globalError }}</div>
     </div>
     <AdminPanelAddProduct :adminPanelAddProductUrl='adminPanelAddProductUrl' :selectedCategory='selectedCategory' />
+    <div id='products-container' class='clearfix'>
+        <div v-for="(product, index) in products" :key="product.id" class="product">
+            <div class="card">
+                <img :src="product.product.product_photos[0] ? product.product.product_photos[0].fullUrlSmall : 'https://placehold.co/400'"
+                    class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.product.title }}</h5>
+                    <p class="card-text"
+                        v-html="'<b>' + __('Price: ') + '</b>' + product.product.price + ' &nbsp;' + '<b>' + __('Quantity: ') + '</b>' + product.product.quantity">
+                    </p>
+                    <a href="" class="btn btn-primary">{{ __('Edit') }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -56,6 +74,7 @@ export default {
             breadcrumb: [],
             categories: {},
             showCategories: false,
+            globalError: '',
         }
     },
     computed: {
@@ -67,6 +86,9 @@ export default {
         },
     },
     methods: {
+        setGlobalError: function (errorMessage) {
+            this.globalError = errorMessage;
+        },
         getSelectedCategory: function () {
             var selectedCategory = null;
             _.forEach(this.currentCategories, function (category, key) {

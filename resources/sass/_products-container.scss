@@ -1,0 +1,38 @@
+#products-container {
+    padding-top: 20px;
+    .product {
+        height: 400px;
+        padding-top: 10px;
+        overflow: hidden;
+        .card {
+            width: 200px;
+            margin: 0 auto;
+        }
+    }
+}
+
+@include media-breakpoint-up(md) {
+    #products-container {
+        .product {
+            width: 50%;
+            max-width: 235px;
+            float: left;
+        }
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    #products-container {
+        .product {
+            width: 33.33%;
+        }
+    }
+}
+
+@include media-breakpoint-up(xl) {
+    #products-container {
+        .product {
+            width: 25%;
+        }
+    }
+}

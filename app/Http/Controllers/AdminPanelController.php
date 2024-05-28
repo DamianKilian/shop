@@ -36,6 +36,13 @@ class AdminPanelController extends Controller
             'quantity' => $request->quantity,
             'category_id' => $request->categoryId,
         ]);
+        if ($request->file('files')) {
+            $this->addImages($request, $product->id);
+        }
+    }
+
+    protected function addImages($request, $productId)
+    {
         $filesArr = json_decode($request->filesArr);
         foreach ($request->file('files') as $key => $file) {
             foreach ($filesArr as &$value) {
@@ -46,7 +53,6 @@ class AdminPanelController extends Controller
             unset($value);
         }
         $position = 0;
-        $productId = $product->id;
         foreach ($filesArr as $value) {
             $file = $value->file;
             $name = $file->hashName();
@@ -82,8 +88,20 @@ class AdminPanelController extends Controller
 
     public function getProducts(Request $request)
     {
+        dd(1111);
+        $products = Product::with('productPhotos')->get();
+        foreach ($products as &$product) {
+            if (0 === $product->productPhotos->count()) {
+                continue;
+            }
+            foreach ($product->productPhotos as &$photo) {
+                $photo->fullUrlSmall = Storage::url($photo->url_small);
+            }
+            unset($photo);
+        }
+        unset($product);
         return response()->json([
-            'products' => [],
+            'products' => $products,
         ]);
     }
 

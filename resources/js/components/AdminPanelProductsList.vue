@@ -17,10 +17,9 @@
 import { goToSubCategory } from './commonFunctions.js'
 
 export default {
-    props: ['currentCategories', 'breadcrumb', 'selectedCategory',],
+    props: ['currentCategories', 'breadcrumb', 'selectedCategory', 'products', 'adminPanelGetProductsUrl'],
     data() {
-        return {
-        }
+        return {}
     },
     methods: {
         viewProduct: function (e, product) {
@@ -47,21 +46,29 @@ export default {
             }
             this.getProducts(category);
         },
-        getProducts: function (category) {
+        getProducts: function (category = null) {
             var that = this;
             axios
                 .post(this.adminPanelGetProductsUrl, { category: category })
                 .then(function (response) {
-                    that.arrangeProducts(response.data);
+                    that.arrangeProducts(response.data.products);
                 })
                 .catch(function (error) {
+                    that.$emit('getProductsGlobalError', error.message)
                 });
         },
-        arrangeProducts: function (data) {
-            this.products = data.products;
+        arrangeProducts: function (products) {
+            var that = this;
+            _.forEach(products, function (product, key) {
+                that.products.push({
+                    product: product,
+                    selected: false,
+                });
+            });
         },
     },
     created() {
+        this.getProducts();
     },
     mounted() {
     },
