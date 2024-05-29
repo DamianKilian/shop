@@ -12,6 +12,7 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 
 Route::prefix('admin-panel')->group(function () {
     Route::get('/products', [App\Http\Controllers\AdminPanelController::class, 'products'])->name('admin-panel-products');
+    Route::post('/delete-products', [App\Http\Controllers\AdminPanelController::class, 'deleteProducts'])->name('admin-panel-delete-products');
     Route::post('/get-products', [App\Http\Controllers\AdminPanelController::class, 'getProducts'])->name('admin-panel-get-products');
     Route::post('/add-product', [App\Http\Controllers\AdminPanelController::class, 'addProduct'])->name('admin-panel-add-product');
     Route::get('/categories', [App\Http\Controllers\AdminPanelController::class, 'categories'])->name('admin-panel-categories');

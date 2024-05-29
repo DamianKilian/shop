@@ -17,7 +17,7 @@
 import { goToSubCategory } from './commonFunctions.js'
 
 export default {
-    props: ['currentCategories', 'breadcrumb', 'selectedCategory', 'products', 'adminPanelGetProductsUrl'],
+    props: ['currentCategories', 'breadcrumb', 'selectedCategory', 'adminPanelGetProductsUrl', 'getProducts'],
     data() {
         return {}
     },
@@ -45,26 +45,6 @@ export default {
                 category.selected = true;
             }
             this.getProducts(category);
-        },
-        getProducts: function (category = null) {
-            var that = this;
-            axios
-                .post(this.adminPanelGetProductsUrl, { category: category })
-                .then(function (response) {
-                    that.arrangeProducts(response.data.products);
-                })
-                .catch(function (error) {
-                    that.$emit('getProductsGlobalError', error.message)
-                });
-        },
-        arrangeProducts: function (products) {
-            var that = this;
-            _.forEach(products, function (product, key) {
-                that.products.push({
-                    product: product,
-                    selected: false,
-                });
-            });
         },
     },
     created() {

@@ -20,6 +20,31 @@ class AdminPanelController extends Controller
         $this->middleware('auth');
     }
 
+    public function deleteProducts(Request $request)
+    {
+        DB::transaction(function () use ($request) {
+            $this->deleteProductsDb($request);
+        });
+    }
+
+    protected function deleteProductsDb($request)
+    {
+        foreach ($request->products as $product) {
+            $productPhotosIds = [];
+            foreach ($product['product_photos'] as $product_photo) {
+                $productPhotosIds[] = $product_photo['id'];
+            }
+            if ($productPhotosIds) {
+                ProductPhoto::where('product_id', $product['id'])
+                    ->whereIn('id', $productPhotosIds)
+                    ->delete();
+            }
+            Product::where('id', $product['id'])
+                ->where('title', $product['title'])
+                ->delete();
+        }
+    }
+
     public function addProduct(AddProductRequest $request)
     {
         DB::transaction(function () use ($request) {
@@ -88,7 +113,6 @@ class AdminPanelController extends Controller
 
     public function getProducts(Request $request)
     {
-        dd(1111);
         $products = Product::with('productPhotos')->get();
         foreach ($products as &$product) {
             if (0 === $product->productPhotos->count()) {
