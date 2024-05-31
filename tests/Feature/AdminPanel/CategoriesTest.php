@@ -289,7 +289,7 @@ class CategoriesTest extends TestCase
         return $subCategories;
     }
 
-    public function addSubCategories($parent, $id, $categoriesInitial)
+    protected function addSubCategories($parent, $id, $categoriesInitial)
     {
         $parent_id = $id[$parent['id']];
         $children = isset($categoriesInitial[$parent['id']]) ? $categoriesInitial[$parent['id']] : [];
