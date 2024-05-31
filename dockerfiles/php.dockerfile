@@ -47,6 +47,17 @@ RUN apt-get install -y webp
 RUN apt-get install -y libavif-bin
 RUN apt-get install -y nodejs npm
 RUN npm install -y -g svgo
+# gd
+RUN apt-get install -y \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libwebp-dev \
+    libxpm-dev \
+    zlib1g-dev && \
+    docker-php-ext-configure gd --enable-gd --with-webp --with-jpeg \
+    --with-xpm --with-freetype && \
+    docker-php-ext-install -j$(nproc) gd
 
 USER laravel
 

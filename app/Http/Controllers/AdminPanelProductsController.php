@@ -63,6 +63,7 @@ class AdminPanelProductsController extends Controller
         if ($request->file('files')) {
             $this->addImages($request, $product->id);
         }
+        return $product->id;
     }
 
     protected function addImages($request, $productId)
