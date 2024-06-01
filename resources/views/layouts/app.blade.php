@@ -28,9 +28,10 @@
 <body class="shop">
     <div id="app" class="container-xxl">
         <nav class="d-flex flex-wrap flex-sm-nowrap" id="nav">
-            <div class="order-1 p-2 align-self-center">
-                <a class="navbar-brand" href="{{ url('/') }}">{{ config('app.name', 'Laravel') }}</a>
-            </div>
+            <a class="navbar-brand order-1 p-2 align-self-center" href="{{ url('/') }}">
+                <img src="{{ asset('storage/logo.svg') }}" width="48" height="24"
+                    alt="{{ config('app.name', 'Laravel') }}">
+            </a>
             <div class="menu-btn d-sm-none order-1 p-2 align-self-center user-select-none flex-grow-1 flex-sm-grow-0">
                 <span>{{ __('Menu') }}</span>
             </div>
@@ -42,7 +43,7 @@
                     ];
                 @endphp
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    <button class="btn btn-light dropdown-toggle ms-2" data-bs-toggle="dropdown">
                         {{ $locales[app()->getLocale()] }}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
@@ -56,12 +57,11 @@
                 </div>
             </div>
             <div class="order-1 order-sm-2 align-self-center">
-                <a id="navbarDropdown" class="nav-link dropdown-toggle p-2" href="#" role="button"
-                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                <button id="navbarDropdown" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
                     @guest {{ __('Guest') }}
                     @else
                     {{ Auth::user()->name }} @endguest
-                </a>
+                </button>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     @guest
                         @if (Route::has('login'))
@@ -84,9 +84,9 @@
                     @endguest
                 </div>
             </div>
-            <form class="order-1 p-2 flex-grow-1 d-flex" role="search" style="min-width: 250px" id="search">
-                <input class="form-control me-2" type="search" placeholder="{{ __('Search') }}" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">{{ __('Search') }}</button>
+            <form class="order-1 pt-2 pb-2 flex-grow-1 d-flex justify-content-center" role="search"
+                style="min-width: 250px" id="search">
+                <input class="form-control" type="search" placeholder="{{ __('Search') }}" aria-label="Search">
             </form>
         </nav>
         <main id="main" class="d-flex align-items-stretch">

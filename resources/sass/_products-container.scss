@@ -7,15 +7,20 @@
             overflow: visible;
             z-index: 10;
             position: relative;
-            .edit-product{
-                span{
+            .edit-product {
+                span {
                     display: inline;
                 }
             }
         }
         .card {
             width: 200px;
+            height: 100%;
             margin: 0 auto;
+            .card-body {
+                background-color: #fff;
+                border-radius: 6px;
+            }
             .card-img {
                 position: relative;
                 width: 198px;
@@ -28,11 +33,11 @@
             }
         }
     }
-    .edit-product{
+    .edit-product {
         position: absolute;
         right: 0;
         bottom: 0;
-        span{
+        span {
             display: none;
         }
     }

@@ -29,6 +29,12 @@ $topHeight: 60px;
     align-items: center;
 }
 
+#search {
+    input{
+        max-width: 550px;
+    }
+}
+
 @include media-breakpoint-only(xs) {
     $topHeight: 100px;
     .shop {

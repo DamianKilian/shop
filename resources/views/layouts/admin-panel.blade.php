@@ -28,9 +28,10 @@
 <body>
     <div id="app" class="container-xxl">
         <nav class="d-flex flex-wrap flex-sm-nowrap" id="nav">
-            <div class="order-1 p-2 align-self-center">
-                <a class="navbar-brand" href="{{ url('/') }}">{{ config('app.name', 'Laravel') }}</a>
-            </div>
+            <a class="navbar-brand order-1 p-2 align-self-center" href="{{ url('/') }}">
+                <img src="{{ asset('storage/logo.svg') }}" width="48" height="24"
+                    alt="{{ config('app.name', 'Laravel') }}">
+            </a>
             <div class="menu-btn d-sm-none order-1 p-2 align-self-center user-select-none flex-grow-1">
                 <span>{{ __('Menu') }}</span>
             </div>
@@ -42,7 +43,7 @@
                     ];
                 @endphp
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
                         {{ $locales[app()->getLocale()] }}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
@@ -56,12 +57,11 @@
                 </div>
             </div>
             <div class="order-1 order-sm-2 align-self-center">
-                <a id="navbarDropdown" class="nav-link dropdown-toggle p-2" href="#" role="button"
-                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                <button id="navbarDropdown" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
                     @guest {{ __('Guest') }}
                     @else
                     {{ Auth::user()->name }} @endguest
-                </a>
+                </button>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     @guest
                         @if (Route::has('login'))
