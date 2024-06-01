@@ -43,9 +43,10 @@
             <div class="card">
                 <div @click='product.selected = !product.selected' class="card-img border-bottom">
                     <input class="m-1 form-check-input position-absolute" type="checkbox" v-model="product.selected">
-                    <button class="btn btn-warning btn-sm edit-product"><i class="fa-solid fa-pen-to-square"></i> <span>{{ __('Edit') }}</span></button>
                     <img :src="product.product.product_photos[0] ? product.product.product_photos[0].fullUrlSmall : 'https://placehold.co/400'"
                         class="card-img-top">
+                    <button @click.stop class="btn btn-warning btn-sm edit-product"><i
+                            class="fa-solid fa-pen-to-square"></i> <span>{{ __('Edit') }}</span></button>
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">{{ product.product.title }}</h5>
@@ -85,6 +86,10 @@ export default {
         },
     },
     methods: {
+        selectProduct: function (e, product) {
+            console.debug(e.target);//mmmyyy
+            product.selected = !product.selected;
+        },
         setGlobalError: function (errorMessage) {
             this.globalError = errorMessage;
         },
