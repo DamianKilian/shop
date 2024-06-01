@@ -11,7 +11,7 @@
         <div class='files-preview d-flex flex-row' @dragstart="dragstart" @dragend="dragend($event, 'filesArr')"
             @dragover="dragover($event, true)" ref="sortable">
             <div v-if="newFiles" v-for="(file, index) in filesArr" :key="file.src"
-                class="file-preview me-1 draggableElement position-relative"
+                class="file-preview me-1 draggableElement position-relative center"
                 :class='{ "border-danger border": file.validationErr }' draggable="true">
                 <img class="preview-img mw-100 mh-100 new-element" :class='{ "is-invalid": file.validationErr }'
                     :src="file.src" style='pointer-events: none;' :data-position-in-input="file.positionInInput" />

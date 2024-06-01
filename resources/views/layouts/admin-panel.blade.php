@@ -94,7 +94,7 @@
                         href="{{ route('admin-panel-categories') }}">{{ __('Categories') }}</a>
                 </nav>
             </div>
-            <div id="content" class="flex-grow-1 pb-4">
+            <div id="content" class="flex-grow-1">
                 @yield('content')
             </div>
         </main>

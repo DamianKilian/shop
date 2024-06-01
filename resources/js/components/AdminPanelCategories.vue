@@ -28,7 +28,7 @@
             <div v-if="globalError" class="text-bg-danger float-end mt-1">{{ globalError }}</div>
             <div v-if="globalSuccess" class="text-bg-success float-end mt-1">{{ globalSuccess }}</div>
         </div>
-        <div class="text-center">
+        <div class="text-center mt-3">
             <button class="btn btn-sm btn-outline-danger" :class='{ "btn-outline-dark": !showDeletedCategories }'
                 @click='showDeletedCategories = !showDeletedCategories'>
                 {{ __('Show deleted categories') }}

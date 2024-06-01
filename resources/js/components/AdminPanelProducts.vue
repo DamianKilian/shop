@@ -43,15 +43,15 @@
             <div class="card">
                 <div @click='product.selected = !product.selected' class="card-img border-bottom">
                     <input class="m-1 form-check-input position-absolute" type="checkbox" v-model="product.selected">
+                    <button class="btn btn-warning btn-sm edit-product"><i class="fa-solid fa-pen-to-square"></i> <span>{{ __('Edit') }}</span></button>
                     <img :src="product.product.product_photos[0] ? product.product.product_photos[0].fullUrlSmall : 'https://placehold.co/400'"
                         class="card-img-top">
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">{{ product.product.title }}</h5>
                     <p class="card-text"
-                        v-html="'<b>' + __('Price: ') + '</b>' + product.product.price + ' &nbsp;' + '<b>' + __('Quantity: ') + '</b>' + product.product.quantity">
+                        v-html="'<b>' + __('Price') + ': </b>' + product.product.price + ' &nbsp;' + '<b>' + __('Quantity') + ': </b>' + product.product.quantity">
                     </p>
-                    <a href="" class="btn btn-primary">{{ __('Edit') }}</a>
                 </div>
             </div>
         </div>
