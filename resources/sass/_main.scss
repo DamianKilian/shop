@@ -10,7 +10,7 @@ $topHeight: 60px;
     overflow-y: auto;
     width: 250px;
 }
-#content{
+#content {
     padding-bottom: 250px;
 }
 .overlay {
@@ -30,8 +30,18 @@ $topHeight: 60px;
 }
 
 #search {
-    input{
+    $searchIconShift: 40px;
+    .search-icon {
+        width: $searchIconShift;
+        position: relative;
+        i {
+            margin: 0 auto;
+        }
+    }
+    input {
         max-width: 550px;
+        margin-left: -$searchIconShift;
+        padding-left: $searchIconShift;
     }
 }
 

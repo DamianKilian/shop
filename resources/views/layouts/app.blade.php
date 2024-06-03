@@ -86,7 +86,9 @@
             </div>
             <form class="order-1 pt-2 pb-2 flex-grow-1 d-flex justify-content-center" role="search"
                 style="min-width: 250px" id="search">
+                <div class="d-flex align-items-center search-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
                 <input class="form-control" type="search" placeholder="{{ __('Search') }}" aria-label="Search">
+                <button type="button" class="btn btn-danger ms-1"><i class="fa-solid fa-xmark"></i></button>
             </form>
         </nav>
         <main id="main" class="d-flex align-items-stretch">
