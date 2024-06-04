@@ -12,8 +12,9 @@ export default {
     },
     created() { },
     mounted() {
-        this.$refs.clear.classList.remove("d-none");
-
+        if (this.$refs.clear) {
+            this.$refs.clear.classList.remove("d-none");
+        }
     }
 }
 </script>

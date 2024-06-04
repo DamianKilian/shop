@@ -33,7 +33,7 @@
                     alt="{{ config('app.name', 'Laravel') }}">
             </a>
             <div class="menu-btn d-sm-none order-1 p-2 align-self-center user-select-none flex-grow-1 flex-sm-grow-0">
-                <span>{{ __('Menu') }}</span>
+                <span class="display-6"><i class="fa-solid fa-bars"></i></span>
             </div>
             <div class="order-1 order-sm-2 ms-auto align-self-center">
                 @php
@@ -42,22 +42,21 @@
                         'en' => 'English',
                     ];
                 @endphp
-                <div class="dropdown">
-                    <button class="btn btn-light dropdown-toggle ms-2" data-bs-toggle="dropdown">
-                        {{ $locales[app()->getLocale()] }}
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        @foreach ($locales as $locale => $lang)
-                            <li>
-                                <a class="dropdown-item set-locale-link"
-                                    data-locale='{{ $locale }}'>{{ $lang }}</a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
+                <button class="btn btn-light dropdown-toggle ms-2" data-bs-toggle="dropdown">
+                    <i class="fa-solid fa-language"></i> {{ $locales[app()->getLocale()] }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    @foreach ($locales as $locale => $lang)
+                        <li>
+                            <a class="dropdown-item set-locale-link"
+                                data-locale='{{ $locale }}'>{{ $lang }}</a>
+                        </li>
+                    @endforeach
+                </ul>
             </div>
             <div class="order-1 order-sm-2 align-self-center">
                 <button id="navbarDropdown" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fa-regular fa-user"></i>
                     @guest {{ __('Guest') }}
                     @else
                     {{ Auth::user()->name }} @endguest
@@ -87,14 +86,22 @@
             <form class="order-1 pt-2 pb-2 flex-grow-1 d-flex justify-content-center" role="search"
                 style="min-width: 250px" id="search">
                 <div class="d-flex align-items-center search-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-                <input v-model='searchValue' class="form-control" type="search" placeholder="{{ __('Search') }}"
-                    aria-label="Search">
+                <div class="input-group">
+                    <input v-model='searchValue' class="form-control" type="search" placeholder="{{ __('Search') }}"
+                        aria-label="Search">
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon1">Search</button>
+                </div>
                 <button v-show='searchValue' @click='searchValue = ""' ref="clear" type="button"
                     class="btn btn-danger ms-1 d-none"><i class="fa-solid fa-xmark"></i></button>
             </form>
         </nav>
         <main id="main" class="d-flex align-items-stretch">
             <div id="menu" class="p-2 d-none d-sm-block">
+                <div class="position-absolute d-sm-none" style="top: 0;right: 40px;">
+                    <div class="menu-btn btn-close position-fixed" style="padding: 13px;" type="button"
+                        aria-label="Close">
+                    </div>
+                </div>
                 menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>
             </div>
             <div id="content" class="flex-grow-1">
@@ -103,7 +110,7 @@
             </div>
         </main>
     </div>
-    <div id="menu-overlay" class="overlay d-none menu-btn"></div>
+    <div id="menu-overlay" class="overlay d-none d-sm-none menu-btn"></div>
     <script type="module">
         toggleMenu();
         localeSwitcher();

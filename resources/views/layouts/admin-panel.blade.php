@@ -33,7 +33,7 @@
                     alt="{{ config('app.name', 'Laravel') }}">
             </a>
             <div class="menu-btn d-sm-none order-1 p-2 align-self-center user-select-none flex-grow-1">
-                <span>{{ __('Menu') }}</span>
+                <span class="display-6"><i class="fa-solid fa-bars"></i></span>
             </div>
             <div class="order-1 order-sm-2 ms-auto align-self-center">
                 @php
@@ -44,7 +44,7 @@
                 @endphp
                 <div class="dropdown">
                     <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
-                        {{ $locales[app()->getLocale()] }}
+                        <i class="fa-solid fa-language"></i> {{ $locales[app()->getLocale()] }}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         @foreach ($locales as $locale => $lang)
@@ -58,6 +58,7 @@
             </div>
             <div class="order-1 order-sm-2 align-self-center">
                 <button id="navbarDropdown" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fa-regular fa-user"></i>
                     @guest {{ __('Guest') }}
                     @else
                     {{ Auth::user()->name }} @endguest
@@ -87,6 +88,11 @@
         </nav>
         <main id="main" class="d-flex align-items-stretch">
             <div id="menu" class="p-2 d-none d-sm-block">
+                <div class="position-absolute d-sm-none" style="top: 0;right: 40px;">
+                    <div class="menu-btn btn-close position-fixed" style="padding: 13px;" type="button"
+                        aria-label="Close">
+                    </div>
+                </div>
                 <nav class="nav flex-column">
                     <a class="nav-link _products" aria-current="page"
                         href="{{ route('admin-panel-products') }}">{{ __('Products') }}</a>
@@ -99,7 +105,7 @@
             </div>
         </main>
     </div>
-    <div id="menu-overlay" class="overlay d-none menu-btn"></div>
+    <div id="menu-overlay" class="overlay d-none d-sm-none menu-btn"></div>
     <script>
         if (window.activeLink) {
             var link = document.querySelector('#menu .' + window.activeLink);

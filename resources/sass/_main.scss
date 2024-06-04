@@ -2,6 +2,19 @@ $topHeight: 60px;
 
 #nav {
     height: $topHeight;
+    .dropdown-toggle {
+        max-width: 150px;
+    }
+    .dropdown-menu {
+        a {
+            cursor: pointer;
+        }
+    }
+    .fa-language {
+        font-size: 1.2rem;
+        top: 2px;
+        position: relative;
+    }
 }
 #main {
     min-height: calc(100vh - $topHeight);
@@ -34,14 +47,17 @@ $topHeight: 60px;
     .search-icon {
         width: $searchIconShift;
         position: relative;
+        z-index: 10;
         i {
             margin: 0 auto;
         }
     }
-    input {
+    .input-group {
         max-width: 550px;
         margin-left: -$searchIconShift;
-        padding-left: $searchIconShift;
+        input {
+            padding-left: $searchIconShift;
+        }
     }
 }
 
@@ -50,6 +66,9 @@ $topHeight: 60px;
     .shop {
         #nav {
             height: $topHeight;
+            .dropdown-toggle {
+                max-width: 88px;
+            }
         }
         #main {
             min-height: calc(100vh - $topHeight);
