@@ -19,7 +19,8 @@ import { createApp } from 'vue';
  * to use in your application's views. An example is included for you.
  */
 
-const app = createApp({});
+import Root from './components/Root.vue';
+const app = createApp(Root);
 app.config.globalProperties.__ = window.__;
 
 // import ExampleComponent from './components/ExampleComponent.vue';
