@@ -113,7 +113,7 @@ class AdminPanelProductsController extends Controller
 
     public function getProducts(Request $request)
     {
-        $products = Product::with('productPhotos')->get();
+        $products = Product::with('productPhotos')->orderByDesc('created_at')->get();
         foreach ($products as &$product) {
             if (0 === $product->productPhotos->count()) {
                 continue;

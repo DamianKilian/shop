@@ -12,8 +12,8 @@
                     <input v-if='selectedCategory' :value='selectedCategory.id' name='categoryId' type='hidden' />
                     <div class="modal-body">
                         <div class="form-floating mb-3">
-                            <input name='title' :class='{ "is-invalid": failedValidation.title }' class="form-control"
-                                id="title" :placeholder="__('Title')">
+                            <input ref='title' name='title' :class='{ "is-invalid": failedValidation.title }'
+                                class="form-control" id="title" :placeholder="__('Title')">
                             <label for="title">{{ __('Title') }}</label>
                             <div class="invalid-feedback">
                                 {{ failedValidation.title ? failedValidation.title[0] : '' }}
@@ -72,7 +72,7 @@ import List from "@editorjs/list";
 
 export default {
     components: { DragDropFileUploader, LoadingOverlay },
-    props: ['currFilesProp', 'adminPanelAddProductUrl', 'selectedCategory'],
+    props: ['currFilesProp', 'adminPanelAddProductUrl', 'selectedCategory', 'getProducts'],
     data() {
         return {
             filesArr: this.currFilesProp || [],
@@ -98,7 +98,8 @@ export default {
                 that.globalError = '';
                 axios.post(this.adminPanelAddProductUrl, formData)
                     .then(function (response) {
-                        that.globalSuccess = __('Saved!');
+                        that.globalSuccess = `"${that.$refs.title.value}" ${__('saved!')}`;
+                        that.getProducts();
                     })
                     .catch(function (error) {
                         if (_.has(error, 'response.data.failedValidation')) {

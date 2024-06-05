@@ -35,7 +35,8 @@
         </div>
         <div v-if="globalError" class="text-bg-danger float-start mt-1">{{ globalError }}</div>
     </div>
-    <AdminPanelAddProduct :adminPanelAddProductUrl='adminPanelAddProductUrl' :selectedCategory='selectedCategory' />
+    <AdminPanelAddProduct :getProducts='getProducts' :adminPanelAddProductUrl='adminPanelAddProductUrl'
+        :selectedCategory='selectedCategory' />
     <div class='text-center'><b>{{ selectedCategory ? selectedCategory.name : '' }}</b></div>
     <div id='products-container' class='clearfix'>
         <div v-for="(product, index) in products" :key="product.id"
