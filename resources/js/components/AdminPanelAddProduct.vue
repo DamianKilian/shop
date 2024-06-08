@@ -3,8 +3,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="modalLabel">{{ selectedCategory ? (__('Add product to') + ': ' +
-                        selectedCategory.name) : __('Select category') }}</h1>
+                    <h1 class="modal-title fs-5" id="modalLabel">{{ submitBtnText }}</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form @submit='addProduct' ref='addProduct' method="post" enctype="multipart/form-data"
@@ -21,7 +20,7 @@
                         </div>
                         <div class="clearfix">
                             <div class="form-floating mb-3 float-start" style="width: 49%;">
-                                <input name='price' :class='{ "is-invalid": failedValidation.price }'
+                                <input ref='price' name='price' :class='{ "is-invalid": failedValidation.price }'
                                     class="form-control" id="price" :placeholder="__('Price')">
                                 <label for="price">{{ __('Price') }}</label>
                                 <div class="invalid-feedback">
@@ -29,15 +28,17 @@
                                 </div>
                             </div>
                             <div class="form-floating mb-3 float-end" style="width: 49%; margin-left: 2%;">
-                                <input name='quantity' :class='{ "is-invalid": failedValidation.quantity }'
-                                    class="form-control" id="quantity" :placeholder="__('Quantity')">
+                                <input ref='quantity' name='quantity'
+                                    :class='{ "is-invalid": failedValidation.quantity }' class="form-control"
+                                    id="quantity" :placeholder="__('Quantity')">
                                 <label for="quantity">{{ __('Quantity') }}</label>
                                 <div class="invalid-feedback">
                                     {{ failedValidation.quantity ? failedValidation.quantity[0] : '' }}
                                 </div>
                             </div>
                         </div>
-                        <DragDropFileUploader :failedValidation='failedValidation' :filesArr='filesArr' />
+                        <DragDropFileUploader :editProduct='editProduct' :failedValidation='failedValidation'
+                            :filesArr='filesArr' />
                         <div class="border border-2 padding-form-control">
                             <label class="form-label"><b>{{ __('Description') }}</b></label>
                             <div id="editorjs" :class='{ "is-invalid border-danger": failedValidation.description }'
@@ -47,10 +48,10 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Close') }}</button>
-                        <button type="submit" class="btn btn-success">
-                            <i class="fa-solid fa-plus"></i> {{ selectedCategory ? (__('Add product to') + ': ' +
-                                selectedCategory.name) : __('Select category') }}
+                        <button ref='closeModal' type='button' class="btn btn-secondary" data-bs-dismiss="modal">{{
+                            __('Close') }}</button>
+                        <button type="submit" class="btn btn-success"><i class="fa-solid fa-plus"></i>
+                            {{ submitBtnText }}
                         </button>
                         <div v-if="globalError" class="text-bg-danger float-end mt-1">{{ globalError }}</div>
                         <div v-if="globalSuccess" class="text-bg-success float-end mt-1">{{ globalSuccess }}</div>
@@ -72,10 +73,10 @@ import List from "@editorjs/list";
 
 export default {
     components: { DragDropFileUploader, LoadingOverlay },
-    props: ['currFilesProp', 'adminPanelAddProductUrl', 'selectedCategory', 'getProducts'],
+    props: ['editProduct', 'adminPanelAddProductUrl', 'selectedCategory', 'getProducts'],
     data() {
         return {
-            filesArr: this.currFilesProp || [],
+            filesArr: [],
             editor: null,
             addingProduct: false,
             globalError: '',
@@ -83,23 +84,68 @@ export default {
             failedValidation: {},
         }
     },
+    watch: {
+        editProduct(newVal) {
+            this.createfilesArr();
+            this.setEditForm();
+            this.failedValidation = {};
+            this.globalSuccess = '';
+            this.globalError = '';
+        }
+    },
+    computed: {
+        submitBtnText() {
+            if (this.editProduct) {
+                return __('Edit product') + ` (${this.editProduct.product.category.name})`
+            }
+            return this.selectedCategory ? (__('Add product to') + ': ' + this.selectedCategory.name) : __('Select category')
+        },
+    },
     methods: {
+        setEditForm: function () {
+            if (this.editProduct) {
+                this.editor.blocks.render(JSON.parse(this.editProduct.product.description));
+                this.$refs.title.value = this.editProduct.product.title;
+                this.$refs.price.value = this.editProduct.product.price;
+                this.$refs.quantity.value = this.editProduct.product.quantity;
+            } else {
+                this.editor.blocks.clear();
+                this.$refs.title.value = '';
+                this.$refs.price.value = '';
+                this.$refs.quantity.value = '';
+            }
+        },
+        createfilesArr: function () {
+            var photos = [];
+            if (this.editProduct) {
+                _.forEach(this.editProduct.product.product_photos, function (photo) {
+                    photos.push({
+                        src: photo.fullUrlSmall,
+                        id: photo.id,
+                        removed: false,
+                    });
+                });
+            }
+            this.filesArr = photos;
+        },
         addProduct: function (e) {
             var that = this;
             this.addingProduct = true;
             e.preventDefault();
             let formData = new FormData(this.$refs.addProduct);
             formData.append("filesArr", JSON.stringify(this.filesArr));
+            if (this.editProduct) {
+                formData.append("productId", this.editProduct.product.id);
+            }
             this.editor.save().then((description) => {
                 if (description.blocks.length) {
                     formData.append("description", JSON.stringify(description));
                 }
-                that.globalSuccess = '';
-                that.globalError = '';
                 axios.post(this.adminPanelAddProductUrl, formData)
                     .then(function (response) {
                         that.globalSuccess = `"${that.$refs.title.value}" ${__('saved!')}`;
                         that.getProducts();
+                        that.$refs.closeModal.click();
                     })
                     .catch(function (error) {
                         if (_.has(error, 'response.data.failedValidation')) {
@@ -116,7 +162,7 @@ export default {
         }
     },
     updated() {
-        console.log('updated')
+        console.debug('updated');//mmmyyy
     },
     created() { },
     mounted() {
@@ -139,7 +185,6 @@ export default {
                     }
                 }
             }
-
         });
     }
 }

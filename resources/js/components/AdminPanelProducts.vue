@@ -22,8 +22,8 @@
                 :adminPanelGetProductsUrl='adminPanelGetProductsUrl' />
         </div>
         <div class="mt-3 actions-global clearfix">
-            <button data-bs-toggle="modal" data-bs-target="#addProduct" :disabled="!selectedCategory"
-                class="btn btn-success float-end mt-1 mt-sm-0" @click="addCategory">
+            <button @click='editProduct = null' data-bs-toggle="modal" data-bs-target="#addProduct"
+                :disabled="!selectedCategory" class="btn btn-success float-end mt-1 mt-sm-0">
                 <i class="fa-solid fa-plus"></i> {{ selectedCategory ? __('Add product') : __('Select category') }}
             </button>
             <button class="btn float-end me-1 mt-1 mt-sm-0 btn-outline-dark" @click="showCategories = !showCategories">
@@ -35,8 +35,8 @@
         </div>
         <div v-if="globalError" class="text-bg-danger float-start mt-1">{{ globalError }}</div>
     </div>
-    <AdminPanelAddProduct :getProducts='getProducts' :adminPanelAddProductUrl='adminPanelAddProductUrl'
-        :selectedCategory='selectedCategory' />
+    <AdminPanelAddProduct :editProduct='editProduct' :getProducts='getProducts'
+        :adminPanelAddProductUrl='adminPanelAddProductUrl' :selectedCategory='selectedCategory' />
     <div class='text-center'><b>{{ selectedCategory ? selectedCategory.name : '' }}</b></div>
     <div id='products-container' class='clearfix'>
         <div v-for="(product, index) in products" :key="product.id"
@@ -46,13 +46,14 @@
                     <input class="m-1 form-check-input position-absolute" type="checkbox" v-model="product.selected">
                     <img :src="product.product.product_photos[0] ? product.product.product_photos[0].fullUrlSmall : 'https://placehold.co/400'"
                         class="card-img-top">
-                    <button @click.stop class="btn btn-warning btn-sm edit-product"><i
-                            class="fa-solid fa-pen-to-square"></i> <span>{{ __('Edit') }}</span></button>
+                    <button @click.stop='editProduct = product' data-bs-toggle="modal" data-bs-target="#addProduct"
+                        class="btn btn-warning btn-sm edit-product"><i class="fa-solid fa-pen-to-square"></i> <span>{{
+                            __('Edit') }}</span></button>
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">{{ product.product.title }}</h5>
                     <p class="card-text"
-                        v-html="'<b>' + __('Price') + ': </b>' + product.product.price + ' &nbsp;' + '<b>' + __('Quantity') + ': </b>' + product.product.quantity">
+                        v-html="'<b>' + __('Price') + ': </b>' + product.product.price + '<br><b>' + __('Quantity') + ': </b>' + product.product.quantity">
                     </p>
                 </div>
             </div>
@@ -70,6 +71,7 @@ export default {
     props: ['categoriesProp', 'adminPanelGetProductsUrl', 'adminPanelAddProductUrl', 'adminPanelDeleteProductsUrl'],
     data() {
         return {
+            editProduct: null,
             products: [],
             mainMenuId: 'main-menu',
             breadcrumb: [],
@@ -88,7 +90,6 @@ export default {
     },
     methods: {
         selectProduct: function (e, product) {
-            console.debug(e.target);//mmmyyy
             product.selected = !product.selected;
         },
         setGlobalError: function (errorMessage) {

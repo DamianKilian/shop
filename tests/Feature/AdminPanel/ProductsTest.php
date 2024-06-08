@@ -93,6 +93,70 @@ class ProductsTest extends TestCase
         ]);
     }
 
+    public function test_edit_addProduct(): void
+    {
+        $category = Category::create([
+            'parent_id' => null,
+            'name' => 'Example testing category name',
+            'position' => 0,
+        ]);
+        $product = Product::create([
+            'title' => 'title',
+            'description' => 'description',
+            'price' => 11,
+            'quantity' => 22,
+            'category_id' => $category->id,
+        ]);
+        $productPhotoDb = ProductPhoto::create([
+            'url' => 'url',
+            'url_small' => 'url_small',
+            'position' => 0,
+            'size' => 22,
+            'product_id' => $product->id,
+        ]);
+        Storage::fake('public');
+        Storage::disk('public')->put('url2.jpg', 'content');
+        Storage::disk('public')->put('small/url2.jpg', 'content');
+        $productPhotoDb2 = ProductPhoto::create([
+            'url' => 'url2.jpg',
+            'url_small' => 'small/url2.jpg',
+            'position' => 1,
+            'size' => 22,
+            'product_id' => $product->id,
+        ]);
+        $user = User::factory()->create();
+        $productPhoto = UploadedFile::fake()->image('product.jpg');
+
+        $this->actingAs($user)->postJson('/admin-panel/add-product', [
+            'productId' => $product->id,
+            'title' => 'titleEdited',
+            'description' => 'descriptionEdited',
+            'price' => 111,
+            'quantity' => 222,
+            'categoryId' => $category->id,
+            'files' => [$productPhoto],
+            'filesArr' => json_encode([
+                ['positionInInput' => 0], ['id' => $productPhotoDb->id, 'removed' => false], ['id' => $productPhotoDb2->id, 'removed' => true]
+            ]),
+        ]);
+
+        Storage::disk('public')->assertExists('products/' . $productPhoto->hashName());
+        Storage::disk('public')->assertExists('products/small/' . $productPhoto->hashName());
+        Storage::disk('public')->assertMissing('url2.jpg');
+        Storage::disk('public')->assertMissing('small/url2.jpg');
+        $this->assertDatabaseHas('products', [
+            'title' => 'titleEdited',
+        ]);
+        $this->assertDatabaseHas('product_photos', [
+            'url' => 'products/' . $productPhoto->hashName(),
+        ]);
+        $this->assertDatabaseHas('product_photos', [
+            'id' => $productPhotoDb->id,
+            'position' => 1,
+        ]);
+        $this->assertModelMissing($productPhotoDb2);
+    }
+
     public function test_deleteProducts(): void
     {
         $category = Category::create([

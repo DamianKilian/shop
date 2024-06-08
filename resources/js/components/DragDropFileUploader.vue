@@ -8,13 +8,17 @@
                     accept="image/*" class="form-control">
             </div>
         </div>
-        <div class='files-preview d-flex flex-row' @dragstart="dragstart" @dragend="dragend($event, 'filesArr')"
-            @dragover="dragover($event, true)" ref="sortable">
-            <div v-if="newFiles" v-for="(file, index) in filesArr" :key="file.src"
-                class="file-preview me-1 draggableElement position-relative center"
+        <div class='files-preview d-flex flex-wrap flex-row' @dragstart="dragstart"
+            @dragend="dragend($event, 'filesArr')" @dragover="dragover($event, true)" ref="sortable">
+            <div v-for="(file, index) in filesArr" :key="file.src"
+                class="file-preview me-1 mt-1 draggableElement position-relative center"
                 :class='{ "border-danger border": file.validationErr }' draggable="true">
+                <button @click.stop='removeFile($event, index)' type="button" class="btn btn-danger remove-file"><i
+                        class="fa-solid fa-xmark"></i></button>
                 <img class="preview-img mw-100 mh-100 new-element" :class='{ "is-invalid": file.validationErr }'
                     :src="file.src" style='pointer-events: none;' :data-position-in-input="file.positionInInput" />
+                <div v-if='file.removed' class="text-bg-danger"
+                    style="position: absolute;width: 100%;text-align: center;">{{ __('Removed') }}</div>
                 <div class="invalid-tooltip" style="max-width: 125%;">
                     {{ file.validationErr ? file.validationErr[0] : '' }}
                 </div>
@@ -29,11 +33,10 @@ import { arraymove } from './commonFunctions.js'
 
 export default {
     mixins: [sortable],
-    props: ['failedValidation', 'filesArr'],
+    props: ['editProduct', 'failedValidation', 'filesArr'],
     data() {
         return {
             dropAreaHighlight: false,
-            currFiles: this.currFilesProp,
             newFiles: null,
         }
     },
@@ -44,7 +47,13 @@ export default {
                     file.validationErr = newVal['files.' + key];
                 }
             });
-        }
+        },
+        editProduct(newVal) {
+            if (this.newFiles) {
+                this.newFiles.items.clear();
+                this.$refs.fileInput.files = this.newFiles.files;
+            }
+        },
     },
     methods: {
         arraymove,
@@ -87,6 +96,16 @@ export default {
             }
             this.$refs.fileInput.files = this.newFiles.files;
         },
+        removeFile: function (e, index) {
+            var file = this.filesArr[index];
+            if (undefined !== file.positionInInput) {
+                this.newFiles.items.remove(file.positionInInput);
+                this.$refs.fileInput.files = this.newFiles.files;
+                this.filesArr.splice(index, 1);
+            } else {
+                this.filesArr[index].removed = !this.filesArr[index].removed;
+            }
+        },
         generateURL: function (file) {
             file.src = URL.createObjectURL(file);
             setTimeout(() => {
@@ -98,7 +117,9 @@ export default {
             e.stopPropagation();
         },
     },
-    updated() { },
+    updated() {
+        console.debug('updated');//mmmyyy
+    },
     created() { },
     mounted() { }
 }

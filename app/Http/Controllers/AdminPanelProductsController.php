@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Requests\AddProductRequest;
 use App\Models\Product;
 use App\Models\ProductPhoto;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
 use Spatie\Image\Image;
@@ -53,14 +54,24 @@ class AdminPanelProductsController extends Controller
 
     protected function createProduct($request)
     {
-        $product = Product::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'price' => str_replace(',', '.', $request->price),
-            'quantity' => $request->quantity,
-            'category_id' => $request->categoryId,
-        ]);
-        if ($request->file('files')) {
+        if ($request->productId) {
+            $product = Product::find($request->productId);
+            $product->update([
+                'title' => $request->title,
+                'description' => $request->description,
+                'price' => str_replace(',', '.', $request->price),
+                'quantity' => $request->quantity,
+            ]);
+        } else {
+            $product = Product::create([
+                'title' => $request->title,
+                'description' => $request->description,
+                'price' => str_replace(',', '.', $request->price),
+                'quantity' => $request->quantity,
+                'category_id' => $request->categoryId,
+            ]);
+        }
+        if ("[]" !== $request->filesArr) {
             $this->addImages($request, $product->id);
         }
         return $product->id;
@@ -69,17 +80,24 @@ class AdminPanelProductsController extends Controller
     protected function addImages($request, $productId)
     {
         $filesArr = json_decode($request->filesArr);
-        foreach ($request->file('files') as $key => $file) {
-            foreach ($filesArr as &$value) {
-                if ($value->positionInInput === $key) {
-                    $value->file = $file;
+        if ($request->file('files')) {
+            foreach ($request->file('files') as $positionInInput => $file) {
+                foreach ($filesArr as &$image) {
+                    if (isset($image->positionInInput) && $image->positionInInput === $positionInInput) {
+                        $image->file = $file;
+                    }
                 }
+                unset($image);
             }
-            unset($value);
         }
-        $position = 0;
-        foreach ($filesArr as $value) {
-            $file = $value->file;
+        $position = -1;
+        foreach ($filesArr as $image) {
+            $position += 1;
+            if (isset($image->id)) {
+                $this->updateImage($image, $productId, $position);
+                continue;
+            }
+            $file = $image->file;
             $name = $file->hashName();
             $publicStorage = Storage::disk('public');
             $url = "products/$name";
@@ -97,9 +115,26 @@ class AdminPanelProductsController extends Controller
             ProductPhoto::create([
                 'url' => $url,
                 'url_small' => $urlSmall,
-                'position' => $position++,
+                'position' => $position,
                 'size' => $file->getSize(),
                 'product_id' => $productId,
+            ]);
+        }
+    }
+
+    protected function updateImage($image, $productId, $position)
+    {
+        $photo = ProductPhoto::where('id', $image->id)
+            ->where('product_id', $productId)->first();
+        if ($image->removed) {
+            Storage::disk('public')->delete([
+                $photo->url_small,
+                $photo->url,
+            ]);
+            $photo->forceDelete();
+        } else {
+            $photo->update([
+                'position' => $position,
             ]);
         }
     }
@@ -113,7 +148,9 @@ class AdminPanelProductsController extends Controller
 
     public function getProducts(Request $request)
     {
-        $products = Product::with('productPhotos')->orderByDesc('created_at')->get();
+        $products = Product::with(['productPhotos' => function (Builder $query) {
+            $query->orderBy('position');
+        }])->with('category')->orderByDesc('created_at')->get();
         foreach ($products as &$product) {
             if (0 === $product->productPhotos->count()) {
                 continue;
