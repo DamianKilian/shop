@@ -38,7 +38,7 @@
     <AdminPanelAddProduct :editProduct='editProduct' :getProducts='getProducts'
         :adminPanelAddProductUrl='adminPanelAddProductUrl' :selectedCategory='selectedCategory' />
     <div class='text-center'><b>{{ selectedCategory ? selectedCategory.name : '' }}</b></div>
-    <div id='products-container' class='clearfix'>
+    <div v-if='products.length' id='products-container' class='clearfix pt-3'>
         <div v-for="(product, index) in products" :key="product.id"
             :class='{ "bg-primary bg-opacity-75": product.selected }' class="product">
             <div class="card">
@@ -59,8 +59,8 @@
             </div>
         </div>
     </div>
-    <AdminPanelProductsPagination :pagination='pagination' :selectedCategory='selectedCategory'
-        :getProducts='getProducts' />
+    <div v-else class="alert alert-light mt-3" role="alert">{{ __('No products') }}</div>
+    <AdminPanelProductsPagination :pagination='pagination' :getProducts='getProducts' />
 </template>
 
 <script>
@@ -120,9 +120,10 @@ export default {
             });
             return selectedProducts;
         },
-        getProducts: function (category = null, url = this.adminPanelGetProductsUrl) {
+        getProducts: function (url = this.adminPanelGetProductsUrl) {
             this.products = [];
             var that = this;
+            var category = this.selectedCategory;
             axios
                 .post(url, { category: category })
                 .then(function (response) {

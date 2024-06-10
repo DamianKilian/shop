@@ -4,7 +4,7 @@
             <ul v-if='pagination' class="pagination justify-content-center">
                 <li v-for="(link, i) in pagination.links" :class='{ active: link.active, disabled: !link.url }'
                     class="page-item">
-                    <a @click.prevent='getProducts(selectedCategory, link.url)' :href="link.url" class="page-link"
+                    <a @click.prevent='getProducts(link.url)' :href="link.url" class="page-link"
                         v-html='link.label'></a>
                 </li>
             </ul>
@@ -15,7 +15,7 @@
 <script>
 
 export default {
-    props: ['pagination', 'selectedCategory', 'getProducts'],
+    props: ['pagination', 'getProducts'],
     data() {
         return {
         }

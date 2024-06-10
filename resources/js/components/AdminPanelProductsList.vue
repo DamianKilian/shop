@@ -44,7 +44,7 @@ export default {
             } else {
                 category.selected = true;
             }
-            this.getProducts(category);
+            this.getProducts();
         },
     },
     created() {

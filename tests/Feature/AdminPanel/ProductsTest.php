@@ -39,12 +39,24 @@ class ProductsTest extends TestCase
             'name' => 'Example testing category name',
             'position' => 0,
         ]);
+        $category2 = Category::create([
+            'parent_id' => null,
+            'name' => 'Example testing category name2',
+            'position' => 0,
+        ]);
         $product = Product::create([
             'title' => 'title',
             'description' => 'description',
             'price' => '111',
             'quantity' => '22',
             'category_id' => $category->id,
+        ]);
+        $product2 = Product::create([
+            'title' => 'title2',
+            'description' => 'description2',
+            'price' => '111',
+            'quantity' => '22',
+            'category_id' => $category2->id,
         ]);
         $productPhoto = ProductPhoto::create([
             'url' => 'url',
@@ -55,9 +67,12 @@ class ProductsTest extends TestCase
         ]);
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/get-products', []);
+        $response = $this->actingAs($user)->postJson('/admin-panel/get-products', ['category' => null]);
+        $response2 = $this->actingAs($user)->postJson('/admin-panel/get-products', ['category' => ['id' => $category->id, 'name' => 'cname']]);
+        $p = $response['products']['data'][0];
 
-        $p = $response['products'][0];
+        $this->assertTrue(2 === count($response['products']['data']));
+        $this->assertTrue(1 === count($response2['products']['data']));
         $this->assertTrue('title' === $p['title']);
         $this->assertTrue(Storage::url($productPhoto->url_small) === $p['product_photos'][0]['fullUrlSmall']);
     }

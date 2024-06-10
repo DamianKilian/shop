@@ -150,7 +150,9 @@ class AdminPanelProductsController extends Controller
     {
         $products = Product::with(['productPhotos' => function (Builder $query) {
             $query->orderBy('position');
-        }])->with('category')->orderByDesc('created_at')->paginate(20);
+        }])->with('category')->orderByDesc('created_at')->when($request->category, function ($query, $category) {
+            return $query->where('category_id', $category['id']);
+        })->paginate(20);
         foreach ($products as &$product) {
             if (0 === $product->productPhotos->count()) {
                 continue;
