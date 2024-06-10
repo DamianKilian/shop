@@ -87,9 +87,10 @@
                 style="min-width: 250px" id="search">
                 <div class="d-flex align-items-center search-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
                 <div class="input-group">
-                    <input v-model='searchValue' class="form-control" type="search" placeholder="{{ __('Search') }}"
-                        aria-label="Search">
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon1">Search</button>
+                    <input v-model='searchValue' class="form-control" type="search"
+                        placeholder="{{ __('Search') }}..." aria-label="Search">
+                    <button class="btn btn-outline-secondary" type="button"
+                        id="button-addon1">{{ __('Search') }}</button>
                 </div>
                 <button v-show='searchValue' @click='searchValue = ""' ref="clear" type="button"
                     class="btn btn-danger ms-1 d-none"><i class="fa-solid fa-xmark"></i></button>

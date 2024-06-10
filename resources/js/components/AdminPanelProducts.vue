@@ -59,18 +59,22 @@
             </div>
         </div>
     </div>
+    <AdminPanelProductsPagination :pagination='pagination' :selectedCategory='selectedCategory'
+        :getProducts='getProducts' />
 </template>
 
 <script>
 import AdminPanelProductsList from './AdminPanelProductsList.vue'
 import AdminPanelAddProduct from './AdminPanelAddProduct.vue'
+import AdminPanelProductsPagination from './AdminPanelProductsPagination.vue'
 import { goToCategory, arrangeCategories, setBreadcrumb } from './commonFunctions.js'
 
 export default {
-    components: { AdminPanelProductsList, AdminPanelAddProduct },
+    components: { AdminPanelProductsList, AdminPanelAddProduct, AdminPanelProductsPagination },
     props: ['categoriesProp', 'adminPanelGetProductsUrl', 'adminPanelAddProductUrl', 'adminPanelDeleteProductsUrl'],
     data() {
         return {
+            pagination: null,
             editProduct: null,
             products: [],
             mainMenuId: 'main-menu',
@@ -116,13 +120,14 @@ export default {
             });
             return selectedProducts;
         },
-        getProducts: function (category = null) {
+        getProducts: function (category = null, url = this.adminPanelGetProductsUrl) {
             this.products = [];
             var that = this;
             axios
-                .post(this.adminPanelGetProductsUrl, { category: category })
+                .post(url, { category: category })
                 .then(function (response) {
-                    that.arrangeProducts(response.data.products);
+                    that.pagination = response.data.products;
+                    that.arrangeProducts(that.pagination.data);
                 })
                 .catch(function (error) {
                     that.globalError = error.message;
