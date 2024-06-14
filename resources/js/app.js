@@ -30,6 +30,11 @@ import AdminPanelCategories from './components/AdminPanelCategories.vue';
 app.component('admin-panel-categories', AdminPanelCategories);
 import AdminPanelProducts from './components/AdminPanelProducts.vue';
 app.component('admin-panel-products', AdminPanelProducts);
+import Search from './components/Search.vue';
+app.component('search', Search);
+import SearchFilters from './components/SearchFilters.vue';
+app.component('search-filters', SearchFilters);
+
 
 
 

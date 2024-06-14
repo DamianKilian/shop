@@ -37,7 +37,10 @@
     </div>
     <AdminPanelAddProduct :editProduct='editProduct' :getProducts='getProducts'
         :adminPanelAddProductUrl='adminPanelAddProductUrl' :selectedCategory='selectedCategory' />
-    <div class='text-center'><b>{{ selectedCategory ? selectedCategory.name : '' }}</b></div>
+    <search @search="(searchValue) => { getProducts(adminPanelGetProductsUrl, searchValue) }"></search>
+    <search-filters @remove-search-value-submitted="searchValueSubmitted = ''; getProducts()"
+        @remove-selected-category="selectedCategory.selected = false; getProducts()" :selectedCategory='selectedCategory'
+        :searchValueSubmitted='searchValueSubmitted'></search-filters>
     <div v-if='products.length' id='products-container' class='clearfix pt-3'>
         <div v-for="(product, index) in products" :key="product.id"
             :class='{ "bg-primary bg-opacity-75": product.selected }' class="product">
@@ -74,6 +77,7 @@ export default {
     props: ['categoriesProp', 'adminPanelGetProductsUrl', 'adminPanelAddProductUrl', 'adminPanelDeleteProductsUrl'],
     data() {
         return {
+            searchValueSubmitted: '',
             pagination: null,
             editProduct: null,
             products: [],
@@ -120,18 +124,19 @@ export default {
             });
             return selectedProducts;
         },
-        getProducts: function (url = this.adminPanelGetProductsUrl) {
+        getProducts: function (url = this.adminPanelGetProductsUrl, searchValue = this.searchValueSubmitted) {
             this.products = [];
             var that = this;
-            var category = this.selectedCategory;
             axios
-                .post(url, { category: category })
+                .post(url, { category: this.selectedCategory, searchValue: searchValue })
                 .then(function (response) {
                     that.pagination = response.data.products;
                     that.arrangeProducts(that.pagination.data);
+                    that.searchValueSubmitted = searchValue;
                 })
                 .catch(function (error) {
                     that.globalError = error.message;
+                    console.log(error.message);
                 });
         },
         arrangeProducts: function (products) {

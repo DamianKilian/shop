@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Requests\AddProductRequest;
 use App\Models\Product;
 use App\Models\ProductPhoto;
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use App\Services\ProductService;
 use Illuminate\Support\Facades\Storage;
 use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
 use Spatie\Image\Image;
@@ -18,6 +18,10 @@ class AdminPanelProductsController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    public function suggestions(Request $request)
+    {
     }
 
     public function deleteProducts(Request $request)
@@ -148,11 +152,7 @@ class AdminPanelProductsController extends Controller
 
     public function getProducts(Request $request)
     {
-        $products = Product::with(['productPhotos' => function (Builder $query) {
-            $query->orderBy('position');
-        }])->with('category')->orderByDesc('created_at')->when($request->category, function ($query, $category) {
-            return $query->where('category_id', $category['id']);
-        })->paginate(20);
+        $products = ProductService::searchFilters($request);
         foreach ($products as &$product) {
             if (0 === $product->productPhotos->count()) {
                 continue;

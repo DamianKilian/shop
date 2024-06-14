@@ -1,9 +1,6 @@
 <script>
 export default {
     data() {
-        return {
-            searchValue: '',
-        }
     },
     methods: {
     },
@@ -12,9 +9,6 @@ export default {
     },
     created() { },
     mounted() {
-        if (this.$refs.clear) {
-            this.$refs.clear.classList.remove("d-none");
-        }
     }
 }
 </script>

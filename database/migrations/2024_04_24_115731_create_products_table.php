@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->json('description');
+            $table->text('description');
             $table->decimal('price');
             $table->integer('quantity');
             $table->string('gtin')->nullable();
@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreign('category_id')
                 ->references('id')
                 ->on('categories');
+            $table->fullText(['title', 'description']);
             $table->softDeletes();
             $table->timestamps();
         });
