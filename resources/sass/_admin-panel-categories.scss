@@ -3,7 +3,8 @@ body {
 }
 
 .app-list {
-    max-width: 300px;
+    width: 100%;
+    max-width: 600px;
     margin: 0 auto;
 }
 
@@ -14,19 +15,16 @@ ul {
 
 .app-list-ul {
     li {
+        min-height: 45px;
+        padding-left: 5px;
         position: relative;
         background-color: #f0f0f0;
-        padding: 10px;
         margin: 5px 0;
         &.new-category {
             background-color: green;
             color: #f0f0f0;
         }
         .btn-group {
-            position: absolute;
-            right: 0;
-            top: 0;
-            bottom: 0;
             width: 85px;
         }
         .edit-category {

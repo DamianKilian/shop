@@ -13,7 +13,7 @@ class Category extends Model
     use SelfReferenceTrait;
     use SoftDeletes;
 
-    protected $fillable = ['parent_id', 'name', 'position', 'deleted_at',];
+    protected $fillable = ['parent_id', 'name', 'slug', 'position', 'deleted_at',];
 
     public function products()
     {

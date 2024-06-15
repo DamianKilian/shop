@@ -20,6 +20,7 @@ export function arrangeCategories(categoriesDb = null) {
         }
         this.categories[item.parent_id].push({
             name: item.name,
+            slug: item.slug,
             id: item.id,
             deleted_at: item.deleted_at,
         });

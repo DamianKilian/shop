@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('price');
             $table->integer('quantity');
             $table->string('gtin')->nullable();
+            $table->string('slug')->unique();
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')
                 ->references('id')

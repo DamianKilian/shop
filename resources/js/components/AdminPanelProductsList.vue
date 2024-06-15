@@ -4,7 +4,9 @@
             @click="getCategoryProducts($event, category)"
             :class="{ 'text-bg-success': selectedCategory && selectedCategory.id === category.id }"
             class="d-flex show-products">
-            {{ category.name }}
+            <div style="pointer-events: none;" class="cat-name flex-fill align-self-center">
+                <span class="text-muted">{{ __('name') }}: </span><b>{{ category.name }}</b>
+            </div>
             <div class="btn-group btn-group-sm float-end" role="group" aria-label="Small button group">
                 <button class="btn btn-secondary" @click="goToSubCategory($event, category)"><i
                         class="fa-solid fa-arrow-right"></i></button>

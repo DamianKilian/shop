@@ -5,11 +5,16 @@
             <li :set="removeStatus = category.remove || (category.deleted_at && !category.restore)"
                 v-if="!category.deleted_at || category.restore || showDeletedCategories"
                 :class="{ 'new-category': category.new, 'text-bg-danger': removeStatus, 'mb-4': category.failedValidation }"
-                class="d-flex draggableElement" draggable="true">
-                {{ category.name }}&nbsp;
+                class="d-flex align-items-stretch draggableElement" draggable="true">
+                <div class="cat-name flex-fill align-self-center"><span class="text-muted">{{ __('name') }}: </span>
+                    <b>{{ category.name }}</b>
+                </div>
+                <div class="cat-slug flex-fill align-self-center"><span class="text-muted">{{ __('slug') }}: </span>
+                    <b>{{ category.slug }}</b>
+                </div>
                 <div class="btn-group btn-group-sm float-end" role="group" aria-label="Small button group">
-                    <button v-if='!removeStatus' class="btn btn-secondary"
-                        @click="showEditCategoryNameInput($event, category)"><i
+                    <button v-if='!removeStatus' class="btn btn-secondary" data-bs-toggle="modal"
+                        data-bs-target="#editCategory" @click="bootEditedCategory(category)"><i
                             class="fa-solid fa-pen-to-square"></i></button>
                     <button class="btn btn-secondary" @click="removeCategory($event, index, category)"><i
                             class="fa-solid fa-xmark"></i></button>
@@ -22,9 +27,33 @@
             </li>
         </template>
     </ul>
-    <div id="editCategoryName" class="input-group mb-3 edit-category d-none">
-        <input type="text" class="form-control" :value="editCategoryData.category ? editCategoryData.category.name : ''"
-            @input="if (editCategoryData.category) editCategoryData.category.name = $event.target.value;">
+    <div id="editCategory" class="modal fade" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm" style="width: 60px;">{{ __('Name')
+                            }}</span>
+                        <input v-model='editedCategory.name' @input='editedCategoryName()' type="text"
+                            class="form-control" aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm">
+                    </div>
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm" style="width: 60px;">{{ __('Slug')
+                            }}</span>
+                        <input v-model='editedCategory.slug' @input='editedCategory.slugCustomized = true' type="text"
+                            class="form-control" aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-sm">
+                        <button @click='editedCategory.slugCustomized = false; editedCategoryName()'
+                            class="btn btn-outline-secondary" type="button" id="button-addon2">{{ __('Reset')
+                            }}</button>
+                    </div>
+                </div>
+                <div class="modal-footer border-light">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">{{ __('Ok') }}</button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -37,12 +66,28 @@ export default {
     props: ['currentCategories', 'breadcrumb', 'categories', 'showDeletedCategories'],
     data() {
         return {
-            editCategoryData: {}
+            editedCategory: {
+                name: '',
+                slug: ''
+            }
         }
     },
     methods: {
         goToSubCategory,
         arraymove,
+        editedCategoryName: function (e) {
+            console.debug('editedCategoryName');//mmmyyy
+            if (!this.editedCategory.slugCustomized) {
+                this.editedCategory.slug = this.generateSlug();
+            }
+        },
+        generateSlug: function () {
+            return this.editedCategory.name.trim().replace(/ /g, '-');
+        },
+        bootEditedCategory: function (category) {
+            this.editedCategory = category;
+            this.editedCategory.slugCustomized = this.generateSlug() !== this.editedCategory.slug;
+        },
         removeCategory: function (e, index, category) {
             if (category.new) {
                 this.currentCategories.splice(index, 1);
@@ -60,42 +105,13 @@ export default {
                 }
             }
         },
-        showEditCategoryNameInput: function (e, category) {
-            let editCategoryName = this.editCategoryData.editCategoryName = document.getElementById('editCategoryName');
-            let li = this.editCategoryData.li = e.target.closest('li');
-            this.editCategoryData.category = category;
-            li.prepend(editCategoryName);
-            li.setAttribute('draggable', false);
-            editCategoryName.classList.remove('d-none');
-        },
-        editCategoryName: function () {
-            let editCategoryName = this.editCategoryData.editCategoryName;
-            document.getElementById('sortable').after(editCategoryName);
-            this.editCategoryData.li.setAttribute('draggable', true);
-            editCategoryName.classList.add('d-none');
-            this.editCategoryData = {};
-        },
     },
     created() {
-        document.addEventListener('click', (e) => {
-            if (_.isEmpty(this.editCategoryData)) {
-                return;
-            }
-            let sortableLi = e.target.closest('#sortable li');
-            if (!sortableLi || !sortableLi.querySelector("#editCategoryName")) {
-                this.editCategoryName();
-            }
-        });
     },
     mounted() {
-        document.querySelector("#editCategoryName > input").addEventListener('keypress', (e) => {
-            if (e.keyCode !== 13) {
-                return;
-            }
-            this.editCategoryName();
-        });
     },
     updated() {
+        console.debug(this.categories);//mmmyyy
         console.debug('updated');//mmmyyy
     },
 }

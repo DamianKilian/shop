@@ -67,6 +67,7 @@ export default {
             var id = Math.random().toString().replace('0.', 'new_');
             this.currentCategories.push({
                 name: id,
+                slug: id,
                 id: id,
                 new: true,
             });

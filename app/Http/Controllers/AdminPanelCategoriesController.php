@@ -28,6 +28,7 @@ class AdminPanelCategoriesController extends Controller
             $categoryDb = Category::create([
                 'parent_id' => $parent_id,
                 'name' => $category['name'],
+                'slug' => $category['slug'],
                 'position' => $index,
             ]);
         } elseif ($remove) {
@@ -42,6 +43,7 @@ class AdminPanelCategoriesController extends Controller
             $categoryDb = $restore ? Category::onlyTrashed()->whereId($category['id'])->first() : Category::whereId($category['id'])->first();
             $categoryDb->update([
                 'name' => $category['name'],
+                'slug' => $category['slug'],
                 'position' => $index,
                 'deleted_at' => null,
             ]);
