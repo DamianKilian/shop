@@ -27,7 +27,7 @@
 
 <body>
     <div id="app" class="container-xxl">
-        <nav class="d-flex flex-wrap flex-sm-nowrap" id="nav">
+        <nav class="bg-light fixed-top d-flex flex-wrap flex-sm-nowrap" id="nav">
             <a class="navbar-brand order-1 p-2 align-self-center" href="{{ url('/') }}">
                 <img src="{{ asset('storage/logo.svg') }}" width="48" height="24"
                     alt="{{ config('app.name', 'Laravel') }}">
@@ -86,10 +86,10 @@
                 </div>
             </div>
         </nav>
-        <main id="main" class="d-flex align-items-stretch">
-            <div id="menu" class="p-2 d-none d-sm-block">
-                <div class="position-absolute d-sm-none" style="top: 0;right: 40px;">
-                    <div class="menu-btn btn-close position-fixed" style="padding: 13px;" type="button"
+        <main id="main" class="clearfix">
+            <div id="menu" class="bg-light d-none d-sm-block">
+                <div class="position-absolute d-sm-none" style="top: 0;right: 45px;">
+                    <div class="menu-btn btn-close position-fixed" style="padding: 15px;" type="button"
                         aria-label="Close">
                     </div>
                 </div>
@@ -100,7 +100,7 @@
                         href="{{ route('admin-panel-categories') }}">{{ __('Categories') }}</a>
                 </nav>
             </div>
-            <div id="content" class="flex-grow-1">
+            <div id="content" class="d-flex">
                 @yield('content')
             </div>
         </main>
