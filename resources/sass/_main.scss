@@ -45,6 +45,8 @@ $topHeight: 60px;
 
 #search {
     $searchIconShift: 40px;
+    width: 50%;
+    min-width: 250px;
     .search-icon {
         width: $searchIconShift;
         position: relative;
@@ -63,16 +65,20 @@ $topHeight: 60px;
 }
 
 @include media-breakpoint-only(xs) {
-    $topHeight: 100px;
+    #nav {
+        .nav-dropdown {
+            min-width: 88px;
+            max-width: 27%;
+            overflow: hidden;
+        }
+    }
+    $topHeight: 110px;
     .shop {
         #nav {
             height: $topHeight;
-            .dropdown-toggle {
-                max-width: 88px;
-            }
         }
         #main {
-            margin-top: $topHeight;
+            margin-top: calc($topHeight + 20px);
             min-height: calc(100vh - $topHeight);
         }
     }
@@ -89,6 +95,6 @@ $topHeight: 60px;
         padding-top: 45px;
     }
     #search {
-        width: 100%;
+        width: 95%;
     }
 }

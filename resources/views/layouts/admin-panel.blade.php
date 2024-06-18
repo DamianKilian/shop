@@ -35,7 +35,7 @@
             <div class="menu-btn d-sm-none order-1 p-2 align-self-center user-select-none flex-grow-1">
                 <span class="display-6"><i class="fa-solid fa-bars"></i></span>
             </div>
-            <div class="order-1 order-sm-2 ms-auto align-self-center">
+            <div class="order-1 order-sm-2 ms-auto align-self-center nav-dropdown">
                 @php
                     $locales = [
                         'pl' => 'Polski',
@@ -56,7 +56,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="order-1 order-sm-2 align-self-center">
+            <div class="order-1 order-sm-2 align-self-center nav-dropdown">
                 <button id="navbarDropdown" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
                     <i class="fa-regular fa-user"></i>
                     @guest {{ __('Guest') }}
