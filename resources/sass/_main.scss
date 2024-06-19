@@ -2,8 +2,11 @@ $topHeight: 60px;
 
 #nav {
     height: $topHeight;
+    .nav-dropdown {
+        margin-right: 1%;
+    }
     .dropdown-toggle {
-        max-width: 150px;
+        width: 100%;
     }
     .dropdown-menu {
         a {

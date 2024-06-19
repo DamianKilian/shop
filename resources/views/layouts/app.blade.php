@@ -92,14 +92,26 @@
                         aria-label="Close">
                     </div>
                 </div>
-                menuss1<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>
+                @if (count($categories) > 0)
+                    @php
+                        $nesting = 0;
+                    @endphp
+                    <ul>
+                        @foreach ($categories as $category)
+                            @if (!$category->parent_id)
+                                @include('_partials.menu-category')
+                            @endif
+                        @endforeach
+                    </ul>
+                @else
+                    No categories
+                @endif
             </div>
             <div id="content" class="d-flex">
                 @yield('content')
                 <div>
                     menuss1<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>
                 </div>
-
             </div>
         </main>
     </div>

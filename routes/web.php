@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/category/{slug}', [App\Http\Controllers\HomeController::class, 'category'])->name('category');
 
 Route::prefix('admin-panel')->group(function () {
     Route::get('/products', [App\Http\Controllers\AdminPanelProductsController::class, 'products'])->name('admin-panel-products');
