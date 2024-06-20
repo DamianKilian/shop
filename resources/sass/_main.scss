@@ -2,6 +2,7 @@ $topHeight: 60px;
 
 #nav {
     height: $topHeight;
+    transition: opacity .5s;
     .nav-dropdown {
         margin-right: 1%;
     }

@@ -116,6 +116,15 @@
         toggleMenu();
         localeSwitcher();
     </script>
+    <script>
+        function hideNavBarOnPageLoading() {
+            document.getElementById("nav").style.opacity = "0";
+            window.addEventListener("load", () => {
+                document.getElementById("nav").style.opacity = "1";
+            });
+        }
+        hideNavBarOnPageLoading();
+    </script>
     @yield('scripts')
 </body>
 
