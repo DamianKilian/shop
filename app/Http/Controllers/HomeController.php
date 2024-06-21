@@ -20,16 +20,27 @@ class HomeController extends Controller
     public function category(Request $request, $slug)
     {
         $category = Category::where('slug', $slug)->first();
+        $activeLinks = '._' . $category->slug;
+        $parentIds = [$category->parent_id => $category->parent_id];
+        $categories = Category::with('children')->get()->keyBy('id');
+        while (end($parentIds)) {
+            $parent = $categories[end($parentIds)];
+            $activeLinks .= ', ._' . $parent->slug;
+            $parentIds[$parent->parent_id] = $parent->parent_id;
+        }
         return view('category', [
+            'parentIds' => $parentIds,
+            'activeLinks' => $activeLinks,
             'category' => $category,
-            'categories' => Category::with('children')->get(),
+            'selectedCategory' => $category,
+            'categories' => $categories,
         ]);
     }
 
     public function index()
     {
         return view('home', [
-            'categories' => Category::with('children')->get(),
+            'categories' => Category::with('children')->get()->keyBy('id'),
         ]);
     }
 }

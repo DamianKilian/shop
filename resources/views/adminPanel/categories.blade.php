@@ -10,6 +10,6 @@
 
 @section('scriptsHead')
     <script>
-        window.activeLink = '_categories';
+        window.activeLinks = '._categories';
     </script>
 @endsection

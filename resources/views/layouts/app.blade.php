@@ -93,9 +93,6 @@
                     </div>
                 </div>
                 @if (count($categories) > 0)
-                    @php
-                        $nesting = 0;
-                    @endphp
                     <ul>
                         @foreach ($categories as $category)
                             @if (!$category->parent_id)
@@ -131,6 +128,18 @@
             });
         }
         hideNavBarOnPageLoading();
+
+        function selectActiveLinks() {
+            if (!window.activeLinks) {
+                return;
+            }
+            var links = Array.from(document.querySelectorAll(window.activeLinks));
+            links.forEach(link => {
+                link.classList.add('bg-primary', 'link-light');
+                link.classList.remove('link-dark');
+            });
+        }
+        selectActiveLinks();
     </script>
     @yield('scripts')
 </body>

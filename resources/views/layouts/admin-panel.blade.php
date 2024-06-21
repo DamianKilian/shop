@@ -106,12 +106,6 @@
         </main>
     </div>
     <div id="menu-overlay" class="overlay d-none d-sm-none menu-btn"></div>
-    <script>
-        if (window.activeLink) {
-            var link = document.querySelector('#menu .' + window.activeLink);
-            link.classList.add('active');
-        }
-    </script>
     <script type="module">
         toggleMenu();
         localeSwitcher();
@@ -124,6 +118,17 @@
             });
         }
         hideNavBarOnPageLoading();
+
+        function selectActiveLinks() {
+            if (!window.activeLinks) {
+                return;
+            }
+            var links = Array.from(document.querySelectorAll(window.activeLinks));
+            links.forEach(link => {
+                link.classList.add('active');
+            });
+        }
+        selectActiveLinks();
     </script>
     @yield('scripts')
 </body>
