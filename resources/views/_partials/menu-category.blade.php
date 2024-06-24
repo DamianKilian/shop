@@ -7,7 +7,7 @@
 
 <li style="margin-left: {{ $ml }}" class="mt-1">
     <a href="{{ route('category', ['slug' => $category->slug]) }}"
-        class="link-dark p-1 d-block _{{ $category->slug }}">{{ $category->name }}
+        class="p-1 d-block _{{ $category->slug }}">{{ $category->name }}
     </a>
     @if ($children)
         @php

@@ -2,7 +2,7 @@ $topHeight: 60px;
 
 #nav {
     height: $topHeight;
-    transition: opacity .5s;
+    transition: opacity 0.5s;
     .nav-dropdown {
         margin-right: 1%;
     }
@@ -35,6 +35,11 @@ $topHeight: 60px;
     float: left;
     padding: 20px;
     margin-bottom: 20px;
+}
+
+#content {
+    float: left;
+    width: calc(100% - 250px);
 }
 
 .overlay {

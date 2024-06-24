@@ -27,65 +27,67 @@
 
 <body>
     <div id="app" class="container-xxl">
-        <nav class="bg-light fixed-top d-flex flex-wrap flex-sm-nowrap" id="nav">
-            <a class="navbar-brand order-1 p-2 align-self-center" href="{{ url('/') }}">
-                <img src="{{ asset('storage/logo.svg') }}" width="48" height="24"
-                    alt="{{ config('app.name', 'Laravel') }}">
-            </a>
-            <div class="menu-btn d-sm-none order-1 p-2 align-self-center user-select-none flex-grow-1">
-                <span class="display-6"><i class="fa-solid fa-bars"></i></span>
-            </div>
-            <div class="order-1 order-sm-2 ms-auto align-self-center nav-dropdown">
-                @php
-                    $locales = [
-                        'pl' => 'Polski',
-                        'en' => 'English',
-                    ];
-                @endphp
-                <div class="dropdown">
-                    <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fa-solid fa-language"></i> {{ $locales[app()->getLocale()] }}
+        <div class="bg-light fixed-top ">
+            <nav class="container-xxl d-flex flex-wrap flex-sm-nowrap" id="nav">
+                <a class="navbar-brand order-1 p-2 align-self-center" href="{{ url('/') }}">
+                    <img src="{{ asset('storage/logo.svg') }}" width="48" height="24"
+                        alt="{{ config('app.name', 'Laravel') }}">
+                </a>
+                <div class="menu-btn d-sm-none order-1 p-2 align-self-center user-select-none flex-grow-1">
+                    <span class="display-6"><i class="fa-solid fa-bars"></i></span>
+                </div>
+                <div class="order-1 order-sm-2 ms-auto align-self-center nav-dropdown">
+                    @php
+                        $locales = [
+                            'pl' => 'Polski',
+                            'en' => 'English',
+                        ];
+                    @endphp
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fa-solid fa-language"></i> {{ $locales[app()->getLocale()] }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            @foreach ($locales as $locale => $lang)
+                                <li>
+                                    <a class="dropdown-item set-locale-link"
+                                        data-locale='{{ $locale }}'>{{ $lang }}</a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+                <div class="order-1 order-sm-2 align-self-center nav-dropdown">
+                    <button id="navbarDropdown" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fa-regular fa-user"></i>
+                        @guest {{ __('Guest') }}
+                        @else
+                        {{ Auth::user()->name }} @endguest
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        @foreach ($locales as $locale => $lang)
-                            <li>
-                                <a class="dropdown-item set-locale-link"
-                                    data-locale='{{ $locale }}'>{{ $lang }}</a>
-                            </li>
-                        @endforeach
-                    </ul>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        @guest
+                            @if (Route::has('login'))
+                                <li><a class="dropdown-item" href="{{ route('login') }}">{{ __('Login') }}</a></li>
+                            @endif
+                            @if (Route::has('register'))
+                                <li><a class="dropdown-item" href="{{ route('register') }}">{{ __('Register') }}</a></li>
+                            @endif
+                        @else
+                            <a class="dropdown-item"
+                                href="{{ route('admin-panel-products') }}">{{ __('Admin panel') }}</a>
+                            <a class="dropdown-item" href="{{ route('logout') }}"
+                                onclick="event.preventDefault();
+                             document.getElementById('logout-form').submit();">
+                                {{ __('Logout') }}
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
+                        @endguest
+                    </div>
                 </div>
-            </div>
-            <div class="order-1 order-sm-2 align-self-center nav-dropdown">
-                <button id="navbarDropdown" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
-                    <i class="fa-regular fa-user"></i>
-                    @guest {{ __('Guest') }}
-                    @else
-                    {{ Auth::user()->name }} @endguest
-                </button>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    @guest
-                        @if (Route::has('login'))
-                            <li><a class="dropdown-item" href="{{ route('login') }}">{{ __('Login') }}</a></li>
-                        @endif
-
-                        @if (Route::has('register'))
-                            <li><a class="dropdown-item" href="{{ route('register') }}">{{ __('Register') }}</a></li>
-                        @endif
-                    @else
-                        <a class="dropdown-item" href="{{ route('admin-panel-products') }}">{{ __('Admin panel') }}</a>
-                        <a class="dropdown-item" href="{{ route('logout') }}"
-                            onclick="event.preventDefault();
-                         document.getElementById('logout-form').submit();">
-                            {{ __('Logout') }}
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                            @csrf
-                        </form>
-                    @endguest
-                </div>
-            </div>
-        </nav>
+            </nav>
+        </div>
         <main id="main" class="clearfix">
             <div id="menu" class="bg-light d-none d-sm-block">
                 <div class="position-absolute d-sm-none" style="top: 0;right: 45px;">
