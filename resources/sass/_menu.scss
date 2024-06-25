@@ -5,7 +5,6 @@
             > span {
                 background-color: $dark;
                 color: #fff;
-                border-radius: 3px;
                 > i {
                     transform: rotate(90deg);
                 }
@@ -19,6 +18,8 @@
             position: absolute;
             top: 0;
             right: 0;
+            border-radius: 3px;
+            transition: background-color 0.3s;
             > i {
                 margin-top: 8px;
                 transition: transform 0.3s;
@@ -41,18 +42,16 @@
     a {
         color: $dark;
         font-weight: bolder;
+        &:hover {
+            color: $primary;
+        }
         &.active {
             text-decoration: underline;
-            background-color: lightgray;
-            text-shadow: 0 0 2px #fff;
-        }
-        &.bg-primary {
+            background-color: $primary;
+            color: #fff;
             + span {
                 color: #fff;
             }
-        }
-        &:hover {
-            color: $primary;
         }
     }
 }

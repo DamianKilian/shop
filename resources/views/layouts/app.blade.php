@@ -138,8 +138,7 @@
             }
             var links = Array.from(document.querySelectorAll(window.activeLinks));
             links.forEach(link => {
-                link.classList.add('bg-primary', 'link-light');
-                link.classList.remove('link-dark');
+                link.classList.add('active');
             });
         }
         selectActiveLinks();
