@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -19,10 +20,12 @@ class HomeController extends Controller
 
     public function category(Request $request, $slug)
     {
-        $category = Category::where('slug', $slug)->first();
+        $category = Category::with('products')->where('slug', $slug)->first();
         $activeLinks = '._' . $category->slug;
         $parentIds = [$category->parent_id => $category->parent_id];
-        $categories = Category::with('children')->get()->keyBy('id');
+        $categories = Category::with(['children' => function (Builder $query) {
+            $query->orderBy('position');
+        }])->orderBy('position')->get()->keyBy('id');
         while (end($parentIds)) {
             $parent = $categories[end($parentIds)];
             $activeLinks .= ', ._' . $parent->slug;
@@ -40,7 +43,9 @@ class HomeController extends Controller
     public function index()
     {
         return view('home', [
-            'categories' => Category::with('children')->get()->keyBy('id'),
+            'categories' => Category::with(['children' => function (Builder $query) {
+                $query->orderBy('position');
+            }])->orderBy('position')->get()->keyBy('id'),
         ]);
     }
 }
