@@ -76,7 +76,6 @@ export default {
         goToSubCategory,
         arraymove,
         editedCategoryName: function (e) {
-            console.debug('editedCategoryName');//mmmyyy
             if (!this.editedCategory.slugCustomized) {
                 this.editedCategory.slug = this.generateSlug();
             }
@@ -111,7 +110,6 @@ export default {
     mounted() {
     },
     updated() {
-        console.debug(this.categories);//mmmyyy
         console.debug('updated');//mmmyyy
     },
 }

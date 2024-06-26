@@ -10,12 +10,28 @@
                     class='position-relative'>
                     <input v-if='selectedCategory' :value='selectedCategory.id' name='categoryId' type='hidden' />
                     <div class="modal-body">
-                        <div class="form-floating mb-3">
-                            <input ref='title' name='title' :class='{ "is-invalid": failedValidation.title }'
-                                class="form-control" id="title" :placeholder="__('Title')">
-                            <label for="title">{{ __('Title') }}</label>
-                            <div class="invalid-feedback">
-                                {{ failedValidation.title ? failedValidation.title[0] : '' }}
+                        <div class="clearfix">
+                            <div class="form-floating mb-3 float-start" style="width: 49%;">
+                                <input v-model='title.val' @input='editedTitleVal()' ref='title' name='title'
+                                    :class='{ "is-invalid": failedValidation.title }' class="form-control" id="title"
+                                    :placeholder="__('Title')">
+                                <label for="title">{{ __('Title') }}</label>
+                                <div class="invalid-feedback">
+                                    {{ failedValidation.title ? failedValidation.title[0] : '' }}
+                                </div>
+                            </div>
+                            <div class="input-group mb-3 float-start" style="width: 49%; margin-left: 2%;">
+                                <div class="form-floating">
+                                    <input v-model='title.slug' @input='title.slugCustomized = true' ref='slug'
+                                        name='slug' :class='{ "is-invalid": failedValidation.title }'
+                                        class="form-control" id="slug" :placeholder="__('Slug')">
+                                    <label for="slug">{{ __('Slug') }}</label>
+                                    <div class="invalid-feedback">
+                                        {{ failedValidation.title ? failedValidation.title[0] : '' }}
+                                    </div>
+                                </div>
+                                <button @click='title.slugCustomized = false; editedTitleVal()'
+                                    class="btn btn-outline-secondary" type="button" id="button-addon2">Button</button>
                             </div>
                         </div>
                         <div class="clearfix">
@@ -76,6 +92,11 @@ export default {
     props: ['editProduct', 'adminPanelAddProductUrl', 'selectedCategory', 'getProducts'],
     data() {
         return {
+            title: {
+                val: '',
+                slug: '',
+                slugCustomized: false
+            },
             filesArr: [],
             editor: null,
             addingProduct: false,
@@ -102,15 +123,31 @@ export default {
         },
     },
     methods: {
+        editedTitleVal: function (e) {
+            if (!this.title.slugCustomized) {
+                this.title.slug = this.generateSlug();
+            }
+        },
+        generateSlug: function () {
+            return this.title.val.trim().replace(/ /g, '-');
+        },
         setEditForm: function () {
             if (this.editProduct) {
                 this.editor.blocks.render(JSON.parse(this.editProduct.product.description));
-                this.$refs.title.value = this.editProduct.product.title;
+                this.title = {
+                    val: this.editProduct.product.title,
+                    slug: this.editProduct.product.slug,
+                    slugCustomized: this.generateSlug() !== this.title.slug
+                };
                 this.$refs.price.value = this.editProduct.product.price;
                 this.$refs.quantity.value = this.editProduct.product.quantity;
             } else {
                 this.editor.blocks.clear();
-                this.$refs.title.value = '';
+                this.title = {
+                    val: '',
+                    slug: '',
+                    slugCustomized: false
+                };
                 this.$refs.price.value = '';
                 this.$refs.quantity.value = '';
             }

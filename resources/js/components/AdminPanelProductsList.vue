@@ -19,7 +19,7 @@
 import { goToSubCategory } from './commonFunctions.js'
 
 export default {
-    props: ['currentCategories', 'breadcrumb', 'selectedCategory', 'adminPanelGetProductsUrl', 'getProducts'],
+    props: ['currentCategories', 'breadcrumb', 'selectedCategory', 'adminPanelGetProductsUrl', 'getProducts', 'categories'],
     data() {
         return {}
     },

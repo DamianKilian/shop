@@ -62,6 +62,7 @@ class AdminPanelProductsController extends Controller
             $product = Product::find($request->productId);
             $product->update([
                 'title' => $request->title,
+                'slug' => $request->slug,
                 'description' => $request->description,
                 'price' => str_replace(',', '.', $request->price),
                 'quantity' => $request->quantity,
@@ -69,6 +70,7 @@ class AdminPanelProductsController extends Controller
         } else {
             $product = Product::create([
                 'title' => $request->title,
+                'slug' => $request->slug,
                 'description' => $request->description,
                 'price' => str_replace(',', '.', $request->price),
                 'quantity' => $request->quantity,

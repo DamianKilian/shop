@@ -19,7 +19,7 @@
             </div>
             <AdminPanelProductsList :getProducts='getProducts' :products="products" :breadcrumb="breadcrumb"
                 :currentCategories="currentCategories" :selectedCategory='selectedCategory'
-                :adminPanelGetProductsUrl='adminPanelGetProductsUrl' />
+                :adminPanelGetProductsUrl='adminPanelGetProductsUrl' :categories='categories' />
         </div>
         <div class="mt-3 actions-global clearfix">
             <button @click='editProduct = null' data-bs-toggle="modal" data-bs-target="#addProduct"
@@ -39,11 +39,11 @@
         :adminPanelAddProductUrl='adminPanelAddProductUrl' :selectedCategory='selectedCategory' />
     <search @search="(searchValue) => { getProducts(adminPanelGetProductsUrl, searchValue) }"></search>
     <search-filters @remove-search-value-submitted="searchValueSubmitted = ''; getProducts()"
-        @remove-selected-category="selectedCategory.selected = false; getProducts()" :selectedCategory='selectedCategory'
-        :searchValueSubmitted='searchValueSubmitted'></search-filters>
+        @remove-selected-category="selectedCategory.selected = false; getProducts()"
+        :selectedCategory='selectedCategory' :searchValueSubmitted='searchValueSubmitted'></search-filters>
     <div v-if='products.length' id='products-container' class='clearfix pt-3'>
         <div v-for="(product, index) in products" :key="product.id"
-            :class='{ "bg-primary bg-opacity-75": product.selected }' class="product">
+            :class='{ "bg-primary bg-opacity-75": product.selected }' class="product pt-1 pb-1">
             <div class="card">
                 <div @click='product.selected = !product.selected' class="card-img border-bottom">
                     <input class="m-1 form-check-input position-absolute" type="checkbox" v-model="product.selected">
