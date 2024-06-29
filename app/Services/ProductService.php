@@ -21,4 +21,22 @@ class ProductService
         })->paginate($paginate);
         return $products;
     }
+
+    public static function getProductDescStr($product)
+    {
+        $descStr = '';
+        foreach (json_decode($product->description, true)['blocks'] as $block) {
+            $data = $block['data'];
+            if (isset($data['text'])) {
+                $descStr .= $data['text'] . ' ';
+            } elseif (isset($data['items'])) {
+                foreach ($data['items'] as $itemText) {
+                    $descStr .= $itemText . ' ';
+                }
+            }
+        }
+        $descStr = preg_replace('/\s\s+/', ' ', $descStr);
+        $descStr = preg_replace('/\<br\>\s$/', '', $descStr);
+        return $descStr;
+    }
 }

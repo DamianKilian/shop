@@ -40,6 +40,7 @@ $topHeight: 60px;
 #content {
     float: left;
     width: calc(100% - 250px);
+    padding: 20px;
 }
 
 .overlay {
@@ -74,6 +75,9 @@ $topHeight: 60px;
 }
 
 @include media-breakpoint-only(xs) {
+    #content {
+        width: 100%;
+    }
     #nav {
         .nav-dropdown {
             min-width: 88px;

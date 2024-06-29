@@ -1,0 +1,49 @@
+#products {
+    .product {
+        display: block;
+        color: $dark;
+        min-height: 200px;
+        margin-bottom: 10px;
+        position: relative;
+        &:hover {
+            background-color: $light;
+            h2 {
+                text-decoration: underline;
+            }
+        }
+        > div {
+            float: right;
+        }
+        .title-desc {
+            width: calc(75% - 20px);
+        }
+        .price {
+            width: calc(75% - 20px);
+            .number {
+                text-align: center;
+            }
+        }
+    }
+    .img-container {
+        width: 25%;
+        max-width: 200px;
+        min-height: 200px;
+        height: 100%;
+        margin-right: 20px;
+        background-color: $light;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        img,
+        svg {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: scale-down;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+        }
+    }
+}
