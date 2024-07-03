@@ -17,10 +17,9 @@ class ProductsTest extends TestCase
 
     public function test_products(): void
     {
-        $category = Category::create([
+        $category = Category::factory()->create([
             'parent_id' => null,
             'name' => 'Example testing category name',
-            'position' => 1,
         ]);
         $user = User::factory()->create();
 
@@ -34,35 +33,17 @@ class ProductsTest extends TestCase
 
     public function test_getProducts(): void
     {
-        $category = Category::create([
-            'parent_id' => null,
-            'name' => 'Example testing category name',
-            'position' => 0,
-        ]);
-        $category2 = Category::create([
-            'parent_id' => null,
-            'name' => 'Example testing category name2',
-            'position' => 0,
-        ]);
-        $product = Product::create([
+        $category = Category::factory()->create();
+        $category2 = Category::factory()->create();
+        $product = Product::factory()->create([
             'title' => 'title',
-            'description' => 'description',
-            'price' => '111',
-            'quantity' => '22',
             'category_id' => $category->id,
         ]);
-        $product2 = Product::create([
+        $product2 = Product::factory()->create([
             'title' => 'title2',
-            'description' => 'description2',
-            'price' => '111',
-            'quantity' => '22',
             'category_id' => $category2->id,
         ]);
-        $productPhoto = ProductPhoto::create([
-            'url' => 'url',
-            'url_small' => 'url-small',
-            'position' => 0,
-            'size' => 111,
+        $productPhoto = ProductPhoto::factory()->create([
             'product_id' => $product->id,
         ]);
         $user = User::factory()->create();
@@ -79,17 +60,15 @@ class ProductsTest extends TestCase
 
     public function test_addProduct(): void
     {
-        $category = Category::create([
-            'parent_id' => null,
-            'name' => 'Example testing category name',
-            'position' => 0,
-        ]);
+        $category = Category::factory()->create();
         $user = User::factory()->create();
         Storage::fake('public');
+
         $productPhoto = UploadedFile::fake()->image('product.jpg');
         $productPhoto2 = UploadedFile::fake()->image('product2.jpg');
         $this->actingAs($user)->postJson('/admin-panel/add-product', [
             'title' => 'title',
+            'slug' => 'slug',
             'description' => 'description',
             'price' => 11,
             'quantity' => 22,
@@ -97,6 +76,7 @@ class ProductsTest extends TestCase
             'files' => [$productPhoto, $productPhoto2],
             'filesArr' => json_encode([['positionInInput' => 0], ['positionInInput' => 1]]),
         ]);
+
         Storage::disk('public')->assertExists('products/' . $productPhoto->hashName());
         Storage::disk('public')->assertExists('products/' . $productPhoto2->hashName());
         Storage::disk('public')->assertExists('products/small/' . $productPhoto->hashName());
@@ -110,19 +90,15 @@ class ProductsTest extends TestCase
 
     public function test_edit_addProduct(): void
     {
-        $category = Category::create([
-            'parent_id' => null,
-            'name' => 'Example testing category name',
-            'position' => 0,
-        ]);
-        $product = Product::create([
+        $category = Category::factory()->create();
+        $product = Product::factory()->create([
             'title' => 'title',
             'description' => 'description',
             'price' => 11,
             'quantity' => 22,
             'category_id' => $category->id,
         ]);
-        $productPhotoDb = ProductPhoto::create([
+        $productPhotoDb = ProductPhoto::factory()->create([
             'url' => 'url',
             'url_small' => 'url_small',
             'position' => 0,
@@ -132,7 +108,7 @@ class ProductsTest extends TestCase
         Storage::fake('public');
         Storage::disk('public')->put('url2.jpg', 'content');
         Storage::disk('public')->put('small/url2.jpg', 'content');
-        $productPhotoDb2 = ProductPhoto::create([
+        $productPhotoDb2 = ProductPhoto::factory()->create([
             'url' => 'url2.jpg',
             'url_small' => 'small/url2.jpg',
             'position' => 1,
@@ -145,6 +121,7 @@ class ProductsTest extends TestCase
         $this->actingAs($user)->postJson('/admin-panel/add-product', [
             'productId' => $product->id,
             'title' => 'titleEdited',
+            'slug' => 'slug',
             'description' => 'descriptionEdited',
             'price' => 111,
             'quantity' => 222,
@@ -174,52 +151,27 @@ class ProductsTest extends TestCase
 
     public function test_deleteProducts(): void
     {
-        $category = Category::create([
-            'parent_id' => null,
-            'name' => 'Example testing category name',
-            'position' => 0,
-        ]);
-        $product = Product::create([
+        $category = Category::factory()->create();
+        $product = Product::factory()->create([
             'title' => 'title',
-            'description' => 'description',
-            'price' => '111',
-            'quantity' => '22',
             'category_id' => $category->id,
         ]);
-        $product2 = Product::create([
+        $product2 = Product::factory()->create([
             'title' => 'title2',
-            'description' => 'description2',
-            'price' => '111',
-            'quantity' => '22',
             'category_id' => $category->id,
         ]);
-        $product3 = Product::create([
+        $product3 = Product::factory()->create([
             'title' => 'title3',
-            'description' => 'description3',
-            'price' => '111',
-            'quantity' => '22',
             'category_id' => $category->id,
         ]);
-        $productPhoto = ProductPhoto::create([
-            'url' => 'url',
-            'url_small' => 'url-small',
-            'position' => 0,
-            'size' => 111,
+        $productPhoto = ProductPhoto::factory()->create([
             'product_id' => $product->id,
         ]);
-        $productPhoto2 = ProductPhoto::create([
-            'url' => 'url1',
-            'url_small' => 'url-small2',
-            'position' => 0,
-            'size' => 111,
+        $productPhoto2 = ProductPhoto::factory()->create([
             'product_id' => $product->id,
         ]);
-        $productPhoto3 = ProductPhoto::create([
-            'url' => 'url1',
-            'url_small' => 'url-small2',
-            'position' => 0,
-            'size' => 111,
-            'product_id' => $product2->id,
+        $productPhoto3 = ProductPhoto::factory()->create([
+            'product_id' => $product3->id,
         ]);
         $user = User::factory()->create();
 

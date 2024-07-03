@@ -23,7 +23,9 @@ return new class extends Migration
             $table->foreign('category_id')
                 ->references('id')
                 ->on('categories');
-            $table->fullText(['title', 'description']);
+            if (!$this->isSqlite()) {
+                $table->fullText(['title', 'description']);
+            }
             $table->softDeletes();
             $table->timestamps();
         });
@@ -43,9 +45,14 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
+    private function isSqlite(): bool
+    {
+        return 'sqlite' === Schema::connection($this->getConnection())
+            ->getConnection()
+            ->getPdo()
+            ->getAttribute(PDO::ATTR_DRIVER_NAME);
+    }
+
     public function down(): void
     {
         Schema::dropIfExists('products');

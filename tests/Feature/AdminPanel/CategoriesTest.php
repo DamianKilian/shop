@@ -13,15 +13,13 @@ class CategoriesTest extends TestCase
 
     public function test_categories_are_displaying(): void
     {
-        $category = Category::create([
-            'parent_id' => null,
+        $category = Category::factory()->create([
             'name' => 'Example testing category name',
-            'position' => 1,
         ]);
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->get('/admin-panel/categories');
-        // dd($response);//mmmyyy
+
         $response->assertStatus(200);
         $response->assertViewHas('categories', function ($collection) use ($category) {
             return $collection->contains($category);
@@ -92,50 +90,50 @@ class CategoriesTest extends TestCase
         $id = [];
         foreach ($categoriesInitial["main-menu"] as $position => $parent) {
             $parent['position'] = $position;
-            $categoryCreated = Category::create($parent);
+            $categoryCreated = Category::factory()->create($parent);
             $id[$parent['id']] = $categoryCreated->id;
             $id = $this->addSubCategories($parent, $id, $categoriesInitial);
         }
         $categoriesToSave = [
             $id["1"] => [
-                ["id" => $id['3'], "name" => "p1ch2"],
-                ["id" => $id['2'], "name" => "p1ch1"],
-                ["id" => "new_5376972801700572", "name" => "p1ch4", "new" => true],
-                ["id" => $id['4'], "name" => "p1ch3"]
+                ["id" => $id['3'], "name" => "p1ch2", "slug" => "slug1"],
+                ["id" => $id['2'], "name" => "p1ch1", "slug" => "slug2"],
+                ["id" => "new_5376972801700572", "name" => "p1ch4", "slug" => "slug3", "new" => true],
+                ["id" => $id['4'], "name" => "p1ch3", "slug" => "slug4"]
             ],
             $id["5"] => [
-                ["id" => $id['6'], "name" => "p2ch1"],
-                ["id" => $id['8'], "name" => "p2ch2"],
-                ["id" => $id['9'], "name" => "p2ch3"]
+                ["id" => $id['6'], "name" => "p2ch1", "slug" => "slug5"],
+                ["id" => $id['8'], "name" => "p2ch2", "slug" => "slug6"],
+                ["id" => $id['9'], "name" => "p2ch3", "slug" => "slug7"]
             ],
             $id["6"] => [
-                ["id" => $id['7'], "name" => "p2ch1ch1"]
+                ["id" => $id['7'], "name" => "p2ch1ch1", "slug" => "slug8"]
             ],
             $id["10"] => [
-                ["id" => $id['11'], "name" => "p3ch1"],
-                ["id" => $id['12'], "name" => "p3ch2"]
+                ["id" => $id['11'], "name" => "p3ch1", "slug" => "slug9"],
+                ["id" => $id['12'], "name" => "p3ch2", "slug" => "slug10"]
             ],
             $id["13"] => [
-                ["id" => $id['14'], "name" => "p4ch1"],
-                ["id" => $id['15'], "name" => "p4ch2_name_changed"],
-                ["id" => $id['16'], "name" => "p4ch3"]
+                ["id" => $id['14'], "name" => "p4ch1", "slug" => "slug11"],
+                ["id" => $id['15'], "name" => "p4ch2_name_changed", "slug" => "slug12"],
+                ["id" => $id['16'], "name" => "p4ch3", "slug" => "slug13"]
             ],
             $id["17"] => [
-                ["id" => $id["18"], "name" => "p6ch1", "deleted_at" => $now, "restore" => true],
-                ["id" => $id["19"], "name" => "p6ch2", "deleted_at" => $now, "restore" => false],
-                ["id" => $id["20"], "name" => "p6ch3", "deleted_at" => $now, "restore" => false]
+                ["id" => $id["18"], "name" => "p6ch1", "slug" => "slug14", "deleted_at" => $now, "restore" => true],
+                ["id" => $id["19"], "name" => "p6ch2", "slug" => "slug15", "deleted_at" => $now, "restore" => false],
+                ["id" => $id["20"], "name" => "p6ch3", "slug" => "slug16", "deleted_at" => $now, "restore" => false]
             ],
             $id["21"] => [
-                ["id" => $id["22"], "name" => "p7ch1", "deleted_at" => $now, "restore" => true],
+                ["id" => $id["22"], "name" => "p7ch1", "slug" => "slug17", "deleted_at" => $now, "restore" => true],
             ],
             "main-menu" => [
-                ["id" => $id['5'], "name" => "p2"],
-                ["id" => $id['1'], "name" => "p1"],
-                ["id" => $id['10'], "name" => "p3", "remove" => true],
-                ["id" => "new_6287336174597907", "name" => "p5", "new" => true],
-                ["id" => $id['13'], "name" => "p4"],
-                ["id" => $id['17'], "name" => "p6", "deleted_at" => $now, "restore" => true],
-                ["id" => $id['21'], "name" => "p7", "deleted_at" => $now],
+                ["id" => $id['5'], "name" => "p2", "slug" => "slug18"],
+                ["id" => $id['1'], "name" => "p1", "slug" => "slug19"],
+                ["id" => $id['10'], "name" => "p3", "slug" => "slug20", "remove" => true],
+                ["id" => "new_6287336174597907", "name" => "p5", "slug" => "slug21", "new" => true],
+                ["id" => $id['13'], "name" => "p4", "slug" => "slug22"],
+                ["id" => $id['17'], "name" => "p6", "slug" => "slug23", "deleted_at" => $now, "restore" => true],
+                ["id" => $id['21'], "name" => "p7", "slug" => "slug24", "deleted_at" => $now],
             ],
             "new_6287336174597907" => []
         ];
@@ -199,19 +197,19 @@ class CategoriesTest extends TestCase
         $user = User::factory()->create();
         $response = $this->actingAs($user)->postJson('/admin-panel/save-categories', ['categories' => [
             "main-menu" => [
-                ["name" => "p1", "id" => "new_7831638039189243", "new" => true,],
-                ["name" => "p2", "id" => "new_03850895405535737", "new" => true,],
-                ["name" => "p3", "id" => "new_8016902347158529", "new" => true,],
+                ["name" => "p1", "slug" => "slug1", "id" => "new_7831638039189243", "new" => true,],
+                ["name" => "p2", "slug" => "slug2", "id" => "new_03850895405535737", "new" => true,],
+                ["name" => "p3", "slug" => "slug3", "id" => "new_8016902347158529", "new" => true,],
             ],
             "new_7831638039189243" => [
-                ["name" => "p1ch1", "id" => "new_16271295854768575", "new" => true,],
-                ["name" => "p1ch2", "id" => "new_6114767555203788", "new" => true,]
+                ["name" => "p1ch1", "slug" => "slug4", "id" => "new_16271295854768575", "new" => true,],
+                ["name" => "p1ch2", "slug" => "slug5", "id" => "new_6114767555203788", "new" => true,]
             ],
             "new_16271295854768575" => [
-                ["name" => "p1ch1ch1", "id" => "new_22932103328267117", "new" => true,]
+                ["name" => "p1ch1ch1", "slug" => "slug6", "id" => "new_22932103328267117", "new" => true,]
             ],
             "new_03850895405535737" => [
-                ["name" => "p2ch1", "id" => "new_2885262168746463", "new" => true,]
+                ["name" => "p2ch1", "slug" => "slug7", "id" => "new_2885262168746463", "new" => true,]
             ]
         ]]);
         $categoriesExpectedTree = [
@@ -243,13 +241,13 @@ class CategoriesTest extends TestCase
         $user = User::factory()->create();
         $categoriesInitial = [
             "main-menu" => [
-                ["id" => 1, "name" => "p1"],
-                ["id" => 5, "name" => "p2"],
-                ["id" => 10, "name" => "p3"],
+                ["id" => 1, "name" => "p1", "slug" => "slug1"],
+                ["id" => 5, "name" => "p2", "slug" => "slug2"],
+                ["id" => 10, "name" => "p3", "slug" => "slug3"],
             ],
             "1" => [
-                ["id" => 2, "name" => "p1ch1"],
-                ["id" => 3, "name" => "p1ch2"],
+                ["id" => 2, "name" => "p1ch1", "slug" => "slug4"],
+                ["id" => 3, "name" => "p1ch2", "slug" => "slug5"],
             ],
         ];
         $id = [];
@@ -261,14 +259,14 @@ class CategoriesTest extends TestCase
         }
         $categoriesToSave = [
             "main-menu" => [
-                ["id" => $id['1'], "name" => "p1"],
-                ["id" => $id['5'], "name" => "p2"],
-                ["id" => $id['10'], "name" => "p3"],
+                ["id" => $id['1'], "name" => "p1", "slug" => "slug6"],
+                ["id" => $id['5'], "name" => "p2", "slug" => "slug7"],
+                ["id" => $id['10'], "name" => "p3", "slug" => "slug8"],
             ],
             $id["1"] => [
-                ["id" => $id['2'], "name" => "p1ch1"],
-                ["id" => $id['3'], "name" => "p1ch2"],
-                ["id" => "new_5376972801700572", "name" => "p1ch2", "new" => true],
+                ["id" => $id['2'], "name" => "p1ch1", "slug" => "slug9"],
+                ["id" => $id['3'], "name" => "p1ch2", "slug" => "slug10"],
+                ["id" => "new_5376972801700572", "name" => "p1ch2", "slug" => "slug11", "new" => true],
             ],
         ];
 
@@ -296,7 +294,7 @@ class CategoriesTest extends TestCase
         foreach ($children as $position => $child) {
             $child['position'] = $position;
             $child['parent_id'] = $parent_id;
-            $categoryCreated = Category::create($child);
+            $categoryCreated = Category::factory()->create($child);
             $id[$child['id']] = $categoryCreated->id;
             $id = $this->addSubCategories($child, $id, $categoriesInitial);
         }
