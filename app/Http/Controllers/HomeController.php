@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Services\CategoryService;
 use App\Services\ProductService;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -23,8 +24,12 @@ class HomeController extends Controller
 
     public function category(Request $request, $slug)
     {
+        $categories = Category::with(['children' => function (Builder $query) {
+            $query->orderBy('position');
+        }])->orderBy('position')->get()->keyBy('id');
         $category = Category::where('slug', $slug)->first();
-        $products = Product::where('category_id', $category->id)->with(['productPhotos' => function (Builder $query) {
+        $categoryChildrenIds = CategoryService::getCategoryChildrenIds([$category->id], $categories);
+        $products = Product::whereIn('category_id', $categoryChildrenIds)->with(['productPhotos' => function (Builder $query) {
             $query->orderBy('position');
         }])->get();
         foreach ($products as &$product) {
@@ -33,9 +38,6 @@ class HomeController extends Controller
         unset($product);
         $activeLinks = '._' . $category->slug;
         $parentIds = [$category->parent_id => $category->parent_id];
-        $categories = Category::with(['children' => function (Builder $query) {
-            $query->orderBy('position');
-        }])->orderBy('position')->get()->keyBy('id');
         while (end($parentIds)) {
             $parent = $categories[end($parentIds)];
             $activeLinks .= ', ._' . $parent->slug;
