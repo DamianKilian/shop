@@ -54,13 +54,20 @@
                                 </div>
                             </div>
                         </div>
-                        <label for="category-select" class="form-label"><b>{{ __('Category select') }}</b></label>
-                        <select v-model="selectedCategoryId" id='category-select'
-                            class="form-select form-select-lg mb-3">
-                            <option v-for="option in categoryOptions" :value="option.id">
-                                {{ option.patchName }}
-                            </option>
-                        </select>
+                        <div class="mb-3">
+                            <label for="category-select" class="form-label"><b>{{ __('Category select') }}</b></label>
+                            <select v-model="selectedCategoryId" id='category-select'
+                                :class='{ "is-invalid": failedValidation.categoryId }'
+                                class="form-select form-select-lg">
+                                <option :value="null" selected>{{ __('Category select') }} ...</option>
+                                <option v-for="option in categoryOptions" :value="option.id">
+                                    {{ option.patchName }}
+                                </option>
+                            </select>
+                            <div class="invalid-feedback">
+                                {{ failedValidation.categoryId ? failedValidation.categoryId[0] : '' }}
+                            </div>
+                        </div>
                         <DragDropFileUploader :editProduct='editProduct' :failedValidation='failedValidation'
                             :filesArr='filesArr' />
                         <div class="border border-2 padding-form-control">

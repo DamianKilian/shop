@@ -23,8 +23,8 @@
         </div>
         <div class="mt-3 actions-global clearfix">
             <button @click='editProduct = null' data-bs-toggle="modal" data-bs-target="#addProduct"
-                :disabled="!selectedCategory" class="btn btn-success float-end mt-1 mt-sm-0">
-                <i class="fa-solid fa-plus"></i> {{ selectedCategory ? __('Add product') : __('Select category') }}
+                class="btn btn-success float-end mt-1 mt-sm-0">
+                <i class="fa-solid fa-plus"></i> {{ __('Add product') }}
             </button>
             <button class="btn float-end me-1 mt-1 mt-sm-0 btn-outline-dark" @click="showCategories = !showCategories">
                 {{ __('Select category') }}
