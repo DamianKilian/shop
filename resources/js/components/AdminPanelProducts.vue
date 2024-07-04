@@ -36,7 +36,8 @@
         <div v-if="globalError" class="text-bg-danger float-start mt-1">{{ globalError }}</div>
     </div>
     <AdminPanelAddProduct :editProduct='editProduct' :getProducts='getProducts'
-        :adminPanelAddProductUrl='adminPanelAddProductUrl' :selectedCategory='selectedCategory' />
+        :adminPanelAddProductUrl='adminPanelAddProductUrl' :selectedCategory='selectedCategory'
+        :categoryOptions='categoryOptions' />
     <search @search="(searchValue) => { getProducts(adminPanelGetProductsUrl, searchValue) }"></search>
     <search-filters @remove-search-value-submitted="searchValueSubmitted = ''; getProducts()"
         @remove-selected-category="selectedCategory.selected = false; getProducts()"
@@ -47,12 +48,13 @@
             <div class="card">
                 <div @click='product.selected = !product.selected' class="card-img border-bottom">
                     <input class="m-1 form-check-input position-absolute" type="checkbox" v-model="product.selected">
-                        <img v-if='product.product.product_photos[0]' :src="product.product.product_photos[0].fullUrlSmall" class="card-img-top">
-                        <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
-                            <rect width="400" height="400" fill="#cccccc"></rect>
-                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="monospace"
-                                font-size="26px" fill="#333333">{{ __('No image') }}</text>
-                        </svg>
+                    <img v-if='product.product.product_photos[0]' :src="product.product.product_photos[0].fullUrlSmall"
+                        class="card-img-top">
+                    <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+                        <rect width="400" height="400" fill="#cccccc"></rect>
+                        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="monospace"
+                            font-size="26px" fill="#333333">{{ __('No image') }}</text>
+                    </svg>
                     <button @click.stop='editProduct = product' data-bs-toggle="modal" data-bs-target="#addProduct"
                         class="btn btn-warning btn-sm edit-product"><i class="fa-solid fa-pen-to-square"></i> <span>{{
                             __('Edit') }}</span></button>
@@ -78,9 +80,10 @@ import { goToCategory, arrangeCategories, setBreadcrumb } from './commonFunction
 
 export default {
     components: { AdminPanelProductsList, AdminPanelAddProduct, AdminPanelProductsPagination },
-    props: ['categoriesProp', 'adminPanelGetProductsUrl', 'adminPanelAddProductUrl', 'adminPanelDeleteProductsUrl'],
+    props: ['categoriesProp', 'adminPanelGetProductsUrl', 'adminPanelAddProductUrl', 'adminPanelDeleteProductsUrl', 'categoryOptionsProp'],
     data() {
         return {
+            categoryOptions: JSON.parse(this.categoryOptionsProp),
             searchValueSubmitted: '',
             pagination: null,
             editProduct: null,

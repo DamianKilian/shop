@@ -8,7 +8,7 @@
                 </div>
                 <form @submit='addProduct' ref='addProduct' method="post" enctype="multipart/form-data"
                     class='position-relative'>
-                    <input v-if='selectedCategory' :value='selectedCategory.id' name='categoryId' type='hidden' />
+                    <input :value='selectedCategoryId' name='categoryId' type='hidden' />
                     <div class="modal-body">
                         <div class="clearfix">
                             <div class="form-floating mb-3 float-start" style="width: 49%;">
@@ -31,7 +31,8 @@
                                     </div>
                                 </div>
                                 <button @click='title.slugCustomized = false; editedTitleVal()'
-                                    class="btn btn-outline-secondary" type="button" id="button-addon2">Button</button>
+                                    class="btn btn-outline-secondary" type="button" id="button-addon2">{{ __('Reset') }}
+                                </button>
                             </div>
                         </div>
                         <div class="clearfix">
@@ -53,6 +54,13 @@
                                 </div>
                             </div>
                         </div>
+                        <label for="category-select" class="form-label"><b>{{ __('Category select') }}</b></label>
+                        <select v-model="selectedCategoryId" id='category-select'
+                            class="form-select form-select-lg mb-3">
+                            <option v-for="option in categoryOptions" :value="option.id">
+                                {{ option.patchName }}
+                            </option>
+                        </select>
                         <DragDropFileUploader :editProduct='editProduct' :failedValidation='failedValidation'
                             :filesArr='filesArr' />
                         <div class="border border-2 padding-form-control">
@@ -89,9 +97,10 @@ import List from "@editorjs/list";
 
 export default {
     components: { DragDropFileUploader, LoadingOverlay },
-    props: ['editProduct', 'adminPanelAddProductUrl', 'selectedCategory', 'getProducts'],
+    props: ['editProduct', 'adminPanelAddProductUrl', 'selectedCategory', 'getProducts', 'categoryOptions'],
     data() {
         return {
+            selectedCategoryId: null,
             title: {
                 val: '',
                 slug: '',
@@ -112,6 +121,9 @@ export default {
             this.failedValidation = {};
             this.globalSuccess = '';
             this.globalError = '';
+        },
+        categoryId(newVal) {
+            this.selectedCategoryId = newVal;
         }
     },
     computed: {
@@ -119,8 +131,15 @@ export default {
             if (this.editProduct) {
                 return __('Edit product') + ` (${this.editProduct.product.category.name})`
             }
-            return this.selectedCategory ? (__('Add product to') + ': ' + this.selectedCategory.name) : __('Select category')
+            return this.selectedCategory ? (__('Add product to') + ': ' + this.selectedCategory.name) : __('Select category');
         },
+        categoryId() {
+            if (this.editProduct) {
+                return this.editProduct.product.category.id;
+            } else if (this.selectedCategory) {
+                return this.selectedCategory.id;
+            }
+        }
     },
     methods: {
         editedTitleVal: function (e) {
@@ -137,8 +156,8 @@ export default {
                 this.title = {
                     val: this.editProduct.product.title,
                     slug: this.editProduct.product.slug,
-                    slugCustomized: this.generateSlug() !== this.title.slug
                 };
+                this.title.slugCustomized = this.generateSlug() !== this.title.slug;
                 this.$refs.price.value = this.editProduct.product.price;
                 this.$refs.quantity.value = this.editProduct.product.quantity;
             } else {

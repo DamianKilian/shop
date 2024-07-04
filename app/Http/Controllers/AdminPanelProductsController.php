@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Requests\AddProductRequest;
 use App\Models\Product;
 use App\Models\ProductPhoto;
+use App\Services\CategoryService;
 use App\Services\ProductService;
 use Illuminate\Support\Facades\Storage;
 use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
@@ -66,6 +67,7 @@ class AdminPanelProductsController extends Controller
                 'description' => $request->description,
                 'price' => str_replace(',', '.', $request->price),
                 'quantity' => $request->quantity,
+                'category_id' => $request->categoryId,
             ]);
         } else {
             $product = Product::create([
@@ -147,8 +149,11 @@ class AdminPanelProductsController extends Controller
 
     public function products()
     {
+        $categories = Category::orderBy('parent_id')->orderBy('position')->get();
+        $categoryOptions = CategoryService::categoryOptions($categories);
         return view('adminPanel.products', [
-            'categories' => Category::orderBy('parent_id')->orderBy('position')->get(),
+            'categoryOptions' => json_encode($categoryOptions),
+            'categories' => $categories,
         ]);
     }
 
