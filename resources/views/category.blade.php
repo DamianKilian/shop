@@ -29,6 +29,7 @@
             </a>
         @endforeach
     </div>
+    {{ $products->links() }}
 @endsection
 
 @section('scriptsHead')

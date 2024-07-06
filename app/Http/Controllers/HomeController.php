@@ -31,7 +31,7 @@ class HomeController extends Controller
         $categoryChildrenIds = CategoryService::getCategoryChildrenIds([$category->id], $categories);
         $products = Product::whereIn('category_id', $categoryChildrenIds)->with(['productPhotos' => function (Builder $query) {
             $query->orderBy('position');
-        }])->get();
+        }])->orderBy('id')->paginate(20);
         foreach ($products as &$product) {
             $product->descStr = Str::limit(ProductService::getProductDescStr($product), 175, ' ( ... )');
         }
