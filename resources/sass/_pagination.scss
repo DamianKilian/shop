@@ -1,0 +1,21 @@
+#pagination-widget {
+    top: 65px;
+    float: right;
+    background-color: #fff;
+    width: 130px;
+    input {
+        text-align: center;
+        padding: 0;
+    }
+}
+
+@include media-breakpoint-down(xl) {
+    #pagination-widget {
+        margin-right: -26px;
+    }
+}
+@include media-breakpoint-down(sm) {
+    #pagination-widget {
+        top: 115px;
+    }
+}

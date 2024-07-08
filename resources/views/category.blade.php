@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+    <pagination-widget :last-page='{{ $products->lastPage() }}'></pagination-widget>
     <h1>{{ $category->name }}</h1>
     <div id="products">
         @foreach ($products as $product)

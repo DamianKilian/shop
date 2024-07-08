@@ -34,7 +34,8 @@ import Search from './components/Search.vue';
 app.component('search', Search);
 import SearchFilters from './components/SearchFilters.vue';
 app.component('search-filters', SearchFilters);
-
+import PaginationWidget from './components/PaginationWidget.vue';
+app.component('pagination-widget', PaginationWidget);
 
 
 
