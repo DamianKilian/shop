@@ -49,7 +49,7 @@ export default {
         },
         setCurrentPageFromUrl: function () {
             const searchParams = new URLSearchParams(window.location.search);
-            this.currentPage = parseInt(searchParams.get("page"));
+            this.currentPage = parseInt(searchParams.get("page") || 1);
         },
     },
     updated() {
