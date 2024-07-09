@@ -85,7 +85,10 @@
                         @endguest
                     </div>
                 </div>
-                <search suggestions-url="{{ route('suggestions') }}"></search>
+                @php
+                    $categoryName = isset($category) ? $category->name : '';
+                @endphp
+                <search category-name='{{ $categoryName }}' suggestions-url="{{ route('suggestions') }}"></search>
             </nav>
         </div>
         <main id="main" class="clearfix">

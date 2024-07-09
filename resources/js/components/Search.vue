@@ -3,7 +3,7 @@
         <div class="d-flex align-items-center search-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
         <div class="input-group">
             <input @input='getSuggestions' v-model='searchValue' class="form-control" type="search"
-                :placeholder="__('Search') + ' ...'" aria-label="Search">
+                :placeholder="__('Search') + categoryNameText() + ' ...'" aria-label="Search">
             <button @click="$emit('search', searchValue)" class="btn btn-outline-secondary" type="button">{{
                 __('Search') }}</button>
         </div>
@@ -14,7 +14,7 @@
 
 <script>
 export default {
-    props: ['suggestionsUrl', 'selectedCategory'],
+    props: ['suggestionsUrl', 'selectedCategory', 'categoryName'],
     data() {
         return {
             suggestions: [],
@@ -22,6 +22,9 @@ export default {
         }
     },
     methods: {
+        categoryNameText: function () {
+            return this.categoryName ? ' ' + __('in') + ' "' + this.categoryName + '"' : '';
+        },
         getSuggestions: _.debounce(function () {
             // this.suggestions = [];
             // var that = this;
