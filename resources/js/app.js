@@ -36,6 +36,8 @@ import SearchFilters from './components/SearchFilters.vue';
 app.component('search-filters', SearchFilters);
 import PaginationWidget from './components/PaginationWidget.vue';
 app.component('pagination-widget', PaginationWidget);
+import LoadingOverlay from './components/LoadingOverlay.vue';
+app.component('loading-overlay', LoadingOverlay);
 
 
 

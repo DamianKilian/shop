@@ -87,7 +87,7 @@
                         <div v-if="globalError" class="text-bg-danger float-end mt-1">{{ globalError }}</div>
                         <div v-if="globalSuccess" class="text-bg-success float-end mt-1">{{ globalSuccess }}</div>
                     </div>
-                    <LoadingOverlay v-if='addingProduct' />
+                    <loading-overlay v-if='addingProduct'/>
                 </form>
             </div>
         </div>
@@ -96,14 +96,13 @@
 
 <script>
 import DragDropFileUploader from './DragDropFileUploader.vue'
-import LoadingOverlay from './LoadingOverlay.vue'
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 // import SimpleImage from "@editorjs/simple-image";
 import List from "@editorjs/list";
 
 export default {
-    components: { DragDropFileUploader, LoadingOverlay },
+    components: { DragDropFileUploader },
     props: ['editProduct', 'adminPanelAddProductUrl', 'selectedCategory', 'getProducts', 'categoryOptions'],
     data() {
         return {

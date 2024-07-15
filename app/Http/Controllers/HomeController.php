@@ -29,9 +29,7 @@ class HomeController extends Controller
         }])->orderBy('position')->get()->keyBy('id');
         $category = Category::where('slug', $slug)->first();
         $categoryChildrenIds = CategoryService::getCategoryChildrenIds([$category->id], $categories);
-        $products = Product::whereIn('category_id', $categoryChildrenIds)->with(['productPhotos' => function (Builder $query) {
-            $query->orderBy('position');
-        }])->orderBy('id')->paginate(20);
+        $products = ProductService::searchFilters($request, $categoryChildrenIds, false);
         foreach ($products as &$product) {
             $product->descStr = Str::limit(ProductService::getProductDescStr($product), 175, ' ( ... )');
         }
@@ -44,12 +42,22 @@ class HomeController extends Controller
             $parentIds[$parent->parent_id] = $parent->parent_id;
         }
         return view('category', [
+            'categoryChildrenIds' => json_encode($categoryChildrenIds),
             'products' => $products,
             'parentIds' => $parentIds,
             'activeLinks' => $activeLinks,
             'category' => $category,
             'selectedCategory' => $category,
             'categories' => $categories,
+        ]);
+    }
+
+    public function getProductsView(Request $request)
+    {
+        $categoryChildrenIds = json_decode($request->categoryChildrenIds);
+        $products = ProductService::searchFilters($request, $categoryChildrenIds);
+        return view('_partials.products', [
+            'products' => $products
         ]);
     }
 

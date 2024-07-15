@@ -8,3 +8,4 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/suggestions', [App\Http\Controllers\AdminPanelProductsController::class, 'suggestions'])->name('suggestions');
+Route::post('/get-products-view', [App\Http\Controllers\HomeController::class, 'getProductsView'])->name('get-products-view');

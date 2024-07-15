@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Category;
 use Traversable;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class CategoryService
 {
@@ -19,8 +21,13 @@ class CategoryService
         return $categoryOptions;
     }
 
-    public static function getCategoryChildrenIds($categoryChildrenIds, Traversable $categories)
+    public static function getCategoryChildrenIds($categoryChildrenIds, Traversable $categories = null)
     {
+        if (!$categories) {
+            $categories = Category::with(['children' => function (Builder $query) {
+                $query->orderBy('position');
+            }])->orderBy('position')->get();
+        }
         $categoryId = end($categoryChildrenIds);
         foreach ($categories as $category) {
             if ($categoryId === $category->parent_id) {

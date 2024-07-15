@@ -159,17 +159,11 @@ class AdminPanelProductsController extends Controller
 
     public function getProducts(Request $request)
     {
-        $products = ProductService::searchFilters($request);
-        foreach ($products as &$product) {
-            if (0 === $product->productPhotos->count()) {
-                continue;
-            }
-            foreach ($product->productPhotos as &$photo) {
-                $photo->fullUrlSmall = Storage::url($photo->url_small);
-            }
-            unset($photo);
+        $categoryChildrenIds = [];
+        if ($request->category) {
+            $categoryChildrenIds = CategoryService::getCategoryChildrenIds([$request->category['id']]);
         }
-        unset($product);
+        $products = ProductService::searchFilters($request, $categoryChildrenIds);
         return response()->json([
             'products' => $products,
         ]);

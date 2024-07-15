@@ -5,20 +5,31 @@ namespace App\Services;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 
 class ProductService
 {
-    public static function searchFilters(Request $request, $withCategory = true, $paginate = 20)
+    public static function searchFilters(Request $request, $categoryChildrenIds = [], $withCategory = true, $paginate = 20)
     {
         $products = Product::with(['productPhotos' => function (Builder $query) {
             $query->orderBy('position');
-        }])->when($request->category, function ($query, $category) {
-            return $query->where('category_id', $category['id']);
+        }])->when($categoryChildrenIds, function ($query, $categoryChildrenIds) {
+            return $query->whereIn('category_id', $categoryChildrenIds);
         })->when($request->searchValue, function ($query, $searchValue) {
             return $query->whereFullText(['title', 'description'], $searchValue);
         })->when($withCategory, function ($query) {
             return $query->with('category');
         })->paginate($paginate);
+        foreach ($products as &$product) {
+            if (0 === $product->productPhotos->count()) {
+                continue;
+            }
+            foreach ($product->productPhotos as &$photo) {
+                $photo->fullUrlSmall = Storage::url($photo->url_small);
+            }
+            unset($photo);
+        }
+        unset($product);
         return $products;
     }
 
