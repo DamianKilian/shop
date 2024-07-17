@@ -163,7 +163,7 @@ class AdminPanelProductsController extends Controller
         if ($request->category) {
             $categoryChildrenIds = CategoryService::getCategoryChildrenIds([$request->category['id']]);
         }
-        $products = ProductService::searchFilters($request, $categoryChildrenIds);
+        $products = ProductService::searchFilters($request, $categoryChildrenIds, true);
         return response()->json([
             'products' => $products,
         ]);

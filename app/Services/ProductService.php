@@ -9,14 +9,33 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductService
 {
-    public static function searchFilters(Request $request, $categoryChildrenIds = [], $withCategory = true, $paginate = 20)
+    public static function getProductsFilters(Request $request)
     {
+        $pf = [];
+        $pf['searchValue'] = $request->searchValue;
+        return $pf;
+    }
+
+    // public static function productsFiltersNum($pf)
+    // {
+    //     $productsFiltersNum = 0;
+    //     foreach ($pf as $value) {
+    //         if ($value) {
+    //             $productsFiltersNum += 1;
+    //         }
+    //     }
+    //     return $productsFiltersNum;
+    // }
+
+    public static function searchFilters(Request $request, $categoryChildrenIds = [], $withCategory = false, $paginate = 20)
+    {
+        $pf = self::getProductsFilters($request);
         $products = Product::with(['productPhotos' => function (Builder $query) {
             $query->orderBy('position');
-        }])->when($categoryChildrenIds, function ($query, $categoryChildrenIds) {
-            return $query->whereIn('category_id', $categoryChildrenIds);
-        })->when($request->searchValue, function ($query, $searchValue) {
+        }])->when($pf['searchValue'], function ($query, $searchValue) {
             return $query->whereFullText(['title', 'description'], $searchValue);
+        })->when($categoryChildrenIds, function ($query, $categoryChildrenIds) {
+            return $query->whereIn('category_id', $categoryChildrenIds);
         })->when($withCategory, function ($query) {
             return $query->with('category');
         })->paginate($paginate);

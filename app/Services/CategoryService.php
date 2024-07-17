@@ -5,9 +5,19 @@ namespace App\Services;
 use App\Models\Category;
 use Traversable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 
 class CategoryService
 {
+    public static function getCategories()
+    {
+        return Cache::remember('categories', 60, function () {
+            return Category::with(['children' => function (Builder $query) {
+                $query->orderBy('position');
+            }])->orderBy('position')->get()->keyBy('id');
+        });
+    }
+
     public static function categoryOptions(Traversable $categories, $parentId = null, $categoryOptions = [], $prevNameStr = '')
     {
         foreach ($categories as $category) {

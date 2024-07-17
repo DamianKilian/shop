@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Product;
 use App\Services\CategoryService;
 use App\Services\ProductService;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -24,12 +23,10 @@ class HomeController extends Controller
 
     public function category(Request $request, $slug)
     {
-        $categories = Category::with(['children' => function (Builder $query) {
-            $query->orderBy('position');
-        }])->orderBy('position')->get()->keyBy('id');
+        $categories = CategoryService::getCategories();
         $category = Category::where('slug', $slug)->first();
         $categoryChildrenIds = CategoryService::getCategoryChildrenIds([$category->id], $categories);
-        $products = ProductService::searchFilters($request, $categoryChildrenIds, false);
+        $products = ProductService::searchFilters($request, $categoryChildrenIds);
         foreach ($products as &$product) {
             $product->descStr = Str::limit(ProductService::getProductDescStr($product), 175, ' ( ... )');
         }
@@ -64,9 +61,7 @@ class HomeController extends Controller
     public function index()
     {
         return view('home', [
-            'categories' => Category::with(['children' => function (Builder $query) {
-                $query->orderBy('position');
-            }])->orderBy('position')->get()->keyBy('id'),
+            'categories' => CategoryService::getCategories(),
         ]);
     }
 }
