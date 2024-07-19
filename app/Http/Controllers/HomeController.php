@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Services\CategoryService;
 use App\Services\ProductService;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
@@ -27,9 +25,6 @@ class HomeController extends Controller
         $category = Category::where('slug', $slug)->first();
         $categoryChildrenIds = CategoryService::getCategoryChildrenIds([$category->id], $categories);
         $products = ProductService::searchFilters($request, $categoryChildrenIds);
-        foreach ($products as &$product) {
-            $product->descStr = Str::limit(ProductService::getProductDescStr($product), 175, ' ( ... )');
-        }
         unset($product);
         $activeLinks = '._' . $category->slug;
         $parentIds = [$category->parent_id => $category->parent_id];

@@ -14,7 +14,7 @@
 
 <script>
 export default {
-    props: ['suggestionsUrl', 'selectedCategory', 'categoryName'],
+    props: ['suggestionsUrl', 'categoryName'],
     data() {
         return {
             suggestions: [],

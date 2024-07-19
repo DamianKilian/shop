@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
+            $table->text('description_str');
             $table->decimal('price');
             $table->integer('quantity');
             $table->string('gtin')->nullable();
@@ -24,7 +25,7 @@ return new class extends Migration
                 ->references('id')
                 ->on('categories');
             if (!$this->isSqlite()) {
-                $table->fullText(['title', 'description']);
+                $table->fullText(['title', 'description_str']);
             }
             $table->softDeletes();
             $table->timestamps();

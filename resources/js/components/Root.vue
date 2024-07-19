@@ -2,6 +2,7 @@
 export default {
     data() {
         return {
+            getProductsViewUrl: window.getProductsViewUrl,
             currentPage: null,
             lastPage: parseInt(window.lastPage),
             getProductsViewUrl: window.getProductsViewUrl,
@@ -31,12 +32,16 @@ export default {
             const searchParams = new URLSearchParams(url.substring(url.indexOf("?")));
             this.getProductsView({ page: parseInt(searchParams.get("page")) });
         },
-        getProductsView: function (queryStrParams) {
+        searchProducts: function (searchValue) {
+            var searchValue = _.trim(searchValue);
+            this.getProductsView({ searchValue: searchValue });
+        },
+        getProductsView: function (queryStrParams = {}) {
             this.getingProductsView = true;
             this.queryStrParams = Object.assign(this.queryStrParams, queryStrParams);
             var that = this;
             var page = this.queryStrParams.page;
-            if (0 >= page || page > this.lastPage || page === this.currentPage) {
+            if (0 >= page || page > this.lastPage) {
                 this.getingProductsView = false;
                 return this.currentPage;
             }
@@ -58,7 +63,11 @@ export default {
         setQueryStrParams: function (url) {
             const newUrl = new URL(url);
             _.forEach(this.queryStrParams, function (value, key) {
-                newUrl.searchParams.set(key, value);
+                if ('' === value) {
+                    newUrl.searchParams.delete(key);
+                } else {
+                    newUrl.searchParams.set(key, value);
+                }
             });
             return newUrl;
         },

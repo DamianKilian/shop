@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <pagination-widget :get-products-view='getProductsView' :current-page='currentPage' :load-products='loadProducts'
+    <pagination-widget :get-products-view='getProductsView' :current-page='currentPage'
         :last-page='lastPage'></pagination-widget>
     <h1>{{ $category->name }}</h1>
     <div class="products-view-container position-relative">

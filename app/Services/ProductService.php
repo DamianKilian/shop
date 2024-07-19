@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProductService
 {
@@ -27,13 +28,13 @@ class ProductService
     //     return $productsFiltersNum;
     // }
 
-    public static function searchFilters(Request $request, $categoryChildrenIds = [], $withCategory = false, $paginate = 20)
+    public static function searchFilters(Request $request, $categoryChildrenIds = [], $withCategory = false, $paginate = 20, $withDesc = true)
     {
         $pf = self::getProductsFilters($request);
         $products = Product::with(['productPhotos' => function (Builder $query) {
             $query->orderBy('position');
         }])->when($pf['searchValue'], function ($query, $searchValue) {
-            return $query->whereFullText(['title', 'description'], $searchValue);
+            return $query->whereFullText(['title', 'description_str'], $searchValue);
         })->when($categoryChildrenIds, function ($query, $categoryChildrenIds) {
             return $query->whereIn('category_id', $categoryChildrenIds);
         })->when($withCategory, function ($query) {
@@ -49,13 +50,19 @@ class ProductService
             unset($photo);
         }
         unset($product);
+        if ($withDesc) {
+            foreach ($products as &$product) {
+                $product->descStr = ProductService::limitProductDescStr($product->description_str);
+            }
+            unset($product);
+        }
         return $products;
     }
 
-    public static function getProductDescStr($product)
+    public static function getProductDescStr($description)
     {
         $descStr = '';
-        foreach (json_decode($product->description, true)['blocks'] as $block) {
+        foreach (json_decode($description, true)['blocks'] as $block) {
             $data = $block['data'];
             if (isset($data['text'])) {
                 $descStr .= $data['text'] . ' ';
@@ -68,5 +75,10 @@ class ProductService
         $descStr = preg_replace('/\s\s+/', ' ', $descStr);
         $descStr = preg_replace('/\<br\>\s$/', '', $descStr);
         return $descStr;
+    }
+
+    public static function limitProductDescStr($descStr, $limit = 200, $suffix = ' ( ... )')
+    {
+        return Str::limit(strip_tags($descStr), $limit, $suffix);
     }
 }
