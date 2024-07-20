@@ -16,10 +16,12 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
+        $text = 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Explicabo amet corporis dolor itaque cupiditate id voluptatem fugit, autem, optio omnis unde libero accusamus quod perspiciatis. Obcaecati officiis odit minus voluptatum.';
         return [
             'title' => fake()->name(),
             'slug' => fake()->name(),
-            'description' => '{"time":1719562614808,"blocks":[{"id":"tavms-lRPX","type":"paragraph","data":{"text":"desc desc des 11dsadasd 22asdasdasd 33asdasdasddesc desc des 11dsadasd 22asdasdasd 33asdasdasddesc desc des 11dsadasd 22asdasdasd 33asdasdasddesc desc des 11dsadasd 22asdasdasd 33asdasdasddesc desc des 11dsadasd 22asdasdasd 33asdasdasddesc desc des 11dsadasd 22asdasdasd 33asdasdasddesc desc des 11dsadasd 22asdasdasd 33asdasdasddesc desc des 11dsadasd 22asdasdasd 33asdasdasddesc desc des 11dsadasd 22asdasdasd 33asdasdasddesc desc des 11dsadasd 22asdasdasd 33asdasdasddesc desc des 11dsadasd 22asdasdasd 33asdasdasddesc desc des 11dsadasd 22asdasdasd 33asdasdasddesc desc des 11dsadasd 22asdasdasd 33asdasdasddesc desc des 11dsadasd 22asdasdasd 33asdasdasddesc desc des 11dsadasd 22asdasdasd 33asdasdasddesc desc des 11dsadasd 22asdasdasd 33asdasdasd desc des "}},{"id":"SlAgNsoX6J","type":"list","data":{"style":"unordered","items":["11dsadasd","22asdasdasd","33asdasdasd<br>"]}}],"version":"2.29.1"}',
+            'description' => '{"time":1719562614808,"blocks":[{"id":"tavms-lRPX","type":"paragraph","data":{"text":"' . $text . '"}},{"id":"SlAgNsoX6J","type":"list","data":{"style":"unordered","items":["11dsadasd","22asdasdasd","33asdasdasd<br>"]}}],"version":"2.29.1"}',
+            'description_str' => $text,
             'price' => 0.55 + fake()->numberBetween(0, 100),
             'quantity' => fake()->numberBetween(0, 100),
         ];

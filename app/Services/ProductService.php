@@ -61,6 +61,9 @@ class ProductService
 
     public static function getProductDescStr($description)
     {
+        if (is_string($description)) {
+            return $description;
+        }
         $descStr = '';
         foreach (json_decode($description, true)['blocks'] as $block) {
             $data = $block['data'];
