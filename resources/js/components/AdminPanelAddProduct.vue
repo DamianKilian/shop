@@ -23,15 +23,16 @@
                             <div class="input-group mb-3 float-start" style="width: 49%; margin-left: 2%;">
                                 <div class="form-floating">
                                     <input v-model='title.slug' @input='title.slugCustomized = true' ref='slug'
-                                        name='slug' :class='{ "is-invalid": failedValidation.title }'
+                                        name='slug' :class='{ "is-invalid": failedValidation.slug }'
                                         class="form-control" id="slug" :placeholder="__('Slug')">
                                     <label for="slug">{{ __('Slug') }}</label>
                                     <div class="invalid-feedback">
-                                        {{ failedValidation.title ? failedValidation.title[0] : '' }}
+                                        {{ failedValidation.slug ? failedValidation.slug[0] : '' }}
                                     </div>
                                 </div>
                                 <button @click='title.slugCustomized = false; editedTitleVal()'
-                                    class="btn btn-outline-secondary" type="button" id="button-addon2">{{ __('Reset') }}
+                                    style="max-height: 58px;" class="btn btn-outline-secondary" type="button">
+                                    {{ __('Reset') }}
                                 </button>
                             </div>
                         </div>
@@ -87,7 +88,7 @@
                         <div v-if="globalError" class="text-bg-danger float-end mt-1">{{ globalError }}</div>
                         <div v-if="globalSuccess" class="text-bg-success float-end mt-1">{{ globalSuccess }}</div>
                     </div>
-                    <loading-overlay v-if='addingProduct'/>
+                    <loading-overlay v-if='addingProduct' />
                 </form>
             </div>
         </div>

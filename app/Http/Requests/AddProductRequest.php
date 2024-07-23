@@ -25,6 +25,7 @@ class AddProductRequest extends FormRequest
     {
         return [
             'title' => 'required|max:255',
+            'slug' => 'required|unique:products|max:255',
             'price' => ['required', 'regex:/^\d+((\.|\,)\d{1,2})?$/'],
             'quantity' => 'required|integer',
             'description' => 'required',
@@ -37,6 +38,7 @@ class AddProductRequest extends FormRequest
     {
         return [
             'title.required' => __('Title is required'),
+            'slug.unique' => __('Slug must be unique'),
             'price.required' => __('Price is required'),
             'price.regex' => __('The price is invalid'),
             'quantity.required' => __('Quantity is required'),
