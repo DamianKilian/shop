@@ -1,11 +1,14 @@
 #pagination-widget {
     top: 65px;
     float: right;
-    background-color: #fff;
     width: 130px;
+    height: 0;
     input {
         text-align: center;
         padding: 0;
+    }
+    > * {
+        background-color: #fff;
     }
 }
 

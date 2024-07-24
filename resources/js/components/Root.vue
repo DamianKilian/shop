@@ -2,9 +2,10 @@
 export default {
     data() {
         return {
-            getProductsViewUrl: window.getProductsViewUrl,
+            productsViewLoaded: false,
             currentPage: null,
             lastPage: parseInt(window.lastPage),
+            getProductsViewAllCategoriesUrl: window.getProductsViewAllCategoriesUrl,
             getProductsViewUrl: window.getProductsViewUrl,
             getingProductsView: false,
             queryStrParams: {
@@ -39,24 +40,32 @@ export default {
         getProductsView: function (queryStrParams = {}) {
             this.getingProductsView = true;
             this.queryStrParams = Object.assign(this.queryStrParams, queryStrParams);
-            var that = this;
             var page = this.queryStrParams.page;
             if (0 >= page || page > this.lastPage) {
                 this.getingProductsView = false;
                 return this.currentPage;
             }
-            var url = this.setQueryStrParams(this.getProductsViewUrl).toString();
+            if (this.getProductsViewData.categoryChildrenIds) {
+                this.getProductsViewRequest();
+            } else {
+                this.getProductsViewRequest(this.getProductsViewAllCategoriesUrl);
+            }
+        },
+        getProductsViewRequest: function (url = this.getProductsViewUrl) {
+            var that = this;
+            var url = this.setQueryStrParams(url).toString();
             axios
                 .post(url, this.getProductsViewData)
                 .then(function (response) {
                     that.$refs.productsView.innerHTML = response.data;
-                    that.currentPage = page;
+                    that.currentPage = that.queryStrParams.page;
                     window.history.replaceState(null, null, that.setQueryStrParams(window.location.href));
+                    that.productsViewLoaded = true;
                 })
                 .catch(function (error) {
                     console.log(error.message);
                 }).then(() => {
-                    this.getingProductsView = false;
+                    that.getingProductsView = false;
                     return that.currentPage;
                 });
         },

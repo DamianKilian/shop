@@ -53,10 +53,23 @@ class HomeController extends Controller
         ]);
     }
 
-    public function index()
+    public function getProductsViewAllCategories(Request $request)
     {
+        $products = ProductService::searchFilters($request);
+        return view('_partials.products', [
+            'products' => $products
+        ]);
+    }
+
+    public function index(Request $request)
+    {
+        $products = null;
+        if ($request->searchValue) {
+            $products = ProductService::searchFilters($request);
+        }
         return view('home', [
             'categories' => CategoryService::getCategories(),
+            'products' => $products
         ]);
     }
 }
