@@ -230,6 +230,7 @@ export default {
     created() { },
     mounted() {
         this.editor = new EditorJS({
+            minHeight: 250,
             tools: {
                 list: {
                     class: List,
@@ -252,3 +253,4 @@ export default {
     }
 }
 </script>
+minHeight
