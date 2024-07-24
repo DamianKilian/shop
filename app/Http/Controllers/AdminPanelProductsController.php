@@ -165,9 +165,15 @@ class AdminPanelProductsController extends Controller
         if ($request->category) {
             $categoryChildrenIds = CategoryService::getCategoryChildrenIds([$request->category['id']]);
         }
-        $products = ProductService::searchFilters($request, $categoryChildrenIds, true);
+        $products = ProductService::searchFilters($request, $categoryChildrenIds, true, 20, ['limit' => 30]);
+        $productsArr  = $products->toArray();
+        foreach ($productsArr['data'] as &$product) {
+            $product['description'] = null;
+            $product['description_str'] = null;
+        }
+        unset($product);
         return response()->json([
-            'products' => $products,
+            'products' => $productsArr,
         ]);
     }
 }

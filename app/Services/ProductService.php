@@ -52,7 +52,11 @@ class ProductService
         unset($product);
         if ($withDesc) {
             foreach ($products as &$product) {
-                $product->descStr = ProductService::limitProductDescStr($product->description_str);
+                if (is_array($withDesc)) {
+                    $product->descStr = ProductService::limitProductDescStr($product->description_str, $withDesc);
+                } else {
+                    $product->descStr = ProductService::limitProductDescStr($product->description_str);
+                }
             }
             unset($product);
         }
@@ -80,8 +84,10 @@ class ProductService
         return $descStr;
     }
 
-    public static function limitProductDescStr($descStr, $limit = 200, $suffix = ' ( ... )')
+    public static function limitProductDescStr($descStr, $params = [])
     {
+        $limit = isset($params['limit']) ? $params['limit'] : 200;
+        $suffix = isset($params['suffix']) ? $params['suffix'] : ' ( ... )';
         return Str::limit(strip_tags($descStr), $limit, $suffix);
     }
 }

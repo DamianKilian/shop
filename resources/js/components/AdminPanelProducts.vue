@@ -60,7 +60,8 @@
                             __('Edit') }}</span></button>
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">{{ product.product.title }}</h5>
+                    <h5 class="card-title fw-bolder">{{ product.product.title }}</h5>
+                    <p v-html="product.product.descStr"></p>
                     <p class="card-text"
                         v-html="'<b>' + __('Price') + ': </b>' + product.product.price + '<br><b>' + __('Quantity') + ': </b>' + product.product.quantity">
                     </p>
