@@ -2,8 +2,9 @@
     <form class="order-1 pt-2 pb-2 d-flex justify-content-center m-auto" role="search" id="search">
         <div class="d-flex align-items-center search-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
         <div class="input-group">
-            <input @input='getSuggestions' v-model='searchValue' class="form-control" type="search"
-                :placeholder="__('Search') + categoryNameText() + ' ...'" aria-label="Search">
+            <input @keypress.enter.prevent="$emit('search', searchValue)" @input='getSuggestions' v-model='searchValue'
+                class="form-control" type="search" :placeholder="__('Search') + categoryNameText() + ' ...'"
+                aria-label="Search">
             <button @click="$emit('search', searchValue)" class="btn btn-outline-secondary" type="button">{{
                 __('Search') }}</button>
         </div>
