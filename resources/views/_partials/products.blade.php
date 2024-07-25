@@ -24,5 +24,10 @@
             </div>
         </a>
     @endforeach
+    @if (!$products->total())
+        <div class="alert alert-primary text-center" role="alert">
+            {{ __('No products found') }}
+        </div>
+    @endif
 </div>
 {{ $products->links() }}
