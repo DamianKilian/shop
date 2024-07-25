@@ -1,4 +1,4 @@
-<div id="products">
+<div id="products" data-last-page="{{ $products->lastPage() }}">
     @foreach ($products as $product)
         <a href="#" class="product clearfix">
             <div class="img-container">

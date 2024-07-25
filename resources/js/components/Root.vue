@@ -60,6 +60,7 @@ export default {
                     that.$refs.productsView.innerHTML = response.data;
                     that.currentPage = that.queryStrParams.page;
                     window.history.replaceState(null, null, that.setQueryStrParams(window.location.href));
+                    that.lastPage = that.$refs.productsView.querySelector("#products").dataset.lastPage;
                     that.productsViewLoaded = true;
                 })
                 .catch(function (error) {

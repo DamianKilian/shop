@@ -1,5 +1,5 @@
 <template>
-    <div id="pagination-widget" class='sticky-top'>
+    <div v-if='1 < lastPage' id="pagination-widget" class='sticky-top'>
         <div class="input-group">
             <button v-if='pageInputFocus' @focus="pageInputFocus = false; page = currentPage"
                 class="btn btn-outline-danger" type="button">

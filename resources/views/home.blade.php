@@ -23,5 +23,6 @@
 @section('scriptsHead')
     <script>
         window.getProductsViewAllCategoriesUrl = "{{ route('get-products-view-all-categories') }}";
+        window.lastPage = '{{ $products ? $products->lastPage() : 1 }}';
     </script>
 @endsection
