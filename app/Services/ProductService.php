@@ -28,10 +28,10 @@ class ProductService
     //     return $productsFiltersNum;
     // }
 
-    public static function searchFilters(Request $request, $categoryChildrenIds = [], $withCategory = false, $paginate = 20, $withDesc = true)
+    public static function searchFiltersQuery(Request $request, $categoryChildrenIds = [], $withCategory = false)
     {
         $pf = self::getProductsFilters($request);
-        $products = Product::with(['productPhotos' => function (Builder $query) {
+        return Product::with(['productPhotos' => function (Builder $query) {
             $query->orderBy('position');
         }])->when($pf['searchValue'], function ($query, $searchValue) {
             return $query->whereFullText(['title', 'description_str'], $searchValue);
@@ -39,7 +39,12 @@ class ProductService
             return $query->whereIn('category_id', $categoryChildrenIds);
         })->when($withCategory, function ($query) {
             return $query->with('category');
-        })->paginate($paginate);
+        });
+    }
+
+    public static function searchFilters(Request $request, $categoryChildrenIds = [], $withCategory = false, $paginate = 20, $withDesc = true)
+    {
+        $products = self::searchFiltersQuery($request, $categoryChildrenIds, $withCategory)->paginate($paginate);
         foreach ($products as &$product) {
             if (0 === $product->productPhotos->count()) {
                 continue;

@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Services\CategoryService;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -58,6 +59,24 @@ class HomeController extends Controller
         $products = ProductService::searchFilters($request);
         return view('_partials.products', [
             'products' => $products
+        ]);
+    }
+
+    public function getProductNums(Request $request)
+    {
+        $productNums = [];
+        $filterProductIds = ProductService::searchFiltersQuery($request)->pluck('id');
+        $c = $filterProductIds->count();
+        if ($c > 0 && $c < 500) {
+            $productNums = DB::table('products')
+                ->join('categories', 'categories.id', '=', 'products.category_id')
+                ->select(DB::raw('count(products.id) as product_num'), 'categories.slug',)
+                ->whereIn('products.id', $filterProductIds)
+                ->groupBy('categories.slug')
+                ->get();
+        }
+        return response()->json([
+            'productNums' => $productNums,
         ]);
     }
 

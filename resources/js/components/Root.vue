@@ -7,6 +7,8 @@ export default {
             lastPage: parseInt(window.lastPage),
             getProductsViewAllCategoriesUrl: window.getProductsViewAllCategoriesUrl,
             getProductsViewUrl: window.getProductsViewUrl,
+            getProductNumsUrl: window.getProductNumsUrl,
+            productNums: {},
             getingProductsView: false,
             queryStrParams: {
                 page: null,
@@ -62,6 +64,7 @@ export default {
                     window.history.replaceState(null, null, that.setQueryStrParams(window.location.href));
                     that.lastPage = that.$refs.productsView.querySelector("#products").dataset.lastPage;
                     that.productsViewLoaded = true;
+                    that.getProductNums();
                 })
                 .catch(function (error) {
                     console.log(error.message);
@@ -69,6 +72,42 @@ export default {
                     that.getingProductsView = false;
                     return that.currentPage;
                 });
+        },
+        getProductNums: function () {
+            this.productNums = {};
+            var that = this;
+            var url = this.setQueryStrParams(this.getProductNumsUrl).toString();
+            axios
+                .post(url, this.getProductsViewData)
+                .then(function (response) {
+                    that.setProductNums(response.data.productNums);
+                })
+                .catch(function (error) {
+                    console.log(error.message);
+                });
+        },
+        setProductNums: function (productNums) {
+            var menu = document.getElementById('menu');
+            var that = this;
+            var showSubMenus = function (topEl, nesting = 0, show = true) {
+                let showToggles = topEl.querySelectorAll('.show-toggle');
+                _.forEach(showToggles, function (showToggle) {
+                    if (show) {
+                        if (showToggle.classList.contains('nesting-' + nesting)) {
+                            return false;
+                        }
+                        showToggle.classList.add('show');
+                    } else {
+                        showToggle.classList.remove('show');
+                    }
+                });
+            };
+            showSubMenus(menu, 0, false);
+            _.forEach(productNums, function (val) {
+                that.productNums[val.slug] = val.product_num;
+                let el = menu.querySelector('._' + val.slug);
+                showSubMenus(el.closest(".first-li"), el.dataset.nesting);
+            });
         },
         setQueryStrParams: function (url) {
             const newUrl = new URL(url);
