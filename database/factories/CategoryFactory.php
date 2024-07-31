@@ -17,13 +17,15 @@ class CategoryFactory extends Factory
      */
     public function definition(): array
     {
+        $name = ucfirst(fake()->words(2, true));
+        $slug = str_replace(" ", "-", $name) . fake()->unique()->randomNumber(5, false);
+        $datetime = fake()->dateTimeBetween('-1 month', 'now');
         return [
-            'name' => fake()->name(),
-            'slug' => fake()->unique()->name(),
-            'position'   => function () {
-                $max = Category::max('position');
-                return $max ?: 0;
-            }
+            'name' => $name,
+            'slug' => $slug,
+            'position' => fake()->unique()->numberBetween(0, 100000),
+            'created_at' => $datetime,
+            'updated_at' => $datetime,
         ];
     }
 }

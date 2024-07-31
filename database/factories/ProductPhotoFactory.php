@@ -17,13 +17,11 @@ class ProductPhotoFactory extends Factory
      */
     public function definition(): array
     {
+        $num = rand(1, 1000);
         return [
-            'url' => fake()->regexify('[A-Za-z0-9]{20}'),
-            'url_small' => fake()->regexify('[A-Za-z0-9]{20}'),
-            'position'   => function () {
-                $max = ProductPhoto::max('position');
-                return $max ?: 0;
-            },
+            'url' => "products/XUQ61zwxYhCcSBqs0IPeJm7rTY19n8cTCFy5rV3F$num.jpg",
+            'url_small' => "products/small/XUQ61zwxYhCcSBqs0IPeJm7rTY19n8cTCFy5rV3F$num.jpg",
+            'position' => fake()->unique()->numberBetween(0, 100000),
             'size' => fake()->numberBetween(0, 1000),
         ];
     }
