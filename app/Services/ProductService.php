@@ -70,7 +70,7 @@ class ProductService
 
     public static function getProductDescStr($description)
     {
-        if (is_string($description)) {
+        if (!json_decode($description, true)) {
             return $description;
         }
         $descStr = '';

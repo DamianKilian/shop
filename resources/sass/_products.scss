@@ -1,8 +1,7 @@
 #products {
     .product {
-        display: block;
         color: $dark;
-        min-height: 200px;
+        display: inline-block;
         margin-bottom: 10px;
         position: relative;
         &:hover {

@@ -64,7 +64,9 @@ export default {
                     window.history.replaceState(null, null, that.setQueryStrParams(window.location.href));
                     that.lastPage = that.$refs.productsView.querySelector("#products").dataset.lastPage;
                     that.productsViewLoaded = true;
-                    that.getProductNums();
+                    if (that.getProductNumsUrl) {
+                        that.getProductNums();
+                    }
                 })
                 .catch(function (error) {
                     console.log(error.message);

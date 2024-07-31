@@ -99,7 +99,7 @@
                         aria-label="Close">
                     </div>
                 </div>
-                @if (count($categories) > 0)
+                @if (isset($categories) && count($categories) > 0)
                     <ul>
                         @foreach ($categories as $category)
                             @if (!$category->parent_id)
