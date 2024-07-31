@@ -39,7 +39,7 @@ class ProductService
             return $query->whereIn('category_id', $categoryChildrenIds);
         })->when($withCategory, function ($query) {
             return $query->with('category');
-        });
+        })->orderByDesc('id');
     }
 
     public static function searchFilters(Request $request, $categoryChildrenIds = [], $withCategory = false, $paginate = 20, $withDesc = true)

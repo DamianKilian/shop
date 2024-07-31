@@ -123,8 +123,12 @@ export default {
             return newUrl;
         },
         getQueryStringParameters: function () {
-            const searchParams = new URLSearchParams(window.location.search);
-            this.currentPage = parseInt(searchParams.get("page") || 1);
+            if (!this.$refs.productsView) {
+                this.currentPage = 1;
+            } else {
+                const searchParams = new URLSearchParams(window.location.search);
+                this.currentPage = parseInt(searchParams.get("page") || 1);
+            }
         },
     },
     updated() {

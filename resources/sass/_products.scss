@@ -4,6 +4,8 @@
         display: inline-block;
         margin-bottom: 10px;
         position: relative;
+        min-height: 200px;
+        width: 100%;
         &:hover {
             background-color: $light;
             h2 {

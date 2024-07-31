@@ -3,7 +3,7 @@
 @section('content')
     <div id="products-app">
         <pagination-widget :get-products-view='getProductsView' :current-page='currentPage'
-            :last-page='lastPage'></pagination-widget>
+            :geting-products-view='getingProductsView' :last-page='lastPage'></pagination-widget>
         <h1>{{ $category->name }}</h1>
         <div class="products-view-container position-relative">
             <loading-overlay v-if='getingProductsView'></loading-overlay>
