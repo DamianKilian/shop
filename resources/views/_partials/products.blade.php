@@ -1,5 +1,16 @@
 <div id="products" data-last-page="{{ $products->lastPage() }}">
     @foreach ($products as $product)
+        @if ($product->categories)
+            <div class="product-breadcrumb">
+                @foreach ($product->categories as $category)
+                    @if (!$loop->first)
+                        <i class="fa-solid fa-angle-right" style="position: relative;top: 2px;"></i>
+                    @endif
+                    <a class="badge bg-secondary"
+                        href="{{ route('category', ['slug' => $category->slug]) }}">{{ $category->name }}</a>
+                @endforeach
+            </div>
+        @endif
         <a href="#" class="product clearfix">
             <div class="img-container">
                 @if ($product->productPhotos->get(0))

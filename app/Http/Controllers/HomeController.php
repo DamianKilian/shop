@@ -57,6 +57,10 @@ class HomeController extends Controller
     public function getProductsViewAllCategories(Request $request)
     {
         $products = ProductService::searchFilters($request);
+        $categories = CategoryService::getCategories();
+        foreach ($products as $product) {
+            $product->categories = CategoryService::getParentCategories($product->category_id, $categories);
+        }
         return view('_partials.products', [
             'products' => $products
         ]);

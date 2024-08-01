@@ -48,6 +48,16 @@ class CategoryService
         return $categoryChildrenIds;
     }
 
+    public static function getParentCategories($categoryId, $categories)
+    {
+        $parentCategories = [$categoryId => $categories[$categoryId]];
+        while (end($parentCategories)->parent_id) {
+            $parent = $categories[end($parentCategories)->parent_id];
+            $parentCategories[$parent->id] = $parent;
+        }
+        return array_reverse($parentCategories, true);
+    }
+
     // public static function categoriesIdTree(Traversable $categories, $parentId = null, $categoriesIdTree = [])
     // {
     //     foreach ($categories as $category) {

@@ -1,4 +1,9 @@
 #products {
+    .product-breadcrumb {
+        > a:hover {
+            background-color: $primary !important;
+        }
+    }
     .product {
         color: $dark;
         display: inline-block;
