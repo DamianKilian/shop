@@ -41,6 +41,9 @@ export default {
         },
         getProductsView: function (queryStrParams = {}) {
             this.getingProductsView = true;
+            if (!queryStrParams.page) {
+                queryStrParams.page = 1;
+            }
             this.queryStrParams = Object.assign(this.queryStrParams, queryStrParams);
             var page = this.queryStrParams.page;
             if (0 >= page || page > this.lastPage) {
