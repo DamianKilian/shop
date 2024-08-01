@@ -45,7 +45,7 @@ export default {
                 console.log('getingProductsView');
                 return;
             }
-            this.getProductsView(queryStrParams);
+            this.getProductsView(queryStrParams, true);
         },
     },
     updated() {

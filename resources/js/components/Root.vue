@@ -33,13 +33,13 @@ export default {
         },
         pageChange: function (url) {
             const searchParams = new URLSearchParams(url.substring(url.indexOf("?")));
-            this.getProductsView({ page: parseInt(searchParams.get("page")) });
+            this.getProductsView({ page: parseInt(searchParams.get("page")) }, true);
         },
         searchProducts: function (searchValue) {
             var searchValue = _.trim(searchValue);
             this.getProductsView({ searchValue: searchValue });
         },
-        getProductsView: function (queryStrParams = {}) {
+        getProductsView: function (queryStrParams = {}, pageChange = false) {
             this.getingProductsView = true;
             if (!queryStrParams.page) {
                 queryStrParams.page = 1;
@@ -53,10 +53,10 @@ export default {
             if (this.getProductsViewData.categoryChildrenIds) {
                 this.getProductsViewRequest();
             } else {
-                this.getProductsViewRequest(this.getProductsViewAllCategoriesUrl);
+                this.getProductsViewRequest(this.getProductsViewAllCategoriesUrl, pageChange);
             }
         },
-        getProductsViewRequest: function (url = this.getProductsViewUrl) {
+        getProductsViewRequest: function (url = this.getProductsViewUrl, pageChange = false) {
             var that = this;
             var url = this.setQueryStrParams(url).toString();
             axios
@@ -67,7 +67,7 @@ export default {
                     window.history.replaceState(null, null, that.setQueryStrParams(window.location.href));
                     that.lastPage = that.$refs.productsView.querySelector("#products").dataset.lastPage;
                     that.productsViewLoaded = true;
-                    if (that.getProductNumsUrl) {
+                    if (that.getProductNumsUrl && !pageChange) {
                         that.getProductNums();
                     }
                 })
