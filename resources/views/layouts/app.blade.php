@@ -114,6 +114,8 @@
             <div id="content">
                 @yield('content')
             </div>
+            <pagination-widget :get-products-view='getProductsView' :current-page='currentPage'
+                :geting-products-view='getingProductsView' :last-page='lastPage'></pagination-widget>
         </main>
     </div>
     <footer class="bg-secondary">

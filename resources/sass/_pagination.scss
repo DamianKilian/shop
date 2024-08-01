@@ -1,24 +1,12 @@
 #pagination-widget {
-    top: 65px;
+    left: auto;
     float: right;
     width: 130px;
-    height: 0;
     input {
         text-align: center;
         padding: 0;
     }
     > * {
         background-color: #fff;
-    }
-}
-
-@include media-breakpoint-down(xl) {
-    #pagination-widget {
-        margin-right: -26px;
-    }
-}
-@include media-breakpoint-down(sm) {
-    #pagination-widget {
-        top: 115px;
     }
 }
