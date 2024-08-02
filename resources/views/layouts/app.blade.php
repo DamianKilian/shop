@@ -112,6 +112,10 @@
                 @endif
             </div>
             <div id="content">
+                <div class="mb-2">
+                    <search-filters @remove-search-value-submitted="searchProducts('')"
+                        :search-value-submitted="queryStrParams.searchValue"></search-filters>
+                </div>
                 @yield('content')
             </div>
             <pagination-widget :get-products-view='getProductsView' :current-page='currentPage'

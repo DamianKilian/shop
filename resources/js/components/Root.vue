@@ -12,6 +12,7 @@ export default {
             getingProductsView: false,
             queryStrParams: {
                 page: null,
+                searchValue: '',
             },
             getProductsViewData: {
                 categoryChildrenIds: window.categoryChildrenIds
