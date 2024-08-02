@@ -89,6 +89,10 @@ class HomeController extends Controller
         $products = null;
         if ($request->searchValue) {
             $products = ProductService::searchFilters($request);
+            $categories = CategoryService::getCategories();
+            foreach ($products as $product) {
+                $product->categories = CategoryService::getParentCategories($product->category_id, $categories);
+            }
         }
         return view('home', [
             'categories' => CategoryService::getCategories(),
