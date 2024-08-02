@@ -6,7 +6,7 @@
                     @if (!$loop->first)
                         <i class="fa-solid fa-angle-right" style="position: relative;top: 2px;"></i>
                     @endif
-                    <a class="badge bg-secondary"
+                    <a class="badge bg-secondary product-breadcrumb-badge-link"
                         href="{{ route('category', ['slug' => $category->slug]) }}">{{ $category->name }}</a>
                 @endforeach
             </div>

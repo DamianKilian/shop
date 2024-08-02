@@ -7,10 +7,10 @@
 @endphp
 
 <li style="margin-left: {{ $ml }}" class="mt-1 {{ $firstLi }}">
-    <a href="{{ route('category', ['slug' => $category->slug]) }}" class="p-1 d-block _{{ $category->slug }}"
-        data-nesting='{{ $nesting + 1 }}'>
+    <a href="{{ route('category', ['slug' => $category->slug]) }}"
+        class="main-menu-link p-1 d-block _{{ $category->slug }}" data-nesting='{{ $nesting + 1 }}'>
         <span v-if="productNums['{{ $category->slug }}']" v-html="productNums['{{ $category->slug }}'] "
-            class="badge text-bg-primary"></span>
+            class="badge text-bg-primary product-nums-badge"></span>
         {{ $category->name }}
     </a>
     @if ($children)

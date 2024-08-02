@@ -23,5 +23,6 @@
         window.getProductsViewAllCategoriesUrl = "{{ route('get-products-view-all-categories') }}";
         window.getProductNumsUrl = "{{ route('get-product-nums') }}";
         window.lastPage = '{{ $products ? $products->lastPage() : 1 }}';
+        window.pageType = 'homePage';
     </script>
 @endsection

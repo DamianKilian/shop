@@ -21,9 +21,6 @@ export default {
     },
     methods: {
         applyPageChangeEvents: function () {
-            if (!this.$refs.productsView) {
-                return;
-            }
             var that = this;
             this.$refs.productsView.addEventListener("click", function (e) {
                 if (e.target.matches('a.page-link')) {
@@ -127,23 +124,33 @@ export default {
             return newUrl;
         },
         getQueryStringParameters: function () {
-            if (!this.$refs.productsView) {
-                this.currentPage = 1;
-            } else {
-                const searchParams = new URLSearchParams(window.location.search);
-                this.currentPage = parseInt(searchParams.get("page") || 1);
-            }
+            const searchParams = new URLSearchParams(window.location.search);
+            this.currentPage = parseInt(searchParams.get("page") || 1);
+            this.queryStrParams.page = this.currentPage;
+            this.queryStrParams.searchValue = searchParams.get("searchValue");
+        },
+        preserveFilters: function () {
+            var that = this;
+            document.addEventListener('click', function (e) {
+                if (that.queryStrParams.searchValue && (e.target.matches('.main-menu-link') || e.target.matches('.product-breadcrumb-badge-link'))) {
+                    e.target.setAttribute('href', that.setQueryStrParams(e.target.getAttribute('href')).toString())
+                }
+            });
         },
     },
     updated() {
         console.log('updated-root')
     },
     created() {
-        this.getQueryStringParameters();
-        this.queryStrParams.page = this.currentPage;
     },
     mounted() {
-        this.applyPageChangeEvents();
+        if (this.$refs.productsView) {
+            this.applyPageChangeEvents();
+            if ('homePage' === window.pageType) {
+                this.preserveFilters();
+            }
+            this.getQueryStringParameters();
+        }
     }
 }
 </script>
