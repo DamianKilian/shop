@@ -115,7 +115,7 @@ export default {
         setQueryStrParams: function (url) {
             const newUrl = new URL(url);
             _.forEach(this.queryStrParams, function (value, key) {
-                if ('' === value) {
+                if (!value) {
                     newUrl.searchParams.delete(key);
                 } else {
                     newUrl.searchParams.set(key, value);
@@ -127,7 +127,7 @@ export default {
             const searchParams = new URLSearchParams(window.location.search);
             this.currentPage = parseInt(searchParams.get("page") || 1);
             this.queryStrParams.page = this.currentPage;
-            this.queryStrParams.searchValue = searchParams.get("searchValue");
+            this.queryStrParams.searchValue = searchParams.get("searchValue") || '';
         },
         preserveFilters: function () {
             var that = this;
