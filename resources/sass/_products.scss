@@ -21,10 +21,10 @@
             float: right;
         }
         .title-desc {
-            width: calc(75% - 20px);
+            width: calc(77% - 20px);
         }
         .price {
-            width: calc(75% - 20px);
+            width: calc(77% - 20px);
             .number {
                 text-align: center;
             }
@@ -50,6 +50,19 @@
             top: 0;
             bottom: 0;
             margin: auto;
+        }
+    }
+}
+
+@include media-breakpoint-up(xl) {
+    #products {
+        .product {
+            .title-desc {
+                width: calc(92% - 140px);
+            }
+            .price {
+                width: calc(92% - 140px);
+            }
         }
     }
 }
