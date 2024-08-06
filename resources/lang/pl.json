@@ -1,4 +1,8 @@
 {
+    "Min. price must be lower": "Cena min. musi być mniejsza",
+    "Apply filters": "Zastosuj filtry",
+    "Max. price": "Cena max.",
+    "Min. price": "Cena min.",
     "Products not found": "Nie znaleziono produktów",
     "Slug must be unique": "Slug musi być unikalny",
     "in": "w",

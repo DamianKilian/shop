@@ -1,0 +1,16 @@
+#menu-filters {
+    display: none;
+}
+.price-filter {
+    .label-container {
+        > input {
+            width: 100px;
+            display: block;
+            float: right;
+            text-align: center;
+        }
+    }
+    .apply-filters-btn {
+        display: none;
+    }
+}

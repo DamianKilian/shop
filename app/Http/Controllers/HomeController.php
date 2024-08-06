@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GetProductsViewRequest;
 use App\Models\Category;
 use App\Services\CategoryService;
 use App\Services\ProductService;
@@ -35,6 +36,7 @@ class HomeController extends Controller
             $parentIds[$parent->parent_id] = $parent->parent_id;
         }
         return view('category', [
+            'maxProductsPrice' => ProductService::getMaxProductsPrice($categoryChildrenIds),
             'categoryChildrenIds' => json_encode($categoryChildrenIds),
             'products' => $products,
             'parentIds' => $parentIds,
@@ -45,7 +47,7 @@ class HomeController extends Controller
         ]);
     }
 
-    public function getProductsView(Request $request)
+    public function getProductsView(GetProductsViewRequest $request)
     {
         $categoryChildrenIds = json_decode($request->categoryChildrenIds);
         $products = ProductService::searchFilters($request, $categoryChildrenIds);
@@ -54,7 +56,7 @@ class HomeController extends Controller
         ]);
     }
 
-    public function getProductsViewAllCategories(Request $request)
+    public function getProductsViewAllCategories(GetProductsViewRequest $request)
     {
         $products = ProductService::searchFilters($request);
         $categories = CategoryService::getCategories();
@@ -95,6 +97,7 @@ class HomeController extends Controller
             }
         }
         return view('home', [
+            'maxProductsPrice' => ProductService::getMaxProductsPrice(),
             'categories' => CategoryService::getCategories(),
             'products' => $products
         ]);

@@ -12,7 +12,7 @@
         </div>
     </div>
     @if (!$products)
-        <div v-if='!productsViewLoaded' id="home-page">
+        <div v-if='!productsViewLoaded' id="home-page" ref="homePage">
             <h1>Home page</h1>
         </div>
     @endif

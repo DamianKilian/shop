@@ -13,13 +13,27 @@ export default {
             queryStrParams: {
                 page: null,
                 searchValue: '',
+                minPrice: null,
+                maxPrice: null,
             },
+            queryStrParamsInitialVals: {},
             getProductsViewData: {
                 categoryChildrenIds: window.categoryChildrenIds
-            }
+            },
+            maxProductsPriceCeil: window.maxProductsPrice ? _.ceil(window.maxProductsPrice) : null,
+            failedValidation: {},
         }
     },
     methods: {
+        isFilterChanged: function (filter) {
+            if ('price' === filter) {
+                if (this.queryStrParamsInitialVals.minPrice !== this.queryStrParams.minPrice
+                    || this.queryStrParamsInitialVals.maxPrice !== this.queryStrParams.maxPrice) {
+                    return true;
+                }
+            }
+            return false;
+        },
         applyPageChangeEvents: function () {
             var that = this;
             this.$refs.productsView.addEventListener("click", function (e) {
@@ -28,6 +42,9 @@ export default {
                     that.pageChange(e.target.href);
                 }
             });
+        },
+        applyFilters: function () {
+            this.getProductsView();
         },
         pageChange: function (url) {
             const searchParams = new URLSearchParams(url.substring(url.indexOf("?")));
@@ -57,6 +74,7 @@ export default {
         getProductsViewRequest: function (url = this.getProductsViewUrl, pageChange = false) {
             var that = this;
             var url = this.setQueryStrParams(url).toString();
+            this.failedValidation = {};
             axios
                 .post(url, this.getProductsViewData)
                 .then(function (response) {
@@ -70,9 +88,13 @@ export default {
                     }
                 })
                 .catch(function (error) {
-                    console.log(error.message);
+                    if (_.has(error, 'response.data.failedValidation')) {
+                        that.failedValidation = error.response.data.failedValidation;
+                    }
+                    console.log(error);
                 }).then(() => {
                     that.getingProductsView = false;
+                    that.queryStrParamsInitialVals = _.clone(this.queryStrParams);
                     return that.currentPage;
                 });
         },
@@ -115,7 +137,7 @@ export default {
         setQueryStrParams: function (url) {
             const newUrl = new URL(url);
             _.forEach(this.queryStrParams, function (value, key) {
-                if (!value) {
+                if ('' === value || null === value) {
                     newUrl.searchParams.delete(key);
                 } else {
                     newUrl.searchParams.set(key, value);
@@ -128,6 +150,8 @@ export default {
             this.currentPage = parseInt(searchParams.get("page") || 1);
             this.queryStrParams.page = this.currentPage;
             this.queryStrParams.searchValue = searchParams.get("searchValue") || '';
+            this.queryStrParams.minPrice = parseInt(searchParams.get("minPrice")) || 0;
+            this.queryStrParams.maxPrice = parseInt(searchParams.get("maxPrice")) || this.maxProductsPriceCeil;
         },
         preserveFilters: function () {
             var that = this;
@@ -150,6 +174,7 @@ export default {
                 this.preserveFilters();
             }
             this.getQueryStringParameters();
+            this.queryStrParamsInitialVals = _.clone(this.queryStrParams);
         }
     }
 }

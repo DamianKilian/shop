@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -14,6 +15,8 @@ class ProductService
     {
         $pf = [];
         $pf['searchValue'] = $request->searchValue;
+        $pf['maxPrice'] = $request->maxPrice;
+        $pf['minPrice'] = $request->minPrice;
         return $pf;
     }
 
@@ -28,6 +31,16 @@ class ProductService
     //     return $productsFiltersNum;
     // }
 
+
+    public static function getMaxProductsPrice($categoryChildrenIds = [])
+    {
+        return Cache::remember('maxProductsPrice' . implode($categoryChildrenIds), 60, function () use ($categoryChildrenIds) {
+            return Product::when($categoryChildrenIds, function ($query, $categoryChildrenIds) {
+                return $query->whereIn('category_id', $categoryChildrenIds);
+            })->max('price');
+        });
+    }
+
     public static function searchFiltersQuery(Request $request, $categoryChildrenIds = [], $withCategory = false)
     {
         $pf = self::getProductsFilters($request);
@@ -35,6 +48,10 @@ class ProductService
             $query->orderBy('position');
         }])->when($pf['searchValue'], function ($query, $searchValue) {
             return $query->whereFullText(['title', 'description_str'], $searchValue);
+        })->when($pf['maxPrice'], function ($query, $maxPrice) {
+            return $query->where('price', '<=', $maxPrice);
+        })->when($pf['minPrice'], function ($query, $minPrice) {
+            return $query->where('price', '>=', $minPrice);
         })->when($categoryChildrenIds, function ($query, $categoryChildrenIds) {
             return $query->whereIn('category_id', $categoryChildrenIds);
         })->when($withCategory, function ($query) {

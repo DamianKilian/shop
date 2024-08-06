@@ -17,6 +17,7 @@
     <!-- Scripts -->
     <script>
         window.pageType = '';
+        window.maxProductsPrice = {{ $maxProductsPrice ?? null }};
     </script>
     @yield('scriptsHead')
     @php
@@ -110,6 +111,7 @@
                             @endif
                         @endforeach
                     </ul>
+                    @include('_partials.filters')
                 @else
                     No categories
                 @endif
