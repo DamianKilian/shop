@@ -136,8 +136,13 @@ export default {
         },
         setQueryStrParams: function (url) {
             const newUrl = new URL(url);
+            var that = this;
             _.forEach(this.queryStrParams, function (value, key) {
                 if ('' === value || null === value) {
+                    newUrl.searchParams.delete(key);
+                } else if ('maxPrice' === key && that.maxProductsPriceCeil === value) {
+                    newUrl.searchParams.delete(key);
+                } else if ('minPrice' === key && 0 === value) {
                     newUrl.searchParams.delete(key);
                 } else {
                     newUrl.searchParams.set(key, value);

@@ -24,7 +24,7 @@ class GetProductsViewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'maxPrice' => 'gte:minPrice',
+            'maxPrice' => 'exclude_without:minPrice|gte:minPrice',
         ];
     }
 
