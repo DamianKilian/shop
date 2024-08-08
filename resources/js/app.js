@@ -28,6 +28,8 @@ app.config.globalProperties.__ = window.__;
 
 import AdminPanelCategories from './components/AdminPanelCategories.vue';
 app.component('admin-panel-categories', AdminPanelCategories);
+import AdminPanelFilters from './components/AdminPanelFilters.vue';
+app.component('admin-panel-filters', AdminPanelFilters);
 import AdminPanelProducts from './components/AdminPanelProducts.vue';
 app.component('admin-panel-products', AdminPanelProducts);
 import Search from './components/Search.vue';

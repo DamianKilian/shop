@@ -17,6 +17,7 @@ Route::prefix('admin-panel')->group(function () {
     Route::post('/get-products', [App\Http\Controllers\AdminPanelProductsController::class, 'getProducts'])->name('admin-panel-get-products');
     Route::post('/add-product', [App\Http\Controllers\AdminPanelProductsController::class, 'addProduct'])->name('admin-panel-add-product');
     Route::get('/categories', [App\Http\Controllers\AdminPanelCategoriesController::class, 'categories'])->name('admin-panel-categories');
+    Route::get('/filters', [App\Http\Controllers\AdminPanelCategoriesController::class, 'filters'])->name('admin-panel-filters');
     Route::post('/save-categories', [App\Http\Controllers\AdminPanelCategoriesController::class, 'saveCategories'])->name('admin-panel-save-categories');
 });
 

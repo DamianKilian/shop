@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveCategoriesRequest;
 use App\Models\Category;
+use App\Models\Filter;
 use Illuminate\Support\Facades\DB;
 
 class AdminPanelCategoriesController extends Controller
@@ -11,6 +12,13 @@ class AdminPanelCategoriesController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    public function filters()
+    {
+        return view('adminPanel.filters', [
+            'filters' => Filter::withTrashed()->orderBy('order_priority')->get(),
+        ]);
     }
 
     public function categories()

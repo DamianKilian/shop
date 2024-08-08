@@ -100,6 +100,8 @@
                         href="{{ route('admin-panel-products') }}">{{ __('Products') }}</a>
                     <a class="nav-link _categories"
                         href="{{ route('admin-panel-categories') }}">{{ __('Categories') }}</a>
+                    <a class="nav-link _filters"
+                        href="{{ route('admin-panel-filters') }}">{{ __('Filters') }}</a>
                 </nav>
             </div>
             <div id="content">

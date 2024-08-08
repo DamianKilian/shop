@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('suggestions', function (Blueprint $table) {
             $table->id();
             $table->string('suggestion')->unique();
-            $table->integer('usage');
+            $table->unsignedInteger('usage');
             $table->timestamps();
         });
     }
