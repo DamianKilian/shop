@@ -1,25 +1,27 @@
 <template>
     <div id="admin-panel-products" class='clearfix'>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb justify-content-center">
-                <li v-for="(b, index) in breadcrumb" :key="b.id" class="breadcrumb-item">
-                    <button @click="goToCategory($event, index)" class="btn btn-sm btn-link"
-                        :class="{ active: index == breadcrumb.length - 1 }">
-                        {{ b.name }}
+        <div v-show='showCategories'>
+            <nav>
+                <ol class="breadcrumb justify-content-center">
+                    <li v-for="(b, index) in breadcrumb" :key="b.id" class="breadcrumb-item">
+                        <button @click="goToCategory($event, index)" class="btn btn-sm btn-link"
+                            :class="{ active: index == breadcrumb.length - 1 }">
+                            {{ b.name }}
+                        </button>
+                    </li>
+                </ol>
+            </nav>
+            <div class="app-list clearfix">
+                <div class="actions-global clearfix">
+                    <button type="button" class="btn btn-secondary float-end"
+                        @click="goToCategory($event, breadcrumb.length - 2)">
+                        <i class="fa-solid fa-arrow-left"></i>
                     </button>
-                </li>
-            </ol>
-        </nav>
-        <div class="app-list clearfix" v-show='showCategories'>
-            <div class="actions-global clearfix">
-                <button type="button" class="btn btn-secondary float-end"
-                    @click="goToCategory($event, breadcrumb.length - 2)">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </button>
+                </div>
+                <AdminPanelProductsList :getProducts='getProducts' :products="products" :breadcrumb="breadcrumb"
+                    :currentCategories="currentCategories" :selectedCategory='selectedCategory'
+                    :adminPanelGetProductsUrl='adminPanelGetProductsUrl' :categories='categories' />
             </div>
-            <AdminPanelProductsList :getProducts='getProducts' :products="products" :breadcrumb="breadcrumb"
-                :currentCategories="currentCategories" :selectedCategory='selectedCategory'
-                :adminPanelGetProductsUrl='adminPanelGetProductsUrl' :categories='categories' />
         </div>
         <div class="mt-3 actions-global clearfix">
             <button @click='editProduct = null' data-bs-toggle="modal" data-bs-target="#addProduct"
