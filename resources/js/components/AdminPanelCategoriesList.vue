@@ -48,6 +48,15 @@
                             class="btn btn-outline-secondary" type="button" id="button-addon2">{{ __('Reset')
                             }}</button>
                     </div>
+                    <fieldset ref='filters'>
+                        <legend>{{ __('Filters') }}:</legend>
+                        <div v-for="(filter) in filters" :key="filter.id" class="form-check form-check-inline">
+                            <input @change='addFilter($event, filter, editedCategory)'
+                                class="form-check-input filter-inp" type="checkbox" :id='"f-" + filter.id'
+                                :data-id="filter.id">
+                            <label class="form-check-label" :for='"f-" + filter.id'>{{ filter.name }}</label>
+                        </div>
+                    </fieldset>
                 </div>
                 <div class="modal-footer border-light">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">{{ __('Ok') }}</button>
@@ -63,12 +72,13 @@ import sortable from "./sortable.js";
 
 export default {
     mixins: [sortable],
-    props: ['currentCategories', 'breadcrumb', 'categories', 'showDeletedCategories'],
+    props: ['currentCategories', 'breadcrumb', 'categories', 'filters', 'showDeletedCategories'],
     data() {
         return {
             editedCategory: {
                 name: '',
-                slug: ''
+                slug: '',
+                filtersById: {}
             }
         }
     },
@@ -83,9 +93,26 @@ export default {
         generateSlug: function () {
             return this.editedCategory.name.trim().replace(/ /g, '-');
         },
+        addFilter: function (e, filter, category) {
+            if (e.target.checked) {
+                category.filtersById[filter.id] = filter.name;
+            } else {
+                delete category.filtersById[filter.id];
+            }
+        },
         bootEditedCategory: function (category) {
             this.editedCategory = category;
             this.editedCategory.slugCustomized = this.generateSlug() !== this.editedCategory.slug;
+            var that = this;
+            if (!this.editedCategory.filtersById) {
+                this.editedCategory.filtersById = {};
+                _.forEach(category.filters, function (filter) {
+                    that.editedCategory.filtersById[filter.id] = filter.name;
+                });
+            }
+            _.forEach(this.$refs.filters.querySelectorAll('.filter-inp'), function (filter) {
+                filter.checked = !!that.editedCategory.filtersById[filter.dataset.id];
+            });
         },
         removeCategory: function (e, index, category) {
             if (category.new) {

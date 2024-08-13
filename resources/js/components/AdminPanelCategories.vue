@@ -20,7 +20,7 @@
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
             </div>
-            <AdminPanelCategoriesList :currentCategories="currentCategories" :breadcrumb="breadcrumb"
+            <AdminPanelCategoriesList :filters='filters' :currentCategories="currentCategories" :breadcrumb="breadcrumb"
                 :categories="categories" :showDeletedCategories='showDeletedCategories' />
             <div class="clearfix">
                 <button class="btn btn-success float-end" @click="saveCategories">{{ __('Save') }}</button>
@@ -43,7 +43,7 @@ import { goToCategory, arrangeCategories, setBreadcrumb } from './commonFunction
 
 export default {
     components: { AdminPanelCategoriesList },
-    props: ['categoriesProp', 'adminPanelSaveCategoriesUrl'],
+    props: ['categoriesProp', 'filters', 'adminPanelSaveCategoriesUrl'],
     data() {
         return {
             showDeletedCategories: false,

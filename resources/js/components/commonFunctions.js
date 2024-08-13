@@ -23,6 +23,7 @@ export function arrangeCategories(categoriesDb = null) {
             slug: item.slug,
             id: item.id,
             deleted_at: item.deleted_at,
+            filters: item.filters
         });
     });
 }

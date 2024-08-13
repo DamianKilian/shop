@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveCategoriesRequest;
 use App\Models\Category;
+use App\Models\Filter;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class AdminPanelCategoriesController extends Controller
@@ -16,8 +18,16 @@ class AdminPanelCategoriesController extends Controller
     public function categories()
     {
         return view('adminPanel.categories', [
-            'categories' => Category::withTrashed()->orderBy('parent_id')->orderBy('position')->get(),
+            'filters' => Filter::orderBy('order_priority')->get(['id', 'name', 'order_priority']),
+            'categories' => $this->categoriesWithFilters(),
         ]);
+    }
+
+    protected function categoriesWithFilters()
+    {
+        return Category::withTrashed()->with(['filters' => function (Builder $query) {
+            $query->select('filters.id', 'filters.name', 'filters.order_priority');
+        }])->orderBy('parent_id')->orderBy('position')->get();
     }
 
     protected function saveCategory($category, $categories, $index, $parent_id, $parent_remove = false)
@@ -48,6 +58,9 @@ class AdminPanelCategoriesController extends Controller
                 'deleted_at' => null,
             ]);
         }
+        if (isset($category['filtersById'])) {
+            $categoryDb->filters()->sync(array_keys($category['filtersById']));
+        }
         if (isset($categories[$category['id']])) {
             foreach ($categories[$category['id']] as $index => $category) {
                 $this->saveCategory($category, $categories, $index, $categoryDb->id, $remove);
@@ -63,7 +76,7 @@ class AdminPanelCategoriesController extends Controller
             }
         });
         return response()->json([
-            'categories' => Category::withTrashed()->orderBy('parent_id')->orderBy('position')->get(),
+            'categories' => $this->categoriesWithFilters(),
         ]);
     }
 }
