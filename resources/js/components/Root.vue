@@ -114,24 +114,27 @@ export default {
         setProductNums: function (productNums) {
             var menu = document.getElementById('menu');
             var that = this;
-            var showSubMenus = function (topEl, nesting = 0, show = true) {
+            var showSubMenus = function (topEl, nesting = 0, elBadged = null) {
                 let showToggles = topEl.querySelectorAll('.show-toggle');
                 _.forEach(showToggles, function (showToggle) {
-                    if (show) {
+                    if (elBadged) {
                         if (showToggle.classList.contains('nesting-' + nesting)) {
                             return false;
                         }
-                        showToggle.classList.add('show');
+                        let li = showToggle.closest('li');
+                        if (li.contains(elBadged)) {
+                            showToggle.classList.add('show');
+                        }
                     } else {
                         showToggle.classList.remove('show');
                     }
                 });
             };
-            showSubMenus(menu, 0, false);
+            showSubMenus(menu, 0);
             _.forEach(productNums, function (val) {
                 that.productNums[val.slug] = val.product_num;
-                let el = menu.querySelector('._' + val.slug);
-                showSubMenus(el.closest(".first-li"), el.dataset.nesting);
+                let elBadged = menu.querySelector('._' + val.slug);
+                showSubMenus(elBadged.closest(".first-li"), elBadged.dataset.nesting, elBadged);
             });
         },
         setQueryStrParams: function (url) {
