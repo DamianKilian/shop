@@ -22,6 +22,7 @@
                 <i class="fa-solid fa-arrow-right"></i>
             </button>
         </div>
+        <b id="total-pages">{{ __('of') }} {{ lastPage }}</b>
     </div>
 </template>
 
