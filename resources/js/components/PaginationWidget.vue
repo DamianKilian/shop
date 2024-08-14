@@ -37,6 +37,11 @@ export default {
     watch: {
         currentPage(newVal) {
             this.page = parseInt(newVal);
+        },
+        page(newVal, oldVal) {
+            if (isNaN(newVal)) {
+                this.page = oldVal;
+            }
         }
     },
     methods: {
