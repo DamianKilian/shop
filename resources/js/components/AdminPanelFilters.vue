@@ -37,6 +37,7 @@
             </div>
         </div>
     </div>
+    <div v-else class="alert alert-light mt-3 text-center" role="alert">{{ __('No Filters') }}</div>
 </template>
 
 <script>
