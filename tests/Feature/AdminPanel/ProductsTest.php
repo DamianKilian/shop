@@ -50,7 +50,7 @@ class ProductsTest extends TestCase
 
         $response = $this->actingAs($user)->postJson('/admin-panel/get-products', ['category' => null]);
         $response2 = $this->actingAs($user)->postJson('/admin-panel/get-products', ['category' => ['id' => $category->id, 'name' => 'cname']]);
-        $p = $response['products']['data'][0];
+        $p = $response['products']['data'][1];
 
         $this->assertTrue(2 === count($response['products']['data']));
         $this->assertTrue(1 === count($response2['products']['data']));

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddFilterRequest;
+use App\Models\Category;
 use App\Models\Filter;
 use App\Services\CategoryService;
 use App\Services\FilterService;
@@ -18,7 +19,11 @@ class AdminPanelFiltersController extends Controller
 
     public function filters()
     {
-        return view('adminPanel.filters');
+        $categories = Category::orderBy('parent_id')->orderBy('position')->get();
+        $categoryOptions = CategoryService::categoryOptions($categories);
+        return view('adminPanel.filters', [
+            'categoryOptions' => json_encode($categoryOptions),
+        ]);
     }
 
     public function addFilter(AddFilterRequest $request)
@@ -48,8 +53,8 @@ class AdminPanelFiltersController extends Controller
     public function getFilters(Request $request)
     {
         $categoryChildrenIds = [];
-        if ($request->category) {
-            $categoryChildrenIds = CategoryService::getCategoryChildrenIds([$request->category['id']]);
+        if ($request->categoryId) {
+            $categoryChildrenIds = CategoryService::getCategoryChildrenIds([$request->categoryId]);
         }
         $filters = FilterService::getFilters($request, $categoryChildrenIds, 20);
         return response()->json([

@@ -12,7 +12,7 @@ class FilterService
     {
         return Filter::when($categoryChildrenIds, function ($query, $categoryChildrenIds) {
             return $query->whereHas('categories', function (Builder $query) use ($categoryChildrenIds) {
-                $query->whereIn('id', $categoryChildrenIds);
+                $query->whereIn('categories.id', $categoryChildrenIds);
             });
         })->orderByDesc('id');
     }

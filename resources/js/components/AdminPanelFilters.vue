@@ -1,6 +1,14 @@
 <template>
     <div id="filters">
         <div class="mt-3 actions-global clearfix">
+            <div class='float-start'>
+                <select @change='getFilters()' v-model="selectedCategoryId" id='category-select' class="form-select">
+                    <option :value="null" selected>{{ __('Category select') }} ...</option>
+                    <option v-for="option in categoryOptions" :value="option.id">
+                        {{ option.patchName }}
+                    </option>
+                </select>
+            </div>
             <button @click='editFilter = null' data-bs-toggle="modal" data-bs-target="#addFilter"
                 class="btn btn-success float-end mt-1 mt-sm-0">
                 <i class="fa-solid fa-plus"></i> {{ __('Add filter') }}
@@ -37,10 +45,11 @@ import AdminPanelAddFilter from './AdminPanelAddFilter.vue'
 
 export default {
     components: { AdminPanelAddFilter },
-    props: ['adminPanelGetFiltersUrl', 'adminPanelAddFilterUrl', 'adminPanelDeleteFilterUrl'],
+    props: ['adminPanelGetFiltersUrl', 'adminPanelAddFilterUrl', 'adminPanelDeleteFilterUrl', 'categoryOptionsProp'],
     data() {
         return {
-            selectedCategory: null,
+            categoryOptions: JSON.parse(this.categoryOptionsProp),
+            selectedCategoryId: null,
             editFilter: null,
             filters: [],
         }
@@ -50,7 +59,7 @@ export default {
             this.filters = [];
             var that = this;
             axios
-                .post(url, { category: this.selectedCategory })
+                .post(url, { categoryId: this.selectedCategoryId })
                 .then(function (response) {
                     that.pagination = response.data.filters;
                     that.arrangeFilters(that.pagination.data);
