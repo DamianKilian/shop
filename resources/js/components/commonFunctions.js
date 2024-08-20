@@ -47,3 +47,13 @@ export function goToSubCategory(e, category) {
         this.categories[category.id] = [];
     }
 }
+
+export function generateUniqueNumber() {
+    window.appGeneratedUniqueNumbers = {};
+    var un = '';
+    do {
+        un = Math.random().toString().replace('0.', '');
+    } while (window.appGeneratedUniqueNumbers[un]);
+    window.appGeneratedUniqueNumbers[un] = un;
+    return un;
+}

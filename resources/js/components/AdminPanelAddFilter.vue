@@ -30,6 +30,7 @@
                                 </div>
                             </div>
                         </div>
+                        <FilterOptions :filter-options='filterOptions' />
                     </div>
                     <div class="modal-footer">
                         <button ref='closeModal' type='button' class="btn btn-secondary" data-bs-dismiss="modal">{{
@@ -49,7 +50,10 @@
 
 <script>
 
+import FilterOptions from './FilterOptions.vue'
+
 export default {
+    components: { FilterOptions },
     props: ['editFilter', 'adminPanelAddFilterUrl', 'getFilters'],
     data() {
         return {
@@ -57,11 +61,31 @@ export default {
                 name: '',
                 order_priority: ''
             },
+            filterOptions: [],
             addingFilter: false,
             globalError: '',
             globalSuccess: '',
             failedValidation: {},
             title: __('Add filter'),
+        }
+    },
+    watch: {
+        editFilter(newVal) {
+            if (!newVal) {
+                this.title = __('Add filter');
+                this.filter = {
+                    name: '',
+                    order_priority: ''
+                };
+                this.filterOptions = [];
+            } else {
+                this.title = __('Edit filter');
+                this.filter = {
+                    name: newVal.filter.name,
+                    order_priority: newVal.filter.order_priority,
+                };
+                this.filterOptions = newVal.filter.filter_options;
+            }
         }
     },
     methods: {

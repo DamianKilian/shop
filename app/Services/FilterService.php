@@ -14,7 +14,11 @@ class FilterService
             return $query->whereHas('categories', function (Builder $query) use ($categoryChildrenIds) {
                 $query->whereIn('categories.id', $categoryChildrenIds);
             });
-        })->orderByDesc('id');
+        })
+            ->with([
+                'filterOptions' => fn($query) => $query->orderBy('order_priority')
+            ])
+            ->orderBy('order_priority');
     }
 
     public static function getFilters(Request $request, $categoryChildrenIds = [], $paginate = 20)

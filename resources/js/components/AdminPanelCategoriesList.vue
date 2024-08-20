@@ -137,7 +137,7 @@ export default {
     mounted() {
     },
     updated() {
-        console.debug('updated');//mmmyyy
+        console.debug('updated');
     },
 }
 </script>

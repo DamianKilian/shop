@@ -55,7 +55,7 @@ export default {
         },
     },
     updated() {
-        console.debug('updated');//mmmyyy
+        console.debug('updated');
     },
     created() { },
     mounted() {

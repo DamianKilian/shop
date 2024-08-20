@@ -98,7 +98,7 @@ export default {
         this.arrangeCategories();
     },
     updated() {
-        console.debug('updated');//mmmyyy
+        console.debug('updated');
     },
     mounted() {
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AddFilterRequest;
 use App\Models\Category;
 use App\Models\Filter;
+use App\Models\FilterOption;
 use App\Services\CategoryService;
 use App\Services\FilterService;
 use Illuminate\Http\Request;
@@ -29,7 +30,10 @@ class AdminPanelFiltersController extends Controller
     public function addFilter(AddFilterRequest $request)
     {
         DB::transaction(function () use ($request) {
-            $this->createFilter($request);
+            $filter = $this->createFilter($request);
+            if ($request->filterOptionIds) {
+                $this->addFilterOptions($request, $filter);
+            }
         });
     }
 
@@ -47,7 +51,31 @@ class AdminPanelFiltersController extends Controller
                 'order_priority' => $request->order_priority,
             ]);
         }
-        return $filter->id;
+        return $filter;
+    }
+
+    protected function addFilterOptions($request, $filter)
+    {
+        foreach ($request->filterOptionIds as $key => $optionId) {
+            if ($optionId) {
+                $option = FilterOption::find($optionId);
+                if ("true" === $request->filterOptionRemoves[$key]) {
+                    $option->delete();
+                } else {
+                    $option->update([
+                        'name' => $request->filterOptionNames[$key],
+                        'order_priority' => $request->filterOptionOrderPriorities[$key],
+                        'filter_id' => $filter->id,
+                    ]);
+                }
+            } else {
+                FilterOption::create([
+                    'name' => $request->filterOptionNames[$key],
+                    'order_priority' => $request->filterOptionOrderPriorities[$key],
+                    'filter_id' => $filter->id,
+                ]);
+            }
+        }
     }
 
     public function getFilters(Request $request)
