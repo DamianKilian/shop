@@ -103,6 +103,69 @@ class FiltersTest extends TestCase
         $this->assertDatabaseCount('filter_options', 1);
     }
 
+    public function test_addFilter_Edit(): void
+    {
+        Filter::factory()->count(3)->create();
+        $filter = Filter::factory()->create([
+            'name' => 'f1',
+            'order_priority' => 1,
+        ]);
+        $filterOption = FilterOption::factory()->create([
+            'name' => 'o1',
+            'order_priority' => 1,
+            'filter_id' => $filter->id,
+        ]);
+        $filterOption2 = FilterOption::factory()->create([
+            'name' => 'oRemove',
+            'order_priority' => 2,
+            'filter_id' => $filter->id,
+        ]);
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->post('/admin-panel/add-filter', [
+            'filterId' => $filter->id,
+            'name' => 'f2',
+            'order_priority' => 2,
+            'filterOptionIds' => [
+                $filterOption->id,
+                null,
+                $filterOption2->id,
+            ],
+            'filterOptionNames' => [
+                'o2',
+                'oNew',
+                'oRemove',
+            ],
+            'filterOptionOrderPriorities' => [
+                2,
+                100,
+                101,
+            ],
+            'filterOptionRemoves' => [
+                null,
+                null,
+                'true',
+            ],
+
+        ]);
+
+        $this->assertDatabaseHas('filters', [
+            'id' => $filter->id,
+            'name' => 'f2',
+            'order_priority' => 2,
+        ]);
+        $this->assertDatabaseHas('filter_options', [
+            'id' => $filterOption->id,
+            'name' => 'o2',
+            'order_priority' => 2,
+        ]);
+        $this->assertSoftDeleted($filterOption2);
+        $this->assertDatabaseHas('filter_options', [
+            'name' => 'oNew',
+            'order_priority' => 100,
+        ]);
+    }
+
     public function test_deleteFilters(): void
     {
         $filter = Filter::factory()->create();
