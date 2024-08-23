@@ -46,7 +46,7 @@ import AdminPanelAddFilter from './AdminPanelAddFilter.vue'
 
 export default {
     components: { AdminPanelAddFilter },
-    props: ['adminPanelGetFiltersUrl', 'adminPanelAddFilterUrl', 'adminPanelDeleteFilterUrl', 'categoryOptionsProp'],
+    props: ['adminPanelGetFiltersUrl', 'adminPanelAddFilterUrl', 'adminPanelDeleteFiltersUrl', 'categoryOptionsProp'],
     data() {
         return {
             categoryOptions: JSON.parse(this.categoryOptionsProp),
@@ -56,6 +56,28 @@ export default {
         }
     },
     methods: {
+        deleteFilters: function () {
+            var that = this;
+            axios
+                .post(this.adminPanelDeleteFiltersUrl, { filters: this.getSelectedFilters() })
+                .then(function (response) {
+                    that.getFilters();
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    that.globalError = error.message;
+                });
+        },
+        getSelectedFilters: function () {
+            var selectedFilters = [];
+            _.forEach(this.filters, function (filter, key) {
+                if (filter.selected) {
+                    selectedFilters.push(filter.filter);
+                    return;
+                }
+            });
+            return selectedFilters;
+        },
         getFilters: function (url = this.adminPanelGetFiltersUrl) {
             this.filters = [];
             var that = this;

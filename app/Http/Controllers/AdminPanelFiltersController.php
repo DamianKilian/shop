@@ -27,6 +27,14 @@ class AdminPanelFiltersController extends Controller
         ]);
     }
 
+    public function deleteFilters(Request $request)
+    {
+        foreach ($request->filters as $filter) {
+            $productFilterIds[] = $filter['id'];
+        }
+        Filter::whereIn('id', $productFilterIds)->delete();
+    }
+
     public function addFilter(AddFilterRequest $request)
     {
         DB::transaction(function () use ($request) {
