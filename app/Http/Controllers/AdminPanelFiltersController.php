@@ -30,9 +30,9 @@ class AdminPanelFiltersController extends Controller
     public function deleteFilters(Request $request)
     {
         foreach ($request->filters as $filter) {
-            $productFilterIds[] = $filter['id'];
+            $filterIds[] = $filter['id'];
         }
-        Filter::whereIn('id', $productFilterIds)->delete();
+        Filter::whereIn('id', $filterIds)->delete();
     }
 
     public function addFilter(AddFilterRequest $request)

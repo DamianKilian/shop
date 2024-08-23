@@ -103,4 +103,22 @@ class FiltersTest extends TestCase
         $this->assertDatabaseCount('filter_options', 1);
     }
 
+    public function test_deleteFilters(): void
+    {
+        $filter = Filter::factory()->create();
+        $filter2 = Filter::factory()->create();
+        $filter3 = Filter::factory()->create();
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->postJson('/admin-panel/delete-filters', [
+            'filters' => [
+                ['id' => $filter->id,],
+                ['id' => $filter2->id,],
+            ]
+        ]);
+
+        $this->assertSoftDeleted($filter);
+        $this->assertSoftDeleted($filter2);
+        $this->assertNotSoftDeleted($filter3);
+    }
 }

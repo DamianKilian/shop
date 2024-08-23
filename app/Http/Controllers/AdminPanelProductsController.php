@@ -25,29 +25,13 @@ class AdminPanelProductsController extends Controller
     {
     }
 
+
     public function deleteProducts(Request $request)
     {
-        DB::transaction(function () use ($request) {
-            $this->deleteProductsDb($request);
-        });
-    }
-
-    protected function deleteProductsDb($request)
-    {
         foreach ($request->products as $product) {
-            $productPhotosIds = [];
-            foreach ($product['product_photos'] as $product_photo) {
-                $productPhotosIds[] = $product_photo['id'];
-            }
-            if ($productPhotosIds) {
-                ProductPhoto::where('product_id', $product['id'])
-                    ->whereIn('id', $productPhotosIds)
-                    ->delete();
-            }
-            Product::where('id', $product['id'])
-                ->where('title', $product['title'])
-                ->delete();
+            $productIds[] = $product['id'];
         }
+        Product::whereIn('id', $productIds)->delete();
     }
 
     public function addProduct(AddProductRequest $request)

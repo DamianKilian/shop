@@ -128,7 +128,9 @@ class ProductsTest extends TestCase
             'categoryId' => $category->id,
             'files' => [$productPhoto],
             'filesArr' => json_encode([
-                ['positionInInput' => 0], ['id' => $productPhotoDb->id, 'removed' => false], ['id' => $productPhotoDb2->id, 'removed' => true]
+                ['positionInInput' => 0],
+                ['id' => $productPhotoDb->id, 'removed' => false],
+                ['id' => $productPhotoDb2->id, 'removed' => true]
             ]),
         ]);
 
@@ -153,49 +155,25 @@ class ProductsTest extends TestCase
     {
         $category = Category::factory()->create();
         $product = Product::factory()->create([
-            'title' => 'title',
             'category_id' => $category->id,
         ]);
         $product2 = Product::factory()->create([
-            'title' => 'title2',
             'category_id' => $category->id,
         ]);
         $product3 = Product::factory()->create([
-            'title' => 'title3',
             'category_id' => $category->id,
-        ]);
-        $productPhoto = ProductPhoto::factory()->create([
-            'product_id' => $product->id,
-        ]);
-        $productPhoto2 = ProductPhoto::factory()->create([
-            'product_id' => $product->id,
-        ]);
-        $productPhoto3 = ProductPhoto::factory()->create([
-            'product_id' => $product3->id,
         ]);
         $user = User::factory()->create();
 
         $this->actingAs($user)->postJson('/admin-panel/delete-products', [
             'products' => [
-                [
-                    'id' => $product->id,
-                    'title' => 'title',
-                    'product_photos' => [
-                        ['id' => $productPhoto->id],
-                        ['id' => $productPhoto2->id]
-                    ]
-                ],
-                [
-                    'id' => $product2->id,
-                    'title' => 'title2',
-                    'product_photos' => []
-                ],
+                ['id' => $product->id,],
+                ['id' => $product2->id,],
             ]
         ]);
 
         $this->assertSoftDeleted($product);
         $this->assertSoftDeleted($product2);
-        $this->assertSoftDeleted($productPhoto);
-        $this->assertSoftDeleted($productPhoto2);
+        $this->assertNotSoftDeleted($product3);
     }
 }
