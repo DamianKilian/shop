@@ -2,6 +2,9 @@
     .product {
         height: 400px;
         overflow: hidden;
+        &.filter{
+            height: 250px;
+        }
         &:hover {
             overflow: visible;
             z-index: 10;

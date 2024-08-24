@@ -22,33 +22,32 @@
         :adminPanelAddFilterUrl='adminPanelAddFilterUrl' />
     <div v-if='filters.length' id='products-container' class='clearfix pt-3'>
         <div v-for="(filter, index) in filters" :key="filter.id"
-            :class='{ "bg-primary bg-opacity-75": filter.selected }' class="product pt-1 pb-1">
+            :class='{ "bg-primary bg-opacity-75": filter.selected }' class="product filter pt-1 pb-1">
             <div class="card">
-                <div @click='filter.selected = !filter.selected' class="card-img border-bottom">
+                <div @click='filter.selected = !filter.selected' style='height: 30px;'>
                     <input class="m-1 form-check-input position-absolute" type="checkbox" v-model="filter.selected">
                     <button @click.stop='editFilter = filter' data-bs-toggle="modal" data-bs-target="#addFilter"
                         class="btn btn-warning btn-sm edit-product"><i class="fa-solid fa-pen-to-square"></i> <span>{{
                             __('Edit') }}</span></button>
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title fw-bolder">{{ filter.filter.name }}</h5>
-                    <p>descStr descStr descStr</p>
+                    <FilterDisplay :filter='filter.filter' />
                 </div>
             </div>
         </div>
     </div>
     <div v-else class="alert alert-light mt-3 text-center" role="alert">{{ __('No Filters') }}</div>
-    <AdminPanelProductsPagination :pagination='pagination' :getItems='getFilters' v-if='filters.length'/>
+    <AdminPanelProductsPagination :pagination='pagination' :getItems='getFilters' v-if='filters.length' />
 </template>
 
 <script>
 
 import AdminPanelAddFilter from './AdminPanelAddFilter.vue'
-
 import AdminPanelProductsPagination from './AdminPanelProductsPagination.vue'
+import FilterDisplay from './FilterDisplay.vue'
 
 export default {
-    components: { AdminPanelAddFilter, AdminPanelProductsPagination },
+    components: { AdminPanelAddFilter, AdminPanelProductsPagination, FilterDisplay },
     props: ['adminPanelGetFiltersUrl', 'adminPanelAddFilterUrl', 'adminPanelDeleteFiltersUrl', 'categoryOptionsProp'],
     data() {
         return {
