@@ -38,14 +38,17 @@
         </div>
     </div>
     <div v-else class="alert alert-light mt-3 text-center" role="alert">{{ __('No Filters') }}</div>
+    <AdminPanelProductsPagination :pagination='pagination' :getItems='getFilters' v-if='filters.length'/>
 </template>
 
 <script>
 
 import AdminPanelAddFilter from './AdminPanelAddFilter.vue'
 
+import AdminPanelProductsPagination from './AdminPanelProductsPagination.vue'
+
 export default {
-    components: { AdminPanelAddFilter },
+    components: { AdminPanelAddFilter, AdminPanelProductsPagination },
     props: ['adminPanelGetFiltersUrl', 'adminPanelAddFilterUrl', 'adminPanelDeleteFiltersUrl', 'categoryOptionsProp'],
     data() {
         return {
@@ -53,6 +56,7 @@ export default {
             selectedCategoryId: null,
             editFilter: null,
             filters: [],
+            pagination: null,
         }
     },
     methods: {

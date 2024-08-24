@@ -72,7 +72,7 @@
         </div>
     </div>
     <div v-else class="alert alert-light mt-3" role="alert">{{ __('No products') }}</div>
-    <AdminPanelProductsPagination :pagination='pagination' :getProducts='getProducts' />
+    <AdminPanelProductsPagination :pagination='pagination' :getItems='getProducts' v-if='products.length'/>
 </template>
 
 <script>

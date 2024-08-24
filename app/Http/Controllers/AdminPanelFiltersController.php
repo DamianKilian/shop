@@ -92,7 +92,7 @@ class AdminPanelFiltersController extends Controller
         if ($request->categoryId) {
             $categoryChildrenIds = CategoryService::getCategoryChildrenIds([$request->categoryId]);
         }
-        $filters = FilterService::getFilters($request, $categoryChildrenIds, 20);
+        $filters = FilterService::getFilters($request, $categoryChildrenIds);
         return response()->json([
             'filters' => $filters,
         ]);
