@@ -23,9 +23,11 @@
         <button :class="{ 'd-block': isFilterChanged('price') }" @click="applyFilters()" type="button"
             class="btn btn-warning float-end apply-filters-btn">{{ __('Apply filters') }}</button>
     </div>
-    @foreach ($filters as $filter)
-        <div class="mb-2">
-            <filter-display :filter='@json($filter)'></filter-display>
-        </div>
-    @endforeach
+    @if (isset($filters))
+        @foreach ($filters as $filter)
+            <div class="mb-2">
+                <filter-display :filter='@json($filter)'></filter-display>
+            </div>
+        @endforeach
+    @endif
 </div>
