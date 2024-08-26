@@ -1,5 +1,5 @@
 <div :class="{ 'd-block': !this.$refs.homePage }" v-if="!this.$refs.homePage" id="menu-filters">
-    <div class="fs-3 fw-bolder">Filtry</div>
+    <div class="fs-3 fw-bolder" v-html="__('Filters')"></div>
     <div class="price-filter">
         <div class="label-container">
             <label for="price-filter-min" class="form-label">{{ __('Min. price') }}</label>
@@ -23,4 +23,9 @@
         <button :class="{ 'd-block': isFilterChanged('price') }" @click="applyFilters()" type="button"
             class="btn btn-warning float-end apply-filters-btn">{{ __('Apply filters') }}</button>
     </div>
+    @foreach ($filters as $filter)
+        <div class="mb-2">
+            <filter-display :filter='@json($filter)'></filter-display>
+        </div>
+    @endforeach
 </div>

@@ -1,5 +1,8 @@
 <script>
+import FilterDisplay from './FilterDisplay.vue'
+
 export default {
+    components: { FilterDisplay },
     data() {
         return {
             productsViewLoaded: false,

@@ -31,7 +31,7 @@
                             __('Edit') }}</span></button>
                 </div>
                 <div class="card-body">
-                    <FilterDisplay :filter='filter.filter' />
+                    <FilterDisplay :filter='filter.filter' :opInfo='true'/>
                 </div>
             </div>
         </div>

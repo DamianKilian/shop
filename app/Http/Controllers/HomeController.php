@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\GetProductsViewRequest;
 use App\Models\Category;
+use App\Models\Filter;
 use App\Services\CategoryService;
+use App\Services\FilterService;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,7 +37,10 @@ class HomeController extends Controller
             $activeLinks .= ', ._' . $parent->slug;
             $parentIds[$parent->parent_id] = $parent->parent_id;
         }
+        $parentCategoriesIds = array_keys(CategoryService::getParentCategories($category->id, $categories));
+        $filters = CategoryService::getCategoryFilters($parentCategoriesIds);
         return view('category', [
+            'filters' => $filters,
             'maxProductsPrice' => ProductService::getMaxProductsPrice($categoryChildrenIds),
             'categoryChildrenIds' => json_encode($categoryChildrenIds),
             'products' => $products,

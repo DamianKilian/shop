@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Category;
+use App\Models\Filter;
 use Traversable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -56,6 +57,17 @@ class CategoryService
             $parentCategories[$parent->id] = $parent;
         }
         return array_reverse($parentCategories, true);
+    }
+
+    public static function getCategoryFilters($parentCategoriesIds)
+    {
+        return Cache::remember('categoryFilters' . implode($parentCategoriesIds), 60, function () use ($parentCategoriesIds) {
+            return Filter::whereHas('categories', function (Builder $query) use ($parentCategoriesIds) {
+                $query->whereIn('categories.id', $parentCategoriesIds);
+            })
+                ->with(['filterOptions' => fn($query) => $query->orderBy('order_priority')])
+                ->orderBy('order_priority')->get();
+        });
     }
 
     // public static function categoriesIdTree(Traversable $categories, $parentId = null, $categoriesIdTree = [])
