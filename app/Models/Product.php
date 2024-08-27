@@ -22,4 +22,9 @@ class Product extends Model
     {
         return $this->hasMany(ProductPhoto::class);
     }
+
+    public function filterOptions()
+    {
+        return $this->belongsToMany(FilterOption::class);
+    }
 }

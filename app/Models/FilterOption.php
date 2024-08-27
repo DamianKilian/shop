@@ -17,4 +17,9 @@ class FilterOption extends Model
     {
         return $this->belongsTo(Filter::class);
     }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class);
+    }
 }
