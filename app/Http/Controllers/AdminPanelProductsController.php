@@ -21,9 +21,7 @@ class AdminPanelProductsController extends Controller
         $this->middleware('auth');
     }
 
-    public function suggestions(Request $request)
-    {
-    }
+    public function suggestions(Request $request) {}
 
 
     public function deleteProducts(Request $request)
@@ -32,6 +30,24 @@ class AdminPanelProductsController extends Controller
             $productIds[] = $product['id'];
         }
         Product::whereIn('id', $productIds)->delete();
+    }
+
+    public function getProductFilterOptions(Request $request)
+    {
+        $filters = [];
+        $filterOptions = [];
+        if ($request->categoryId) {
+            $categories = CategoryService::getCategories();
+            $parentCategoriesIds = array_keys(CategoryService::getParentCategories($request->categoryId, $categories));
+            $filters = CategoryService::getCategoryFilters($parentCategoriesIds);
+        }
+        if ($request->productId) {
+            $filterOptions = Product::find($request->productId)->filterOptions()->get()->keyBy('id');
+        }
+        return response()->json([
+            'filters' => $filters,
+            'filterOptions' => $filterOptions,
+        ]);
     }
 
     public function addProduct(AddProductRequest $request)
@@ -68,6 +84,7 @@ class AdminPanelProductsController extends Controller
         if ("[]" !== $request->filesArr) {
             $this->addImages($request, $product->id);
         }
+        $product->filterOptions()->sync($request->filterOptions);
         return $product->id;
     }
 

@@ -57,14 +57,23 @@
                         </div>
                         <div class="mb-3">
                             <label for="category-select" class="form-label"><b>{{ __('Category select') }}</b></label>
-                            <select v-model="selectedCategoryId" id='category-select'
-                                :class='{ "is-invalid": failedValidation.categoryId }'
+                            <select v-model="selectedCategoryId" @change='getProductFilterOptions(selectedCategoryId)'
+                                id='category-select' :class='{ "is-invalid": failedValidation.categoryId }'
                                 class="form-select form-select-lg">
                                 <option :value="null" selected>{{ __('Category select') }} ...</option>
                                 <option v-for="option in categoryOptions" :value="option.id">
                                     {{ option.patchName }}
                                 </option>
                             </select>
+                            <div v-for="(filter, index) in productFilterOptions.filters" :key="filter.id"
+                                class="product filter pt-1 pb-1 d-inline-block me-1">
+                                <div class="card" style='min-width: 200px; min-height: 250px;'>
+                                    <div class="card-body">
+                                        <FilterDisplay :filter='filter'
+                                            :filter-options='productFilterOptions.filterOptions' />
+                                    </div>
+                                </div>
+                            </div>
                             <div class="invalid-feedback">
                                 {{ failedValidation.categoryId ? failedValidation.categoryId[0] : '' }}
                             </div>
@@ -101,10 +110,11 @@ import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 // import SimpleImage from "@editorjs/simple-image";
 import List from "@editorjs/list";
+import FilterDisplay from './FilterDisplay.vue'
 
 export default {
-    components: { DragDropFileUploader },
-    props: ['editProduct', 'adminPanelAddProductUrl', 'selectedCategory', 'getProducts', 'categoryOptions'],
+    components: { DragDropFileUploader, FilterDisplay },
+    props: ['editProduct', 'adminPanelAddProductUrl', 'adminPanelGetProductFilterOptionsUrl', 'selectedCategory', 'getProducts', 'categoryOptions'],
     data() {
         return {
             selectedCategoryId: null,
@@ -112,6 +122,10 @@ export default {
                 val: '',
                 slug: '',
                 slugCustomized: false
+            },
+            productFilterOptions: {
+                filters: [],
+                filterOptions: [],
             },
             filesArr: [],
             editor: null,
@@ -128,6 +142,7 @@ export default {
             this.failedValidation = {};
             this.globalSuccess = '';
             this.globalError = '';
+            this.getProductFilterOptions();
         },
         categoryId(newVal) {
             this.selectedCategoryId = newVal;
@@ -146,6 +161,7 @@ export default {
             } else if (this.selectedCategory) {
                 return this.selectedCategory.id;
             }
+            return null;
         }
     },
     methods: {
@@ -190,6 +206,27 @@ export default {
                 });
             }
             this.filesArr = photos;
+        },
+        getProductFilterOptions: function (categoryId) {
+            this.productFilterOptions = {
+                filters: [],
+                filterOptions: [],
+            };
+            var productId = null;
+            if (this.editProduct) {
+                productId = this.editProduct.product.id;
+                categoryId = categoryId || this.editProduct.product.category.id;
+            } else if(!categoryId){
+                return;
+            }
+            var that = this;
+            axios.post(this.adminPanelGetProductFilterOptionsUrl, { categoryId: categoryId, productId: productId })
+                .then(function (response) {
+                    that.productFilterOptions = {
+                        filters: response.data.filters,
+                        filterOptions: response.data.filterOptions,
+                    };
+                });
         },
         addProduct: function (e) {
             var that = this;

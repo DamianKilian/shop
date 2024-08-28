@@ -38,8 +38,9 @@
         <div v-if="globalError" class="text-bg-danger float-start mt-1">{{ globalError }}</div>
     </div>
     <AdminPanelAddProduct :editProduct='editProduct' :getProducts='getProducts'
-        :adminPanelAddProductUrl='adminPanelAddProductUrl' :selectedCategory='selectedCategory'
-        :categoryOptions='categoryOptions' />
+        :adminPanelAddProductUrl='adminPanelAddProductUrl'
+        :adminPanelGetProductFilterOptionsUrl='adminPanelGetProductFilterOptionsUrl'
+        :selectedCategory='selectedCategory' :categoryOptions='categoryOptions' />
     <search @search="(searchValue) => { getProducts(adminPanelGetProductsUrl, searchValue) }"></search>
     <search-filters @remove-search-value-submitted="searchValueSubmitted = ''; getProducts()"
         @remove-selected-category="selectedCategory.selected = false; getProducts()"
@@ -72,7 +73,7 @@
         </div>
     </div>
     <div v-else class="alert alert-light mt-3" role="alert">{{ __('No products') }}</div>
-    <AdminPanelProductsPagination :pagination='pagination' :getItems='getProducts' v-if='products.length'/>
+    <AdminPanelProductsPagination :pagination='pagination' :getItems='getProducts' v-if='products.length' />
 </template>
 
 <script>
@@ -83,7 +84,7 @@ import { goToCategory, arrangeCategories, setBreadcrumb } from './commonFunction
 
 export default {
     components: { AdminPanelProductsList, AdminPanelAddProduct, AdminPanelProductsPagination },
-    props: ['categoriesProp', 'adminPanelGetProductsUrl', 'adminPanelAddProductUrl', 'adminPanelDeleteProductsUrl', 'categoryOptionsProp'],
+    props: ['categoriesProp', 'adminPanelGetProductsUrl', 'adminPanelAddProductUrl', 'adminPanelGetProductFilterOptionsUrl', 'adminPanelDeleteProductsUrl', 'categoryOptionsProp'],
     data() {
         return {
             categoryOptions: JSON.parse(this.categoryOptionsProp),
