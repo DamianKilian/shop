@@ -8,7 +8,6 @@
                 </div>
                 <form @submit='addProduct' ref='addProduct' method="post" enctype="multipart/form-data"
                     class='position-relative'>
-                    <input :value='selectedCategoryId' name='categoryId' type='hidden' />
                     <div class="modal-body">
                         <div class="clearfix">
                             <div class="form-floating mb-3 float-start" style="width: 49%;">
@@ -57,8 +56,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="category-select" class="form-label"><b>{{ __('Category select') }}</b></label>
-                            <select v-model="selectedCategoryId" @change='getProductFilterOptions(selectedCategoryId)'
-                                id='category-select' :class='{ "is-invalid": failedValidation.categoryId }'
+                            <select name='categoryId' v-model="selectedCategoryId"
+                                @change='getProductFilterOptions(selectedCategoryId)' id='category-select'
+                                :class='{ "is-invalid": failedValidation.categoryId }'
                                 class="form-select form-select-lg">
                                 <option :value="null" selected>{{ __('Category select') }} ...</option>
                                 <option v-for="option in categoryOptions" :value="option.id">
@@ -216,7 +216,7 @@ export default {
             if (this.editProduct) {
                 productId = this.editProduct.product.id;
                 categoryId = categoryId || this.editProduct.product.category.id;
-            } else if(!categoryId){
+            } else if (!categoryId) {
                 return;
             }
             var that = this;
