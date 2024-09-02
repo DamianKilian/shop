@@ -41,7 +41,9 @@
         :adminPanelAddProductUrl='adminPanelAddProductUrl'
         :adminPanelGetProductFilterOptionsUrl='adminPanelGetProductFilterOptionsUrl'
         :selectedCategory='selectedCategory' :categoryOptions='categoryOptions' />
-    <search @search="(searchValue) => { getProducts(adminPanelGetProductsUrl, searchValue) }"></search>
+    <div class="mt-3">
+        <search @search="(searchValue) => { getProducts(adminPanelGetProductsUrl, searchValue) }"></search>
+    </div>
     <search-filters @remove-search-value-submitted="searchValueSubmitted = ''; getProducts()"
         @remove-selected-category="selectedCategory.selected = false; getProducts()"
         :selectedCategory='selectedCategory' :searchValueSubmitted='searchValueSubmitted'></search-filters>
