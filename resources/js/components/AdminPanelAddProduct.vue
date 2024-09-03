@@ -114,7 +114,14 @@ import FilterDisplay from './FilterDisplay.vue'
 
 export default {
     components: { DragDropFileUploader, FilterDisplay },
-    props: ['editProduct', 'adminPanelAddProductUrl', 'adminPanelGetProductFilterOptionsUrl', 'selectedCategory', 'getProducts', 'categoryOptions'],
+    props: ['editProduct',
+        'adminPanelAddProductUrl',
+        'adminPanelGetProductFilterOptionsUrl',
+        'adminPanelGetProductDescUrl',
+        'selectedCategory',
+        'getProducts',
+        'categoryOptions'
+    ],
     data() {
         return {
             selectedCategoryId: null,
@@ -124,6 +131,8 @@ export default {
                 slugCustomized: false
             },
             productFilterOptions: {
+                productId: null,
+                categoryId: null,
                 filters: [],
                 filterOptions: [],
             },
@@ -143,6 +152,7 @@ export default {
             this.globalSuccess = '';
             this.globalError = '';
             this.getProductFilterOptions();
+            this.getProductDesc();
         },
         categoryId(newVal) {
             this.selectedCategoryId = newVal;
@@ -175,7 +185,6 @@ export default {
         },
         setEditForm: function () {
             if (this.editProduct) {
-                this.editor.blocks.render(JSON.parse(this.editProduct.product.description));
                 this.title = {
                     val: this.editProduct.product.title,
                     slug: this.editProduct.product.slug,
@@ -184,7 +193,6 @@ export default {
                 this.$refs.price.value = this.editProduct.product.price;
                 this.$refs.quantity.value = this.editProduct.product.quantity;
             } else {
-                this.editor.blocks.clear();
                 this.title = {
                     val: '',
                     slug: '',
@@ -207,21 +215,41 @@ export default {
             }
             this.filesArr = photos;
         },
-        getProductFilterOptions: function (categoryId) {
+        getProductDesc: function () {
+            this.editor.blocks.clear();
+            if (!this.editProduct) {
+                return;
+            }
+            var that = this;
+            axios.post(this.adminPanelGetProductDescUrl, { productId: this.editProduct.product.id })
+                .then(function (response) {
+                    if (!that.editProduct || response.data.productId !== that.editProduct.product.id) {
+                        return;
+                    }
+                    that.editor.blocks.render(JSON.parse(response.data.desc));
+                });
+        },
+        getProductFilterOptions: function () {
             this.productFilterOptions = {
                 filters: [],
                 filterOptions: [],
             };
             var productId = null;
+            var categoryId = null;
             if (this.editProduct) {
                 productId = this.editProduct.product.id;
                 categoryId = categoryId || this.editProduct.product.category.id;
             } else if (!categoryId) {
                 return;
             }
+            this.productFilterOptions.productId = productId;
+            this.productFilterOptions.categoryId = categoryId;
             var that = this;
             axios.post(this.adminPanelGetProductFilterOptionsUrl, { categoryId: categoryId, productId: productId })
                 .then(function (response) {
+                    if (response.data.categoryId !== categoryId || response.data.productId !== productId) {
+                        return;
+                    }
                     that.productFilterOptions = {
                         filters: response.data.filters,
                         filterOptions: response.data.filterOptions,

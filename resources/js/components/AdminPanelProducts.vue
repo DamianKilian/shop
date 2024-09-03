@@ -40,6 +40,7 @@
     <AdminPanelAddProduct :editProduct='editProduct' :getProducts='getProducts'
         :adminPanelAddProductUrl='adminPanelAddProductUrl'
         :adminPanelGetProductFilterOptionsUrl='adminPanelGetProductFilterOptionsUrl'
+        :adminPanelGetProductDescUrl='adminPanelGetProductDescUrl'
         :selectedCategory='selectedCategory' :categoryOptions='categoryOptions' />
     <div class="mt-3">
         <search @search="(searchValue) => { getProducts(adminPanelGetProductsUrl, searchValue) }"></search>
@@ -86,7 +87,14 @@ import { goToCategory, arrangeCategories, setBreadcrumb } from './commonFunction
 
 export default {
     components: { AdminPanelProductsList, AdminPanelAddProduct, AdminPanelProductsPagination },
-    props: ['categoriesProp', 'adminPanelGetProductsUrl', 'adminPanelAddProductUrl', 'adminPanelGetProductFilterOptionsUrl', 'adminPanelDeleteProductsUrl', 'categoryOptionsProp'],
+    props: ['categoriesProp',
+        'adminPanelGetProductsUrl',
+        'adminPanelAddProductUrl',
+        'adminPanelGetProductFilterOptionsUrl',
+        'adminPanelGetProductDescUrl',
+        'adminPanelDeleteProductsUrl',
+        'categoryOptionsProp'
+    ],
     data() {
         return {
             categoryOptions: JSON.parse(this.categoryOptionsProp),

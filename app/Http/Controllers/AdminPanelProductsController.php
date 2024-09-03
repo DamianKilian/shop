@@ -32,6 +32,15 @@ class AdminPanelProductsController extends Controller
         Product::whereIn('id', $productIds)->delete();
     }
 
+    public function getProductDesc(Request $request)
+    {
+        $desc = Product::select('description')->find($request->productId)->description;
+        return response()->json([
+            'desc' => $desc,
+            'productId' => $request->productId,
+        ]);
+    }
+
     public function getProductFilterOptions(Request $request)
     {
         $filters = [];
@@ -42,11 +51,13 @@ class AdminPanelProductsController extends Controller
             $filters = CategoryService::getCategoryFilters($parentCategoriesIds);
         }
         if ($request->productId) {
-            $filterOptions = Product::find($request->productId)->filterOptions()->get()->keyBy('id');
+            $filterOptions = Product::find($request->productId)->filterOptions()->get()->pluck('id');
         }
         return response()->json([
             'filters' => $filters,
             'filterOptions' => $filterOptions,
+            'categoryId' => $request->categoryId,
+            'productId' => $request->productId,
         ]);
     }
 

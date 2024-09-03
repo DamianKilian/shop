@@ -7,6 +7,7 @@
             admin-panel-delete-products-url="{{ route('admin-panel-delete-products') }}"
             admin-panel-get-products-url="{{ route('admin-panel-get-products') }}"
             admin-panel-get-product-filter-options-url="{{ route('admin-panel-get-product-filter-options') }}"
+            admin-panel-get-product-desc-url="{{ route('admin-panel-get-product-desc') }}"
             admin-panel-add-product-url="{{ route('admin-panel-add-product') }}">
         </admin-panel-products>
     </div>
