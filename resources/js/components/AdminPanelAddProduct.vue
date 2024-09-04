@@ -229,17 +229,17 @@ export default {
                     that.editor.blocks.render(JSON.parse(response.data.desc));
                 });
         },
-        getProductFilterOptions: function () {
+        getProductFilterOptions: function (categoryId) {
             this.productFilterOptions = {
                 filters: [],
                 filterOptions: [],
             };
             var productId = null;
-            var categoryId = null;
             if (this.editProduct) {
                 productId = this.editProduct.product.id;
                 categoryId = categoryId || this.editProduct.product.category.id;
-            } else if (!categoryId) {
+            }
+            if (!categoryId) {
                 return;
             }
             this.productFilterOptions.productId = productId;
