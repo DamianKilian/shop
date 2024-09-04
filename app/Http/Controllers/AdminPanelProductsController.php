@@ -45,11 +45,9 @@ class AdminPanelProductsController extends Controller
     {
         $filters = [];
         $filterOptions = [];
-        if ($request->categoryId) {
-            $categories = CategoryService::getCategories();
-            $parentCategoriesIds = array_keys(CategoryService::getParentCategories($request->categoryId, $categories));
-            $filters = CategoryService::getCategoryFilters($parentCategoriesIds);
-        }
+        $categories = CategoryService::getCategories();
+        $parentCategoriesIds = array_keys(CategoryService::getParentCategories($request->categoryId, $categories));
+        $filters = CategoryService::getCategoryFilters($parentCategoriesIds);
         if ($request->productId) {
             $filterOptions = Product::find($request->productId)->filterOptions()->get()->pluck('id');
         }

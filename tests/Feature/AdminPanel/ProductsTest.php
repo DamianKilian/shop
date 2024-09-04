@@ -3,6 +3,8 @@
 namespace Tests\Feature\AdminPanel;
 
 use App\Models\Category;
+use App\Models\Filter;
+use App\Models\FilterOption;
 use App\Models\Product;
 use App\Models\ProductPhoto;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -11,9 +13,46 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
+use function PHPUnit\Framework\assertTrue;
+
 class ProductsTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_getProductFilterOptions(): void
+    {
+        Filter::factory()->count(3)->create();
+        $filter = Filter::factory()->create();
+        $filter2 = Filter::factory()->create();
+        $filterOption = FilterOption::factory()->create([
+            'filter_id' => $filter->id,
+        ]);
+        $filterOption2 = FilterOption::factory()->create([
+            'filter_id' => $filter->id,
+        ]);
+        $filterOption3 = FilterOption::factory()->create([
+            'filter_id' => $filter2->id,
+        ]);
+        $categoryParent = Category::factory()->create();
+        $category = Category::factory()->create([
+            'parent_id' => $categoryParent->id
+        ]);
+        $product = Product::factory()->create([
+            'category_id' => $category->id,
+        ]);
+        $category->filters()->save($filter);
+        $product->filterOptions()->save($filterOption);
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->postJson('/admin-panel/get-product-filter-options', [
+                'categoryId' => $category->id,
+                'productId' => $product->id,
+            ]);
+
+        $response->assertStatus(200);
+        assertTrue($filterOption->id === $response['filterOptions'][0]);
+    }
 
     public function test_products(): void
     {
