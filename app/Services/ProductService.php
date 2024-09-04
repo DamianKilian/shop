@@ -17,6 +17,7 @@ class ProductService
         $pf['searchValue'] = $request->searchValue;
         $pf['maxPrice'] = $request->maxPrice;
         $pf['minPrice'] = $request->minPrice;
+        $pf['filterOptions'] = $request->filterOptions;
         return $pf;
     }
 
@@ -52,6 +53,11 @@ class ProductService
             return $query->where('price', '<=', $maxPrice);
         })->when($pf['minPrice'], function ($query, $minPrice) {
             return $query->where('price', '>=', $minPrice);
+        })->when($pf['filterOptions'], function ($query, $filterOptions) {
+            $filterOptions = array_map('intval', explode("|", $filterOptions));
+            return $query->whereHas('filterOptions', function (Builder $query) use ($filterOptions) {
+                $query->whereIn('filter_options.id', $filterOptions);
+            });
         })->when($categoryChildrenIds, function ($query, $categoryChildrenIds) {
             return $query->whereIn('category_id', $categoryChildrenIds);
         })->when($withCategory, function ($query) {

@@ -1,6 +1,6 @@
 <div :class="{ 'd-block': !this.$refs.homePage }" v-if="!this.$refs.homePage" id="menu-filters">
     <div class="fs-3 fw-bolder" v-html="__('Filters')"></div>
-    <div class="price-filter">
+    <div class="price-filter clearfix">
         <div class="label-container">
             <label for="price-filter-min" class="form-label">{{ __('Min. price') }}</label>
             <input class="form-control p-0" :value="queryStrParams.minPrice"
@@ -26,7 +26,10 @@
     @if (isset($filters))
         @foreach ($filters as $filter)
             <div class="mb-2">
-                <filter-display :filter='@json($filter)'></filter-display>
+                <filter-display v-if='Object.keys(queryStrParamsInitialVals).length'
+                    :filter='@json($filter)' :query-str-params='queryStrParams'
+                    :query-str-params-initial-vals='queryStrParamsInitialVals'
+                    :checked-options-global='checkedOptionsGlobal' :apply-filters='applyFilters'></filter-display>
             </div>
         @endforeach
     @endif

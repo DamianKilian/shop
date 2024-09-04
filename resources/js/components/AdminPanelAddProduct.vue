@@ -70,7 +70,7 @@
                                 <div class="card" style='min-width: 200px; min-height: 250px;'>
                                     <div class="card-body">
                                         <FilterDisplay :filter='filter'
-                                            :filter-options='productFilterOptions.filterOptions' />
+                                            :filterOptionsStart='productFilterOptions.filterOptions' />
                                     </div>
                                 </div>
                             </div>

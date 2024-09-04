@@ -5,7 +5,6 @@ export default {
     components: { FilterDisplay },
     data() {
         return {
-            productsViewLoaded: false,
             currentPage: null,
             lastPage: parseInt(window.lastPage),
             getProductsViewAllCategoriesUrl: window.getProductsViewAllCategoriesUrl,
@@ -18,7 +17,9 @@ export default {
                 searchValue: '',
                 minPrice: null,
                 maxPrice: null,
+                filterOptions: '',
             },
+            checkedOptionsGlobal: [],
             queryStrParamsInitialVals: {},
             getProductsViewData: {
                 categoryChildrenIds: window.categoryChildrenIds
@@ -47,15 +48,16 @@ export default {
             });
         },
         applyFilters: function () {
-            this.getProductsView();
+            this.queryStrParams.filterOptions = this.checkedOptionsGlobal.sort().join('|');
+            return this.getProductsView();
         },
         pageChange: function (url) {
             const searchParams = new URLSearchParams(url.substring(url.indexOf("?")));
-            this.getProductsView({ page: parseInt(searchParams.get("page")) }, true);
+            return this.getProductsView({ page: parseInt(searchParams.get("page")) }, true);
         },
         searchProducts: function (searchValue) {
             var searchValue = _.trim(searchValue);
-            this.getProductsView({ searchValue: searchValue });
+            return this.getProductsView({ searchValue: searchValue });
         },
         getProductsView: function (queryStrParams = {}, pageChange = false) {
             this.getingProductsView = true;
@@ -69,23 +71,22 @@ export default {
                 return this.currentPage;
             }
             if (this.getProductsViewData.categoryChildrenIds) {
-                this.getProductsViewRequest();
+                return this.getProductsViewRequest();
             } else {
-                this.getProductsViewRequest(this.getProductsViewAllCategoriesUrl, pageChange);
+                return this.getProductsViewRequest(this.getProductsViewAllCategoriesUrl, pageChange);
             }
         },
         getProductsViewRequest: function (url = this.getProductsViewUrl, pageChange = false) {
             var that = this;
             var url = this.setQueryStrParams(url).toString();
             this.failedValidation = {};
-            axios
+            return axios
                 .post(url, this.getProductsViewData)
                 .then(function (response) {
                     that.$refs.productsView.innerHTML = response.data;
                     that.currentPage = that.queryStrParams.page;
                     window.history.replaceState(null, null, that.setQueryStrParams(window.location.href));
                     that.lastPage = that.$refs.productsView.querySelector("#products").dataset.lastPage;
-                    that.productsViewLoaded = true;
                     if (that.getProductNumsUrl && !pageChange) {
                         that.getProductNums();
                     }
@@ -98,7 +99,6 @@ export default {
                 }).then(() => {
                     that.getingProductsView = false;
                     that.queryStrParamsInitialVals = _.clone(this.queryStrParams);
-                    return that.currentPage;
                 });
         },
         getProductNums: function () {
@@ -163,6 +163,9 @@ export default {
             this.queryStrParams.searchValue = searchParams.get("searchValue") || '';
             this.queryStrParams.minPrice = parseInt(searchParams.get("minPrice")) || 0;
             this.queryStrParams.maxPrice = parseInt(searchParams.get("maxPrice")) || this.maxProductsPriceCeil;
+            this.queryStrParams.filterOptions = searchParams.get("filterOptions") || '';
+            this.checkedOptionsGlobal = searchParams.get("filterOptions") ? searchParams.get("filterOptions").split("|") : [];
+            this.checkedOptionsGlobal = this.checkedOptionsGlobal.map(Number);
         },
         preserveFilters: function () {
             var that = this;

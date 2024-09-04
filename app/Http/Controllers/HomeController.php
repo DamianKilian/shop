@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\GetProductsViewRequest;
 use App\Models\Category;
-use App\Models\Filter;
 use App\Services\CategoryService;
-use App\Services\FilterService;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
