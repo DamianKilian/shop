@@ -5,6 +5,7 @@ export default {
     components: { FilterDisplay },
     data() {
         return {
+            productsViewLoaded: false,
             currentPage: null,
             lastPage: parseInt(window.lastPage),
             getProductsViewAllCategoriesUrl: window.getProductsViewAllCategoriesUrl,
@@ -87,6 +88,7 @@ export default {
                     that.currentPage = that.queryStrParams.page;
                     window.history.replaceState(null, null, that.setQueryStrParams(window.location.href));
                     that.lastPage = that.$refs.productsView.querySelector("#products").dataset.lastPage;
+                    that.productsViewLoaded = true;
                     if (that.getProductNumsUrl && !pageChange) {
                         that.getProductNums();
                     }
