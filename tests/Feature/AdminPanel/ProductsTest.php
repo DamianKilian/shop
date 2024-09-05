@@ -19,6 +19,24 @@ class ProductsTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_getProductDesc(): void
+    {
+        $category = Category::factory()->create();
+        $product = Product::factory()->create([
+            'category_id' => $category->id,
+        ]);
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->postJson('/admin-panel/get-product-desc', [
+                'productId' => $product->id,
+            ]);
+
+        $response->assertStatus(200);
+        assertTrue($product->id === $response['productId']);
+        assertTrue($product->description === $response['desc']);
+    }
+
     public function test_getProductFilterOptions(): void
     {
         Filter::factory()->count(3)->create();
