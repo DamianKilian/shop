@@ -48,9 +48,9 @@ export default {
                 }
             });
         },
-        applyFilters: function () {
+        applyFilters: function (queryStrParams = {}) {
             this.queryStrParams.filterOptions = this.checkedOptionsGlobal.sort().join('|');
-            return this.getProductsView();
+            return this.getProductsView(queryStrParams);
         },
         pageChange: function (url) {
             const searchParams = new URLSearchParams(url.substring(url.indexOf("?")));

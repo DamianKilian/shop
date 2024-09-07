@@ -119,7 +119,12 @@
             <div id="content">
                 <div class="mb-2">
                     <search-filters @remove-search-value-submitted="searchProducts('')"
-                        :search-value-submitted="queryStrParams.searchValue"></search-filters>
+                        @remove-max-price-submitted="applyFilters({maxPrice: maxProductsPriceCeil})"
+                        @remove-min-price-submitted="applyFilters({minPrice: 0})"
+                        v-if='Object.keys(queryStrParamsInitialVals).length'
+                        :max-products-price-ceil='maxProductsPriceCeil'
+                        :search-value-submitted="queryStrParamsInitialVals.searchValue"
+                        :query-str-params-initial-vals="queryStrParamsInitialVals"></search-filters>
                 </div>
                 @yield('content')
             </div>
