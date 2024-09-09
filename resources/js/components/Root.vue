@@ -1,5 +1,5 @@
 <script>
-import FilterDisplay from './FilterDisplay.vue'
+import FilterDisplay from './FilterDisplay.vue';
 
 export default {
     components: { FilterDisplay },
@@ -8,7 +8,8 @@ export default {
             productsViewLoaded: false,
             currentPage: null,
             lastPage: parseInt(window.lastPage),
-            getProductsViewAllCategoriesUrl: window.getProductsViewAllCategoriesUrl,
+            getProductsViewAllCategoriesUrl:
+                window.getProductsViewAllCategoriesUrl,
             getProductsViewUrl: window.getProductsViewUrl,
             getProductNumsUrl: window.getProductNumsUrl,
             productNums: {},
@@ -23,17 +24,23 @@ export default {
             checkedOptionsGlobal: [],
             queryStrParamsInitialVals: {},
             getProductsViewData: {
-                categoryChildrenIds: window.categoryChildrenIds
+                categoryChildrenIds: window.categoryChildrenIds,
             },
-            maxProductsPriceCeil: window.maxProductsPrice ? _.ceil(window.maxProductsPrice) : null,
+            maxProductsPriceCeil: window.maxProductsPrice
+                ? _.ceil(window.maxProductsPrice)
+                : null,
             failedValidation: {},
-        }
+        };
     },
     methods: {
         isFilterChanged: function (filter) {
             if ('price' === filter) {
-                if (this.queryStrParamsInitialVals.minPrice !== this.queryStrParams.minPrice
-                    || this.queryStrParamsInitialVals.maxPrice !== this.queryStrParams.maxPrice) {
+                if (
+                    this.queryStrParamsInitialVals.minPrice !==
+                        this.queryStrParams.minPrice ||
+                    this.queryStrParamsInitialVals.maxPrice !==
+                        this.queryStrParams.maxPrice
+                ) {
                     return true;
                 }
             }
@@ -41,7 +48,7 @@ export default {
         },
         applyPageChangeEvents: function () {
             var that = this;
-            this.$refs.productsView.addEventListener("click", function (e) {
+            this.$refs.productsView.addEventListener('click', function (e) {
                 if (e.target.matches('a.page-link')) {
                     e.preventDefault();
                     that.pageChange(e.target.href);
@@ -49,12 +56,31 @@ export default {
             });
         },
         applyFilters: function (queryStrParams = {}) {
-            this.queryStrParams.filterOptions = this.checkedOptionsGlobal.sort().join('|');
+            this.queryStrParams.filterOptions = this.checkedOptionsGlobal
+                .sort()
+                .join('|');
             return this.getProductsView(queryStrParams);
         },
+        removeFilterSubmitted: function (optionId) {
+            var that = this;
+            _.forEach(this.checkedOptionsGlobal, function (ogId, index) {
+                if (ogId == optionId) {
+                    that.checkedOptionsGlobal.splice(index, 1);
+                }
+            });
+            this.queryStrParams.filterOptions = this.checkedOptionsGlobal
+                .sort()
+                .join('|');
+            return this.getProductsView();
+        },
         pageChange: function (url) {
-            const searchParams = new URLSearchParams(url.substring(url.indexOf("?")));
-            return this.getProductsView({ page: parseInt(searchParams.get("page")) }, true);
+            const searchParams = new URLSearchParams(
+                url.substring(url.indexOf('?'))
+            );
+            return this.getProductsView(
+                { page: parseInt(searchParams.get('page')) },
+                true
+            );
         },
         searchProducts: function (searchValue) {
             var searchValue = _.trim(searchValue);
@@ -65,7 +91,10 @@ export default {
             if (!queryStrParams.page) {
                 queryStrParams.page = 1;
             }
-            this.queryStrParams = Object.assign(this.queryStrParams, queryStrParams);
+            this.queryStrParams = Object.assign(
+                this.queryStrParams,
+                queryStrParams
+            );
             var page = this.queryStrParams.page;
             if (0 >= page || page > this.lastPage) {
                 this.getingProductsView = false;
@@ -74,10 +103,16 @@ export default {
             if (this.getProductsViewData.categoryChildrenIds) {
                 return this.getProductsViewRequest();
             } else {
-                return this.getProductsViewRequest(this.getProductsViewAllCategoriesUrl, pageChange);
+                return this.getProductsViewRequest(
+                    this.getProductsViewAllCategoriesUrl,
+                    pageChange
+                );
             }
         },
-        getProductsViewRequest: function (url = this.getProductsViewUrl, pageChange = false) {
+        getProductsViewRequest: function (
+            url = this.getProductsViewUrl,
+            pageChange = false
+        ) {
             var that = this;
             var url = this.setQueryStrParams(url).toString();
             this.failedValidation = {};
@@ -86,8 +121,15 @@ export default {
                 .then(function (response) {
                     that.$refs.productsView.innerHTML = response.data;
                     that.currentPage = that.queryStrParams.page;
-                    window.history.replaceState(null, null, that.setQueryStrParams(window.location.href));
-                    that.lastPage = that.$refs.productsView.querySelector("#products").dataset.lastPage;
+                    window.history.replaceState(
+                        null,
+                        null,
+                        that.setQueryStrParams(window.location.href)
+                    );
+                    that.lastPage =
+                        that.$refs.productsView.querySelector(
+                            '#products'
+                        ).dataset.lastPage;
                     that.productsViewLoaded = true;
                     if (that.getProductNumsUrl && !pageChange) {
                         that.getProductNums();
@@ -95,12 +137,16 @@ export default {
                 })
                 .catch(function (error) {
                     if (_.has(error, 'response.data.failedValidation')) {
-                        that.failedValidation = error.response.data.failedValidation;
+                        that.failedValidation =
+                            error.response.data.failedValidation;
                     }
                     console.log(error);
-                }).then(() => {
+                })
+                .then(() => {
                     that.getingProductsView = false;
-                    that.queryStrParamsInitialVals = _.clone(this.queryStrParams);
+                    that.queryStrParamsInitialVals = _.clone(
+                        this.queryStrParams
+                    );
                 });
         },
         getProductNums: function () {
@@ -123,7 +169,9 @@ export default {
                 let showToggles = topEl.querySelectorAll('.show-toggle');
                 _.forEach(showToggles, function (showToggle) {
                     if (elBadged) {
-                        if (showToggle.classList.contains('nesting-' + nesting)) {
+                        if (
+                            showToggle.classList.contains('nesting-' + nesting)
+                        ) {
                             return false;
                         }
                         let li = showToggle.closest('li');
@@ -139,7 +187,11 @@ export default {
             _.forEach(productNums, function (val) {
                 that.productNums[val.slug] = val.product_num;
                 let elBadged = menu.querySelector('._' + val.slug);
-                showSubMenus(elBadged.closest(".first-li"), elBadged.dataset.nesting, elBadged);
+                showSubMenus(
+                    elBadged.closest('.first-li'),
+                    elBadged.dataset.nesting,
+                    elBadged
+                );
             });
         },
         setQueryStrParams: function (url) {
@@ -148,7 +200,10 @@ export default {
             _.forEach(this.queryStrParams, function (value, key) {
                 if ('' === value || null === value) {
                     newUrl.searchParams.delete(key);
-                } else if ('maxPrice' === key && that.maxProductsPriceCeil === value) {
+                } else if (
+                    'maxPrice' === key &&
+                    that.maxProductsPriceCeil === value
+                ) {
                     newUrl.searchParams.delete(key);
                 } else if ('minPrice' === key && 0 === value) {
                     newUrl.searchParams.delete(key);
@@ -160,29 +215,44 @@ export default {
         },
         getQueryStringParameters: function () {
             const searchParams = new URLSearchParams(window.location.search);
-            this.currentPage = parseInt(searchParams.get("page") || 1);
+            this.currentPage = parseInt(searchParams.get('page') || 1);
             this.queryStrParams.page = this.currentPage;
-            this.queryStrParams.searchValue = searchParams.get("searchValue") || '';
-            this.queryStrParams.minPrice = parseInt(searchParams.get("minPrice")) || 0;
-            this.queryStrParams.maxPrice = parseInt(searchParams.get("maxPrice")) || this.maxProductsPriceCeil;
-            this.queryStrParams.filterOptions = searchParams.get("filterOptions") || '';
-            this.checkedOptionsGlobal = searchParams.get("filterOptions") ? searchParams.get("filterOptions").split("|") : [];
+            this.queryStrParams.searchValue =
+                searchParams.get('searchValue') || '';
+            this.queryStrParams.minPrice =
+                parseInt(searchParams.get('minPrice')) || 0;
+            this.queryStrParams.maxPrice =
+                parseInt(searchParams.get('maxPrice')) ||
+                this.maxProductsPriceCeil;
+            this.queryStrParams.filterOptions =
+                searchParams.get('filterOptions') || '';
+            this.checkedOptionsGlobal = searchParams.get('filterOptions')
+                ? searchParams.get('filterOptions').split('|')
+                : [];
             this.checkedOptionsGlobal = this.checkedOptionsGlobal.map(Number);
         },
         preserveFilters: function () {
             var that = this;
             document.addEventListener('click', function (e) {
-                if (that.queryStrParams.searchValue && (e.target.matches('.main-menu-link') || e.target.matches('.product-breadcrumb-badge-link'))) {
-                    e.target.setAttribute('href', that.setQueryStrParams(e.target.getAttribute('href')).toString())
+                if (
+                    that.queryStrParams.searchValue &&
+                    (e.target.matches('.main-menu-link') ||
+                        e.target.matches('.product-breadcrumb-badge-link'))
+                ) {
+                    e.target.setAttribute(
+                        'href',
+                        that
+                            .setQueryStrParams(e.target.getAttribute('href'))
+                            .toString()
+                    );
                 }
             });
         },
     },
     updated() {
-        console.log('updated-root')
+        console.log('updated-root');
     },
-    created() {
-    },
+    created() {},
     mounted() {
         if (this.$refs.productsView) {
             this.applyPageChangeEvents();
@@ -192,6 +262,6 @@ export default {
             this.getQueryStringParameters();
             this.queryStrParamsInitialVals = _.clone(this.queryStrParams);
         }
-    }
-}
+    },
+};
 </script>

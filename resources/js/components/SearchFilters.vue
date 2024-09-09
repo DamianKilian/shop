@@ -38,6 +38,16 @@
             {{ __('Min. price') }}:
             <b>{{ queryStrParamsInitialVals.minPrice }}</b>
         </button>
+        <button
+            v-for="option in filterOptions"
+            @click="$emit('removeFilterSubmitted', option.optionId)"
+            type="button"
+            class="btn btn-outline-primary me-1"
+        >
+            <i class="fa-solid fa-xmark text-danger"></i>
+            {{ option.filterName }}:
+            <b>{{ option.optionName }}</b>
+        </button>
     </div>
 </template>
 
@@ -48,9 +58,12 @@ export default {
         'searchValueSubmitted',
         'queryStrParamsInitialVals',
         'maxProductsPriceCeil',
+        'filters',
     ],
     data() {
-        return {};
+        return {
+            filterOptionToFilter: this.getFilterOptionToFilter(),
+        };
     },
     computed: {
         maxPrice() {
@@ -68,8 +81,46 @@ export default {
             }
             return 0 !== this.queryStrParamsInitialVals.minPrice;
         },
+        filterOptions() {
+            var fo = this.queryStrParamsInitialVals.filterOptions;
+            if (!fo) {
+                return [];
+            }
+            var foArr = fo.split('|');
+            var filterOptions = [];
+            var that = this;
+            _.forEach(foArr, function (optionId) {
+                filterOptions.push(that.filterOptionToFilter[optionId]);
+            });
+            filterOptions.sort((a, b) => {
+                const nameA = a.filterName.toUpperCase();
+                const nameB = b.filterName.toUpperCase();
+                if (nameA < nameB) {
+                    return -1;
+                }
+                if (nameA > nameB) {
+                    return 1;
+                }
+                return 0;
+            });
+            return filterOptions;
+        },
     },
-    methods: {},
+    methods: {
+        getFilterOptionToFilter: function () {
+            var filterOptionToFilter = {};
+            _.forEach(this.filters, function (filter) {
+                _.forEach(filter.filter_options, function (option) {
+                    filterOptionToFilter[option.id] = {
+                        filterName: filter.name,
+                        optionName: option.name,
+                        optionId: option.id,
+                    };
+                });
+            });
+            return filterOptionToFilter;
+        },
+    },
     mounted() {},
 };
 </script>

@@ -33,8 +33,11 @@ export default {
         }
     },
     watch: {
-        queryStrParamsInitialVals: function () {
+        queryStrParamsInitialVals: function (newVal, oldVal) {
             this.filterChanged = false;
+            if(newVal.filterOptions !== oldVal.filterOptions){
+                this.getFilterOptionsUpdate();
+            }
         },
     },
     computed: {
@@ -75,11 +78,16 @@ export default {
                 this.checkedOptionsGlobal.push(option.id);
             }
         },
-        gatFilterOptionsStart: function () {
+        getFilterOptionsUpdate: function () {
             var that = this;
             _.forEach(this.filter.filter_options, function (option) {
                 if (that.checkedOptionsGlobal.includes(option.id)) {
-                    that.checkedOptions.push(option.id);
+                    if (!that.checkedOptions.includes(option.id)) {
+                        that.checkedOptions.push(option.id);
+                    }
+                } else if (that.checkedOptions.includes(option.id)) {
+                    var i = that.checkedOptions.indexOf(option.id);
+                    that.checkedOptions.splice(i, 1);
                 }
             });
         },
@@ -89,8 +97,8 @@ export default {
     mounted() {
         if (this.filterOptionsStart) {
             this.checkedOptions = this.filterOptionsStart;
-        } else if (this.gatFilterOptionsStart) {
-            this.gatFilterOptionsStart();
+        } else {
+            this.getFilterOptionsUpdate();
         }
     }
 }

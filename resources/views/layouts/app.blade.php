@@ -118,9 +118,13 @@
             </div>
             <div id="content">
                 <div class="mb-2">
+                    @php
+                        $filters = $filters ?: null;
+                    @endphp
                     <search-filters @remove-search-value-submitted="searchProducts('')"
                         @remove-max-price-submitted="applyFilters({maxPrice: maxProductsPriceCeil})"
                         @remove-min-price-submitted="applyFilters({minPrice: 0})"
+                        @remove-filter-submitted="removeFilterSubmitted" :filters='@json($filters)'
                         v-if='Object.keys(queryStrParamsInitialVals).length'
                         :max-products-price-ceil='maxProductsPriceCeil'
                         :search-value-submitted="queryStrParamsInitialVals.searchValue"
