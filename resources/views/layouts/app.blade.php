@@ -119,7 +119,7 @@
             <div id="content">
                 <div class="mb-2">
                     @php
-                        $filters = $filters ?: null;
+                        $filters = isset($filters) ? $filters : null;
                     @endphp
                     <search-filters @remove-search-value-submitted="searchProducts('')"
                         @remove-max-price-submitted="applyFilters({maxPrice: maxProductsPriceCeil})"

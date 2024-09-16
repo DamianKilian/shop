@@ -82,7 +82,9 @@ export default {
             return 0 !== this.queryStrParamsInitialVals.minPrice;
         },
         filterOptions() {
-            var fo = this.queryStrParamsInitialVals.filterOptions;
+            var fo = this.queryStrParamsInitialVals
+                ? this.queryStrParamsInitialVals.filterOptions
+                : null;
             if (!fo) {
                 return [];
             }
