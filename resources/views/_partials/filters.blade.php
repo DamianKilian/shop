@@ -26,10 +26,10 @@
     @if (isset($filters))
         @foreach ($filters as $filter)
             <div class="mb-2">
-                <filter-display v-if='Object.keys(queryStrParamsInitialVals).length'
+                <filter-display-app v-if='Object.keys(queryStrParamsInitialVals).length'
                     :filter='@json($filter)' :query-str-params='queryStrParams'
                     :query-str-params-initial-vals='queryStrParamsInitialVals'
-                    :checked-options-global='checkedOptionsGlobal' :apply-filters='applyFilters'></filter-display>
+                    :checked-options-global='checkedOptionsGlobal' :apply-filters='applyFilters'></filter-display-app>
             </div>
         @endforeach
     @endif
