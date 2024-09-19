@@ -23,6 +23,25 @@ class AdminPanelProductsController extends Controller
 
     public function suggestions(Request $request) {}
 
+    public function addOptionsToSelectedProducts(Request $request)
+    {
+        $productIds = [];
+        $checkedOptionIds = [];
+        foreach ($request->products as $product) {
+            $productIds[] = $product['id'];
+        }
+        foreach ($request->checkedOptionsAllFilters as $checkedOptions) {
+            $checkedOptionIds = array_merge($checkedOptionIds, $checkedOptions);
+        }
+        $products = Product::whereIn('id', $productIds)->get();
+        foreach ($products as $productDb) {
+            if ($request->remove) {
+                $productDb->filterOptions()->detach($checkedOptionIds);
+            } else {
+                $productDb->filterOptions()->attach($checkedOptionIds);
+            }
+        }
+    }
 
     public function deleteProducts(Request $request)
     {

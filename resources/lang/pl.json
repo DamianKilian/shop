@@ -1,4 +1,10 @@
 {
+    "Options removed": "Usunięto opcje",
+    "Options added": "Dodano opcje",
+    "options": "opcje",
+    "Remove options to selected products": "Usuń opcje z wybranych produktów",
+    "Add options to selected products": "Dodaj opcje do wybranych produktów",
+    "Add filter options to products": "Dodaj opcje filtrów do produktów",
     "Add option": "Dodaj opcję",
     "Edit filter": "Edytuj filter",
     "Add filter": "Dodaj filter",
@@ -59,6 +65,7 @@
     "Main menu": "Menu główne",
     "Search": "Szukaj",
     "Products": "Produkty",
+    "products": "produkty",
     "Categories": "Kategorie",
     "Category name is repeated": "Nazwa kategorii się powtarza"
 }

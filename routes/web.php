@@ -24,6 +24,7 @@ Route::prefix('admin-panel')->group(function () {
     Route::post('/add-filter', [App\Http\Controllers\AdminPanelFiltersController::class, 'addFilter'])->name('admin-panel-add-filter');
     Route::post('/delete-filters', [App\Http\Controllers\AdminPanelFiltersController::class, 'deleteFilters'])->name('admin-panel-delete-filters');
     Route::post('/save-categories', [App\Http\Controllers\AdminPanelCategoriesController::class, 'saveCategories'])->name('admin-panel-save-categories');
+    Route::post('/add-options-to-selected-products', [App\Http\Controllers\AdminPanelProductsController::class, 'addOptionsToSelectedProducts'])->name('admin-panel-add-options-to-selected-products');
 });
 
 Route::get('/ttt', [App\Http\Controllers\TestController::class, 'ttt']);

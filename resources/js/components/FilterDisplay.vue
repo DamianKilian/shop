@@ -25,6 +25,14 @@ export default {
             checkedOptions: [],
         }
     },
+    watch: {
+        checkedOptions(newVal) {
+            this.$emit('checkedOptionsChange', {
+                filterId: this.filter.id,
+                checkedOptions: newVal,
+            });
+        },
+    },
     methods: {},
     updated() {
     },

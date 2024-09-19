@@ -4,8 +4,17 @@
             <nav>
                 <ol class="breadcrumb justify-content-center">
                     <li v-for="(b, index) in breadcrumb" :key="b.id" class="breadcrumb-item">
-                        <button @click="goToCategory($event, index)" class="btn btn-sm btn-link"
-                            :class="{ active: index == breadcrumb.length - 1 }">
+                        <button
+                            @click="
+                                if (this.selectedCategory) {
+                                    this.selectedCategory.selected = false;
+                                    getProducts();
+                                }
+                                goToCategory($event, index);
+                            "
+                            class="btn btn-sm btn-link"
+                            :class="{ active: index == breadcrumb.length - 1 }"
+                        >
                             {{ b.name }}
                         </button>
                     </li>
@@ -13,13 +22,25 @@
             </nav>
             <div class="app-list clearfix">
                 <div class="actions-global clearfix">
-                    <button type="button" class="btn btn-secondary float-end"
-                        @click="goToCategory($event, breadcrumb.length - 2)">
+                    <button
+                        type="button"
+                        class="btn btn-secondary float-end"
+                        @click="
+                            if (this.selectedCategory) {
+                                this.selectedCategory.selected = false;
+                                getProducts();
+                            }
+                            goToCategory($event, breadcrumb.length - 2);
+                        "
+                    >
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
                 </div>
                 <AdminPanelProductsList :getProducts='getProducts' :products="products" :breadcrumb="breadcrumb"
                     :currentCategories="currentCategories" :selectedCategory='selectedCategory'
+                    :adminPanelGetProductFilterOptionsUrl='adminPanelGetProductFilterOptionsUrl'
+                    :adminPanelAddOptionsToSelectedProductsUrl='adminPanelAddOptionsToSelectedProductsUrl'
+                    :selectedProducts='selectedProducts'
                     :adminPanelGetProductsUrl='adminPanelGetProductsUrl' :categories='categories' />
             </div>
         </div>
@@ -29,7 +50,7 @@
                 <i class="fa-solid fa-plus"></i> {{ __('Add product') }}
             </button>
             <button class="btn float-end me-1 mt-1 mt-sm-0 btn-outline-dark" @click="showCategories = !showCategories">
-                {{ __('Select category') }}
+                <i class="fa-solid fa-plus"></i> {{ __('Add filter options to products') }}
             </button>
             <button class="btn btn-danger float-end me-1 mt-1 mt-sm-0" @click="deleteProducts()">
                 <i class="fa-solid fa-trash"></i> {{ __('Remove') }}
@@ -91,6 +112,7 @@ export default {
         'adminPanelGetProductsUrl',
         'adminPanelAddProductUrl',
         'adminPanelGetProductFilterOptionsUrl',
+        'adminPanelAddOptionsToSelectedProductsUrl',
         'adminPanelGetProductDescUrl',
         'adminPanelDeleteProductsUrl',
         'categoryOptionsProp'
@@ -115,6 +137,9 @@ export default {
         },
         selectedCategory() {
             return this.getSelectedCategory();
+        },
+        selectedProducts() {
+            return this.getSelectedProducts();
         },
     },
     methods: {
