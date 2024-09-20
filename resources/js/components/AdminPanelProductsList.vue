@@ -89,7 +89,7 @@
         </div>
     </div>
     <Transition>
-        <div v-show="showFilters" id="product-filters">
+        <div v-show="showFilters" id="product-filters" class='border d-flex justify-content-center flex-wrap'>
             <div
                 v-for="(filter, index) in productFilterOptions.filters"
                 :key="filter.id"
