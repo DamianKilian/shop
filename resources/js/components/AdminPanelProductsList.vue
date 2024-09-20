@@ -89,11 +89,16 @@
         </div>
     </div>
     <Transition>
-        <div v-show="showFilters" id="product-filters" class='border d-flex justify-content-center flex-wrap'>
+        <div
+            v-show="showFilters"
+            id="product-filters"
+            class="text-center"
+            :class="{ border: productFilterOptions.filters.length }"
+        >
             <div
                 v-for="(filter, index) in productFilterOptions.filters"
                 :key="filter.id"
-                class="product filter pt-1 pb-1 d-inline-block me-1"
+                class="product filter pt-1 pb-1 d-inline-block me-1 text-start"
             >
                 <div class="card" style="min-width: 200px; min-height: 250px">
                     <div class="card-body">
