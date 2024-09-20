@@ -37,20 +37,6 @@
             </div>
         </li>
     </ul>
-    <div
-        v-for="(filter, index) in productFilterOptions.filters"
-        :key="filter.id"
-        class="product filter pt-1 pb-1 d-inline-block me-1"
-    >
-        <div class="card" style="min-width: 200px; min-height: 250px">
-            <div class="card-body">
-                <FilterDisplay
-                    @checked-options-change="checkedOptionsChange"
-                    :filter="filter"
-                />
-            </div>
-        </div>
-    </div>
     <div class="text-center">
         <div
             v-if="
@@ -90,11 +76,36 @@
                 __('products') +
                 ')'
             }}
+            <button
+                type="button"
+                class="btn btn-link"
+                @click="showFilters = !showFilters"
+            >
+                {{ showFilters ? __('Hide filters') : __('Show filters') }}
+            </button>
         </div>
         <div v-if="optionsAdded" class="text-bg-success d-inline-block ms-1">
             {{ optionsAdded }}
         </div>
     </div>
+    <Transition>
+        <div v-show="showFilters" id="product-filters">
+            <div
+                v-for="(filter, index) in productFilterOptions.filters"
+                :key="filter.id"
+                class="product filter pt-1 pb-1 d-inline-block me-1"
+            >
+                <div class="card" style="min-width: 200px; min-height: 250px">
+                    <div class="card-body">
+                        <FilterDisplay
+                            @checked-options-change="checkedOptionsChange"
+                            :filter="filter"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Transition>
 </template>
 
 <script>
@@ -118,6 +129,7 @@ export default {
     ],
     data() {
         return {
+            showFilters: true,
             optionsAdded: '',
             checkedOptionsAllFilters: {},
         };
