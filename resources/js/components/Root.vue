@@ -258,6 +258,7 @@ export default {
             this.applyPageChangeEvents();
             if ('homePage' === window.pageType) {
                 this.preserveFilters();
+                window.history.replaceState(null, '', window.location.pathname);
             }
             this.getQueryStringParameters();
             this.queryStrParamsInitialVals = _.clone(this.queryStrParams);
