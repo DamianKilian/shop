@@ -21,8 +21,6 @@ class AdminPanelProductsController extends Controller
         $this->middleware('auth');
     }
 
-    public function suggestions(Request $request) {}
-
     public function addOptionsToSelectedProducts(Request $request)
     {
         $productIds = [];

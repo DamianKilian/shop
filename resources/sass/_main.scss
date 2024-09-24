@@ -58,6 +58,7 @@ $topHeight: 60px;
 }
 
 #search {
+    position: relative;
     $searchIconShift: 40px;
     width: 50%;
     min-width: 250px;
@@ -74,6 +75,33 @@ $topHeight: 60px;
         margin-left: -$searchIconShift;
         input {
             padding-left: $searchIconShift;
+        }
+    }
+}
+
+#suggestions-container {
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    height: 0;
+}
+
+#suggestions {
+    background-color: #fff;
+    .suggestion {
+        padding-left: 42px !important;
+        > i {
+            width: 0;
+            position: relative;
+            right: 29px;
+        }
+        &:hover, &.active {
+            background-image: var(--bs-gradient);
+            --bs-bg-opacity: 1;
+            background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity));
+            --bs-text-opacity: 1;
+            color: rgba(var(--bs-white-rgb), var(--bs-text-opacity));
         }
     }
 }

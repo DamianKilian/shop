@@ -93,7 +93,7 @@
                     $categoryName = isset($category) ? $category->name : '';
                 @endphp
                 <search @search="searchProducts" category-name='{{ $categoryName }}'
-                    suggestions-url="{{ route('suggestions') }}"></search>
+                    get-suggestions-url="{{ route('get-suggestions') }}"></search>
             </nav>
         </div>
         <main id="main" class="clearfix">
