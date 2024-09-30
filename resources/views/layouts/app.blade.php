@@ -92,8 +92,8 @@
                 @php
                     $categoryName = isset($category) ? $category->name : '';
                 @endphp
-                <search @search="searchProducts" category-name='{{ $categoryName }}'
-                    get-suggestions-url="{{ route('get-suggestions') }}"></search>
+                <search-app @search="searchProducts" category-name='{{ $categoryName }}'
+                    get-suggestions-url="{{ route('get-suggestions') }}"></search-app>
             </nav>
         </div>
         <main id="main" class="clearfix">
@@ -121,14 +121,14 @@
                     @php
                         $filters = isset($filters) ? $filters : null;
                     @endphp
-                    <search-filters @remove-search-value-submitted="searchProducts('')"
+                    <search-filters-app @remove-search-value-submitted="searchProducts('')"
                         @remove-max-price-submitted="applyFilters({maxPrice: maxProductsPriceCeil})"
                         @remove-min-price-submitted="applyFilters({minPrice: 0})"
                         @remove-filter-submitted="removeFilterSubmitted" :filters='@json($filters)'
                         v-if='Object.keys(queryStrParamsInitialVals).length'
                         :max-products-price-ceil='maxProductsPriceCeil'
                         :search-value-submitted="queryStrParamsInitialVals.searchValue"
-                        :query-str-params-initial-vals="queryStrParamsInitialVals"></search-filters>
+                        :query-str-params-initial-vals="queryStrParamsInitialVals"></search-filters-app>
                 </div>
                 @yield('content')
             </div>

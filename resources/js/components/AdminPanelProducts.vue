@@ -104,10 +104,12 @@
 import AdminPanelProductsList from './AdminPanelProductsList.vue'
 import AdminPanelAddProduct from './AdminPanelAddProduct.vue'
 import AdminPanelProductsPagination from './AdminPanelProductsPagination.vue'
+import Search from './Search.vue';
+import SearchFilters from './SearchFilters.vue';
 import { goToCategory, arrangeCategories, setBreadcrumb } from './commonFunctions.js'
 
 export default {
-    components: { AdminPanelProductsList, AdminPanelAddProduct, AdminPanelProductsPagination },
+    components: { AdminPanelProductsList, AdminPanelAddProduct, AdminPanelProductsPagination, Search, SearchFilters },
     props: ['categoriesProp',
         'adminPanelGetProductsUrl',
         'adminPanelAddProductUrl',

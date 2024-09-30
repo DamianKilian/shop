@@ -1,8 +1,10 @@
 <script>
 import FilterDisplayApp from './FilterDisplayApp.vue';
+import SearchApp from './SearchApp.vue';
+import SearchFiltersApp from './SearchFiltersApp.vue';
 
 export default {
-    components: { FilterDisplayApp },
+    components: { FilterDisplayApp, SearchApp, SearchFiltersApp },
     data() {
         return {
             productsViewLoaded: false,
