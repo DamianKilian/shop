@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\AppService;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -24,7 +25,7 @@ return new class extends Migration
             $table->foreign('category_id')
                 ->references('id')
                 ->on('categories');
-            if (!$this->isSqlite()) {
+            if (!AppService::isSqlite($this)) {
                 $table->fullText(['title', 'description_str']);
             }
             $table->softDeletes();
@@ -44,14 +45,6 @@ return new class extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
-    }
-
-    private function isSqlite(): bool
-    {
-        return 'sqlite' === Schema::connection($this->getConnection())
-            ->getConnection()
-            ->getPdo()
-            ->getAttribute(PDO::ATTR_DRIVER_NAME);
     }
 
     public function down(): void

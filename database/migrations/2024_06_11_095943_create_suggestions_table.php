@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\AppService;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +15,10 @@ return new class extends Migration
         Schema::create('suggestions', function (Blueprint $table) {
             $table->id();
             $table->string('suggestion')->unique();
-            $table->unsignedInteger('usage');
+            $table->date('last_used');
+            if (!AppService::isSqlite($this)) {
+                $table->fullText(['suggestion']);
+            }
             $table->timestamps();
         });
     }

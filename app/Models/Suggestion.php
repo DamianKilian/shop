@@ -9,5 +9,5 @@ class Suggestion extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['suggestion', 'usage'];
+    protected $fillable = ['suggestion', 'last_used'];
 }

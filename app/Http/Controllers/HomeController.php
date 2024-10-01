@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\GetProductsViewRequest;
 use App\Models\Category;
+use App\Models\Suggestion;
 use App\Services\CategoryService;
 use App\Services\ProductService;
+use App\Services\SearchService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -19,6 +21,16 @@ class HomeController extends Controller
     public function __construct()
     {
         // $this->middleware('auth');
+    }
+
+    public function getSuggestions(Request $request)
+    {
+        $suggestions = Suggestion::whereFullText('suggestion', $request->searchValue)
+            ->orWhere('suggestion', 'LIKE', '%' . $request->searchValue . '%')
+            ->get();
+        return response()->json([
+            'suggestions' => $suggestions,
+        ]);
     }
 
     public function category(Request $request, $slug)
@@ -54,6 +66,7 @@ class HomeController extends Controller
     {
         $categoryChildrenIds = json_decode($request->categoryChildrenIds);
         $products = ProductService::searchFilters($request, $categoryChildrenIds);
+        SearchService::addSuggestion($request, $products);
         return view('_partials.products', [
             'products' => $products
         ]);
@@ -62,6 +75,7 @@ class HomeController extends Controller
     public function getProductsViewAllCategories(GetProductsViewRequest $request)
     {
         $products = ProductService::searchFilters($request);
+        SearchService::addSuggestion($request, $products);
         $categories = CategoryService::getCategories();
         foreach ($products as $product) {
             $product->categories = CategoryService::getParentCategories($product->category_id, $categories);

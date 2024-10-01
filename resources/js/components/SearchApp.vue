@@ -30,6 +30,7 @@
             <div v-if="suggestions.length" id="suggestions-container">
                 <div id="suggestions" class="border">
                     <div
+                        v-if='suggestions[0]'
                         v-for="suggestion in suggestions"
                         @click="suggestionSelectClick(suggestion)"
                         ref="suggestions"
@@ -39,6 +40,12 @@
                     >
                         <i class="fa-solid fa-magnifying-glass"></i>
                         {{ suggestion.suggestion }}
+                    </div>
+                    <div
+                        v-else
+                        class="suggestion p-1"
+                    >
+                        <i class='text-muted'>{{__('No suggestions')}}</i>
                     </div>
                 </div>
             </div>
@@ -116,11 +123,14 @@ export default {
             this.searchValueEntered = this.searchValue;
             var that = this;
             axios
-                .get(this.getSuggestionsUrl, {
-                    searchValue: this.searchValue,
+                .post(this.getSuggestionsUrl, {
+                    searchValue: that.searchValue,
                 })
                 .then(function (response) {
                     that.suggestions = response.data.suggestions;
+                    if(!that.suggestions.length){
+                        that.suggestions.push('');
+                    }
                 });
         }, 500),
     },
@@ -130,7 +140,7 @@ export default {
             this.$refs.clear.classList.remove('d-none');
         }
         document.addEventListener('click', function (e) {
-            if (!e.target.closest('.search-container')) {
+            if (!e.target.closest('.search-container') || e.target.classList.contains('btn')) {
                 that.suggestions = [];
             }
         });
