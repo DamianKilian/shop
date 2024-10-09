@@ -137,6 +137,11 @@
         </main>
     </div>
     <footer class="bg-secondary">
+        @include('_partials.footer')
+
+
+
+
         menuss1<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>menuss<br>
     </footer>
     <div id="menu-overlay" class="overlay d-none d-sm-none menu-btn"></div>

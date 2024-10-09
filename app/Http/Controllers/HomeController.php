@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\GetProductsViewRequest;
 use App\Models\Category;
+use App\Models\Page;
 use App\Models\Suggestion;
 use App\Services\CategoryService;
+use App\Services\EditorJSService;
 use App\Services\ProductService;
 use App\Services\SearchService;
 use Illuminate\Http\Request;
@@ -103,19 +105,22 @@ class HomeController extends Controller
         ]);
     }
 
-    public function index(Request $request)
+    public function index(Request $request, EditorJSService $editorJS, $slug = null)
     {
         $products = null;
+        $categories = CategoryService::getCategories();
         if ($request->searchValue) {
             $products = ProductService::searchFilters($request);
-            $categories = CategoryService::getCategories();
             foreach ($products as $product) {
                 $product->categories = CategoryService::getParentCategories($product->category_id, $categories);
             }
         }
+        $page = Page::where('slug', $slug)->first();
+        $page->bodyHtml = $editorJS->toHtml($page->body);
         return view('home', [
+            'page' => $page,
             'maxProductsPrice' => ProductService::getMaxProductsPrice(),
-            'categories' => CategoryService::getCategories(),
+            'categories' => $categories,
             'products' => $products
         ]);
     }

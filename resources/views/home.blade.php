@@ -13,7 +13,7 @@
     </div>
     @if (!$products)
         <div v-if='!productsViewLoaded' id="home-page" ref="homePage">
-            <h1>Home page</h1>
+            @include('_partials.page')
         </div>
     @endif
 @endsection

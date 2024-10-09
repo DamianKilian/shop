@@ -83,7 +83,7 @@
                         <div class="border border-2 padding-form-control">
                             <label class="form-label"><b>{{ __('Description') }}</b></label>
                             <div id="editorjs" :class='{ "is-invalid border-danger": failedValidation.description }'
-                                class='border color bg-white padding-form-control' style="max-width: 725px;"></div>
+                                class='border color bg-white padding-form-control'></div>
                             <div class="invalid-feedback">{{ failedValidation.description ?
                                 failedValidation.description[0] : '' }}</div>
                         </div>

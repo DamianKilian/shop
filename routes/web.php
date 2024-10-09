@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('{slug?}', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/category/{slug}', [App\Http\Controllers\HomeController::class, 'category'])->name('category');
 
 Route::prefix('admin-panel')->group(function () {
@@ -23,6 +23,11 @@ Route::prefix('admin-panel')->group(function () {
     Route::post('/get-filters', [App\Http\Controllers\AdminPanelFiltersController::class, 'getFilters'])->name('admin-panel-get-filters');
     Route::post('/add-filter', [App\Http\Controllers\AdminPanelFiltersController::class, 'addFilter'])->name('admin-panel-add-filter');
     Route::post('/delete-filters', [App\Http\Controllers\AdminPanelFiltersController::class, 'deleteFilters'])->name('admin-panel-delete-filters');
+    Route::get('/pages', [App\Http\Controllers\AdminPanelPagesController::class, 'pages'])->name('admin-panel-pages');
+    Route::post('/get-pages', [App\Http\Controllers\AdminPanelPagesController::class, 'getPages'])->name('admin-panel-get-pages');
+    Route::post('/get-page', [App\Http\Controllers\AdminPanelPagesController::class, 'getPage'])->name('admin-panel-get-page');
+    Route::post('/add-page', [App\Http\Controllers\AdminPanelPagesController::class, 'addPage'])->name('admin-panel-add-page');
+    Route::post('/delete-page', [App\Http\Controllers\AdminPanelPagesController::class, 'deletePages'])->name('admin-panel-delete-pages');
     Route::post('/save-categories', [App\Http\Controllers\AdminPanelCategoriesController::class, 'saveCategories'])->name('admin-panel-save-categories');
     Route::post('/add-options-to-selected-products', [App\Http\Controllers\AdminPanelProductsController::class, 'addOptionsToSelectedProducts'])->name('admin-panel-add-options-to-selected-products');
 });
