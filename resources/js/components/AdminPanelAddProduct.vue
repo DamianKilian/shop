@@ -60,7 +60,7 @@
                                 @change='getProductFilterOptions(selectedCategoryId)' id='category-select'
                                 :class='{ "is-invalid": failedValidation.categoryId }'
                                 class="form-select form-select-lg">
-                                <option :value="null" selected>{{ __('Category select') }} ...</option>
+                                <option value="" selected>{{ __('Category select') }} ...</option>
                                 <option v-for="option in categoryOptions" :value="option.id">
                                     {{ option.patchName }}
                                 </option>
