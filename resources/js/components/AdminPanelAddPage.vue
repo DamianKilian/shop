@@ -32,6 +32,7 @@
                                 style="width: 49%"
                             >
                                 <input
+                                    @input='editedStringForSlug(page.title)'
                                     v-model="page.title"
                                     name="title"
                                     ref="title"
@@ -74,6 +75,17 @@
                                         }}
                                     </div>
                                 </div>
+                                <button
+                                    @click="
+                                        slugCustomized = false;
+                                        editedStringForSlug(page.title);
+                                    "
+                                    style="max-height: 58px"
+                                    class="btn btn-outline-secondary"
+                                    type="button"
+                                >
+                                    {{ __('Reset') }}
+                                </button>
                             </div>
                         </div>
                         <div class="border border-2 padding-form-control">
@@ -135,8 +147,10 @@ import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 // import SimpleImage from "@editorjs/simple-image";
 import List from '@editorjs/list';
+import generateSlug from './generateSlug.js';
 
 export default {
+    mixins: [generateSlug],
     props: [
         'adminPanelAddPageUrl',
         'adminPanelGetPageUrl',
@@ -161,6 +175,9 @@ export default {
         },
     },
     methods: {
+        setSlug: function (slug) {
+            this.page.slug = slug;
+        },
         getPage: function () {
             this.setPage();
             var that = this;
@@ -177,7 +194,7 @@ export default {
                 }
                 this.page.title = data.title;
                 this.page.slug = data.slug;
-                this.page.slugCustomized = false;
+                this.slugCustomized = this.generateSlug(this.title) !== this.page.slug;
             } else {
                 this.editor.blocks.clear();
                 this.page.title = '';

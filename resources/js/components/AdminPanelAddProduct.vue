@@ -129,6 +129,7 @@ export default {
         return {
             selectedCategoryId: null,
             title: '',
+            slug: '',
             filesArr: [],
             editor: null,
             addingProduct: false,
@@ -168,6 +169,9 @@ export default {
         }
     },
     methods: {
+        setSlug: function (slug) {
+            this.slug = slug;
+        },
         setEditForm: function () {
             if (this.editProduct) {
                 this.title = this.editProduct.product.title;

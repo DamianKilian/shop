@@ -1,14 +1,13 @@
 export default {
     data() {
         return {
-            slug: '',
             slugCustomized: false,
         };
     },
     methods: {
         editedStringForSlug: function (stringForSlug) {
             if (!this.slugCustomized) {
-                this.slug = this.generateSlug(stringForSlug);
+                this.setSlug(this.generateSlug(stringForSlug));
             }
         },
         generateSlug: function (stringForSlug) {
