@@ -60,4 +60,9 @@ class AdminPanelPagesController extends Controller
             'pages' => $pages,
         ]);
     }
+
+    public function deletePage(Request $request)
+    {
+        Page::where('id', $request->pageId)->delete();
+    }
 }
