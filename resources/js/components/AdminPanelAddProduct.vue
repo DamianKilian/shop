@@ -111,10 +111,10 @@ import Header from '@editorjs/header';
 // import SimpleImage from "@editorjs/simple-image";
 import List from "@editorjs/list";
 import FilterDisplay from './FilterDisplay.vue'
-import GetProductFilterOptions from "./GetProductFilterOptions.vue";
+import getProductFilterOptions from "./getProductFilterOptions.js";
 
 export default {
-    mixins: [GetProductFilterOptions],
+    mixins: [getProductFilterOptions],
     components: { DragDropFileUploader, FilterDisplay },
     props: ['editProduct',
         'adminPanelAddProductUrl',

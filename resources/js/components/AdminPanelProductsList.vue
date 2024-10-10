@@ -116,11 +116,11 @@
 <script>
 import { goToSubCategory } from './commonFunctions.js';
 import FilterDisplay from './FilterDisplay.vue';
-import GetProductFilterOptions from './GetProductFilterOptions.vue';
+import getProductFilterOptions from './getProductFilterOptions.js';
 
 export default {
     components: { FilterDisplay },
-    mixins: [GetProductFilterOptions],
+    mixins: [getProductFilterOptions],
     props: [
         'currentCategories',
         'breadcrumb',
