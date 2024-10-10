@@ -11,7 +11,7 @@
                     <div class="modal-body">
                         <div class="clearfix">
                             <div class="form-floating mb-3 float-start" style="width: 49%;">
-                                <input v-model='title' @input='editedTitleVal()' ref='title' name='title'
+                                <input v-model='title' @input='editedStringForSlug(title)' ref='title' name='title'
                                     :class='{ "is-invalid": failedValidation.title }' class="form-control" id="title"
                                     :placeholder="__('Title')">
                                 <label for="title">{{ __('Title') }}</label>
@@ -29,7 +29,7 @@
                                         {{ failedValidation.slug ? failedValidation.slug[0] : '' }}
                                     </div>
                                 </div>
-                                <button @click='slugCustomized = false; editedTitleVal()'
+                                <button @click='slugCustomized = false; editedStringForSlug(title);'
                                     style="max-height: 58px;" class="btn btn-outline-secondary" type="button">
                                     {{ __('Reset') }}
                                 </button>
@@ -112,9 +112,10 @@ import Header from '@editorjs/header';
 import List from "@editorjs/list";
 import FilterDisplay from './FilterDisplay.vue'
 import getProductFilterOptions from "./getProductFilterOptions.js";
+import generateSlug from "./generateSlug.js";
 
 export default {
-    mixins: [getProductFilterOptions],
+    mixins: [getProductFilterOptions, generateSlug],
     components: { DragDropFileUploader, FilterDisplay },
     props: ['editProduct',
         'adminPanelAddProductUrl',
@@ -128,8 +129,6 @@ export default {
         return {
             selectedCategoryId: null,
             title: '',
-            slug: '',
-            slugCustomized: false,
             filesArr: [],
             editor: null,
             addingProduct: false,
@@ -157,7 +156,7 @@ export default {
             if (this.editProduct) {
                 return __('Edit product') + ` (${this.editProduct.product.category.name})`
             }
-            return this.selectedCategory ? (__('Add product to') + ': ' + this.selectedCategory.name) : __('Select category');
+            return 'Add product';
         },
         categoryId() {
             if (this.editProduct) {
@@ -169,19 +168,11 @@ export default {
         }
     },
     methods: {
-        editedTitleVal: function (e) {
-            if (!this.slugCustomized) {
-                this.slug = this.generateSlug();
-            }
-        },
-        generateSlug: function () {
-            return this.title.trim().replace(/ /g, '-');
-        },
         setEditForm: function () {
             if (this.editProduct) {
                 this.title = this.editProduct.product.title;
-                this.slug =this.editProduct.product.slug;
-                this.slugCustomized = this.generateSlug() !== this.title.slug;
+                this.slug = this.editProduct.product.slug;
+                this.slugCustomized = this.generateSlug(this.title) !== this.slug;
                 this.$refs.price.value = this.editProduct.product.price;
                 this.$refs.quantity.value = this.editProduct.product.quantity;
             } else {
