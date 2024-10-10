@@ -11,7 +11,7 @@
                     <div class="modal-body">
                         <div class="clearfix">
                             <div class="form-floating mb-3 float-start" style="width: 49%;">
-                                <input v-model='title.val' @input='editedTitleVal()' ref='title' name='title'
+                                <input v-model='title' @input='editedTitleVal()' ref='title' name='title'
                                     :class='{ "is-invalid": failedValidation.title }' class="form-control" id="title"
                                     :placeholder="__('Title')">
                                 <label for="title">{{ __('Title') }}</label>
@@ -21,7 +21,7 @@
                             </div>
                             <div class="input-group mb-3 float-start" style="width: 49%; margin-left: 2%;">
                                 <div class="form-floating">
-                                    <input v-model='title.slug' @input='title.slugCustomized = true' ref='slug'
+                                    <input v-model='slug' @input='slugCustomized = true' ref='slug'
                                         name='slug' :class='{ "is-invalid": failedValidation.slug }'
                                         class="form-control" id="slug" :placeholder="__('Slug')">
                                     <label for="slug">{{ __('Slug') }}</label>
@@ -29,7 +29,7 @@
                                         {{ failedValidation.slug ? failedValidation.slug[0] : '' }}
                                     </div>
                                 </div>
-                                <button @click='title.slugCustomized = false; editedTitleVal()'
+                                <button @click='slugCustomized = false; editedTitleVal()'
                                     style="max-height: 58px;" class="btn btn-outline-secondary" type="button">
                                     {{ __('Reset') }}
                                 </button>
@@ -127,11 +127,9 @@ export default {
     data() {
         return {
             selectedCategoryId: null,
-            title: {
-                val: '',
-                slug: '',
-                slugCustomized: false
-            },
+            title: '',
+            slug: '',
+            slugCustomized: false,
             filesArr: [],
             editor: null,
             addingProduct: false,
@@ -172,28 +170,24 @@ export default {
     },
     methods: {
         editedTitleVal: function (e) {
-            if (!this.title.slugCustomized) {
-                this.title.slug = this.generateSlug();
+            if (!this.slugCustomized) {
+                this.slug = this.generateSlug();
             }
         },
         generateSlug: function () {
-            return this.title.val.trim().replace(/ /g, '-');
+            return this.title.trim().replace(/ /g, '-');
         },
         setEditForm: function () {
             if (this.editProduct) {
-                this.title = {
-                    val: this.editProduct.product.title,
-                    slug: this.editProduct.product.slug,
-                };
-                this.title.slugCustomized = this.generateSlug() !== this.title.slug;
+                this.title = this.editProduct.product.title;
+                this.slug =this.editProduct.product.slug;
+                this.slugCustomized = this.generateSlug() !== this.title.slug;
                 this.$refs.price.value = this.editProduct.product.price;
                 this.$refs.quantity.value = this.editProduct.product.quantity;
             } else {
-                this.title = {
-                    val: '',
-                    slug: '',
-                    slugCustomized: false
-                };
+                this.title = '';
+                this.slug = '';
+                this.slugCustomized = false;
                 this.$refs.price.value = '';
                 this.$refs.quantity.value = '';
             }

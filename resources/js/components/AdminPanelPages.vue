@@ -1,6 +1,6 @@
 <template>
     <div id="pages">
-        <table class="table table-bordered table-hover fs-4">
+        <table class="table table-bordered table-hover fs-5">
             <colgroup>
                 <col style="width: 40px;">
             </colgroup>
@@ -30,12 +30,12 @@
                             @click="pageId = page.id"
                             data-bs-toggle="modal"
                             data-bs-target="#addPage"
-                            class="btn btn-primary"
+                            class="btn btn-primary btn-sm"
                         >
                             {{ __('Edit') }}
                         </button>
                         <button
-                            class="btn btn-danger ms-1"
+                            class="btn btn-danger btn-sm ms-1"
                             data-bs-toggle="modal"
                             data-bs-target="#exampleModal"
                             @click="
