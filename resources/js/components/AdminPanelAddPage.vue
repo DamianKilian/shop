@@ -145,7 +145,7 @@
 <script>
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
-// import SimpleImage from "@editorjs/simple-image";
+import SimpleImage from "@editorjs/simple-image";
 import List from '@editorjs/list';
 import generateSlug from './generateSlug.js';
 
@@ -169,6 +169,7 @@ export default {
     },
     watch: {
         pageId(newVal) {
+            this.setPage();
             if (newVal) {
                 this.getPage();
             }
@@ -179,7 +180,6 @@ export default {
             this.page.slug = slug;
         },
         getPage: function () {
-            this.setPage();
             var that = this;
             axios
                 .post(this.adminPanelGetPageUrl, { pageId: this.pageId })
@@ -264,7 +264,7 @@ export default {
                         defaultStyle: 'unordered',
                     },
                 },
-                // image: SimpleImage,
+                image: SimpleImage,
                 header: {
                     class: Header,
                     config: {

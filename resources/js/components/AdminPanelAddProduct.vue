@@ -108,7 +108,7 @@
 import DragDropFileUploader from './DragDropFileUploader.vue'
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
-// import SimpleImage from "@editorjs/simple-image";
+import SimpleImage from "@editorjs/simple-image";
 import List from "@editorjs/list";
 import FilterDisplay from './FilterDisplay.vue'
 import getProductFilterOptions from "./getProductFilterOptions.js";
@@ -262,7 +262,7 @@ export default {
                         defaultStyle: 'unordered'
                     }
                 },
-                // image: SimpleImage,
+                image: SimpleImage,
                 header: {
                     class: Header,
                     config: {
