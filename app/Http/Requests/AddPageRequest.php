@@ -21,7 +21,6 @@ class AddPageRequest extends FormRequest
     {
         return [
             'slug' => [
-                'required',
                 'max:255',
                 Rule::unique('pages')->ignore($this->pageId),
             ],

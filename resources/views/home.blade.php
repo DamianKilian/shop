@@ -12,7 +12,7 @@
         </div>
     </div>
     @if (!$products)
-        <div v-if='!productsViewLoaded' id="home-page" ref="homePage">
+        <div v-if='!productsViewLoaded' id="home-page" ref="homePage" class="page-wrapper">
             @include('_partials.page')
         </div>
     @endif
