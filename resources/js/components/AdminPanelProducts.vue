@@ -59,6 +59,8 @@
         <div v-if="globalError" class="text-bg-danger float-start mt-1">{{ globalError }}</div>
     </div>
     <AdminPanelAddProduct :editProduct='editProduct' :getProducts='getProducts'
+        :adminPanelFetchUrlUrl="adminPanelFetchUrlUrl"
+        :adminPanelUploadFileUrl="adminPanelUploadFileUrl"
         :adminPanelAddProductUrl='adminPanelAddProductUrl'
         :adminPanelGetProductFilterOptionsUrl='adminPanelGetProductFilterOptionsUrl'
         :adminPanelGetProductDescUrl='adminPanelGetProductDescUrl'
@@ -111,6 +113,8 @@ import { goToCategory, arrangeCategories, setBreadcrumb } from './commonFunction
 export default {
     components: { AdminPanelProductsList, AdminPanelAddProduct, AdminPanelProductsPagination, Search, SearchFilters },
     props: ['categoriesProp',
+        'adminPanelFetchUrlUrl',
+        'adminPanelUploadFileUrl',
         'adminPanelGetProductsUrl',
         'adminPanelAddProductUrl',
         'adminPanelGetProductFilterOptionsUrl',

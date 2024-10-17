@@ -116,7 +116,9 @@ class HomeController extends Controller
             }
         }
         $page = Page::where('slug', $slug)->first();
-        $page->bodyHtml = $editorJS->toHtml($page->body);
+        if ($page->body) {
+            $page->bodyHtml = $editorJS->toHtml($page->body);
+        }
         return view('home', [
             'page' => $page,
             'maxProductsPrice' => ProductService::getMaxProductsPrice(),

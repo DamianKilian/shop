@@ -108,7 +108,7 @@
 import DragDropFileUploader from './DragDropFileUploader.vue'
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
-import SimpleImage from "@editorjs/simple-image";
+import ImageTool from '@editorjs/image';
 import List from "@editorjs/list";
 import FilterDisplay from './FilterDisplay.vue'
 import getProductFilterOptions from "./getProductFilterOptions.js";
@@ -121,6 +121,8 @@ export default {
         'adminPanelAddProductUrl',
         'adminPanelGetProductFilterOptionsUrl',
         'adminPanelGetProductDescUrl',
+        'adminPanelFetchUrlUrl',
+        'adminPanelUploadFileUrl',
         'selectedCategory',
         'getProducts',
         'categoryOptions'
@@ -262,7 +264,15 @@ export default {
                         defaultStyle: 'unordered'
                     }
                 },
-                image: SimpleImage,
+                image: {
+                    class: ImageTool,
+                    config: {
+                        endpoints: {
+                            byFile: this.adminPanelUploadFileUrl, // Your backend file uploader endpoint
+                            byUrl: this.adminPanelFetchUrlUrl, // Your endpoint that provides uploading by Url
+                        },
+                    },
+                },
                 header: {
                     class: Header,
                     config: {

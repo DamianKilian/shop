@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AddPageRequest;
 use App\Models\Page;
+use App\Models\PageFile;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -26,6 +28,29 @@ class AdminPanelPagesController extends Controller
         });
     }
 
+    protected function resetPageImages($page, $request)
+    {
+        $blocks = json_decode($page->body)->blocks;
+        $imageUrls = [];
+        foreach ($blocks as $block) {
+            if ('image' === $block->type) {
+                $imageUrls[] = $block->data->file->urlDb;
+            }
+        }
+        $pageFiles = PageFile::whereIn('url', $imageUrls)
+            ->when($request->pageId, function (Builder $query, string $pageId) {
+                $query->orWhere('id', $pageId);
+            })
+            ->get('url');
+        foreach ($pageFiles as $pageFile) {
+            if (false !== array_search($pageFile->url, $imageUrls)) {
+                $pageFile->page_id = $page->id;
+            } else {
+                $pageFile->page_id = null;
+            }
+        }
+    }
+
     protected function createPage($request)
     {
         if ($request->pageId) {
@@ -42,6 +67,7 @@ class AdminPanelPagesController extends Controller
                 'body' => $request->body,
             ]);
         }
+        $this->resetPageImages($page, $request);
         return $page;
     }
 

@@ -4,6 +4,8 @@
     <div class="container">
         <admin-panel-products :categories-prop='@json($categories)'
             category-options-prop='{{ $categoryOptions }}'
+            admin-panel-fetch-url-url="{{ route('admin-panel-fetch-url') }}"
+            admin-panel-upload-file-url="{{ route('admin-panel-upload-file') }}"
             admin-panel-delete-products-url="{{ route('admin-panel-delete-products') }}"
             admin-panel-get-products-url="{{ route('admin-panel-get-products') }}"
             admin-panel-get-product-filter-options-url="{{ route('admin-panel-get-product-filter-options') }}"

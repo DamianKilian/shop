@@ -32,7 +32,7 @@
                                 style="width: 49%"
                             >
                                 <input
-                                    @input='editedStringForSlug(page.title)'
+                                    @input="editedStringForSlug(page.title)"
                                     v-model="page.title"
                                     name="title"
                                     ref="title"
@@ -145,13 +145,15 @@
 <script>
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
-import SimpleImage from "@editorjs/simple-image";
+import ImageTool from '@editorjs/image';
 import List from '@editorjs/list';
 import generateSlug from './generateSlug.js';
 
 export default {
     mixins: [generateSlug],
     props: [
+        'adminPanelFetchUrlUrl',
+        'adminPanelUploadFileUrl',
         'adminPanelAddPageUrl',
         'adminPanelGetPageUrl',
         'getPages',
@@ -194,7 +196,8 @@ export default {
                 }
                 this.page.title = data.title;
                 this.page.slug = data.slug;
-                this.slugCustomized = this.generateSlug(this.title) !== this.page.slug;
+                this.slugCustomized =
+                    this.generateSlug(this.title) !== this.page.slug;
             } else {
                 this.editor.blocks.clear();
                 this.page.title = '';
@@ -252,6 +255,7 @@ export default {
     },
     created() {},
     mounted() {
+        var that = this;
         this.editor = new EditorJS({
             minHeight: 250,
             maxWidth: 250,
@@ -264,7 +268,28 @@ export default {
                         defaultStyle: 'unordered',
                     },
                 },
-                image: SimpleImage,
+                image: {
+                    class: ImageTool,
+                    config: {
+                        endpoints: {
+                            byFile: this.adminPanelUploadFileUrl, // Your backend file uploader endpoint
+                            byUrl: this.adminPanelFetchUrlUrl, // Your endpoint that provides uploading by Url
+                        },
+                        // uploader: {
+                        //     uploadByFile(file) {
+                        //         const form = new FormData();
+                        //         form.append('file', file);
+                        //         form.append('pageId', that.pageId);
+                        //         return axios
+                        //             .post(that.adminPanelUploadFileUrl, form)
+                        //             .then(function (response) {
+                        //                 return response.data;
+                        //             });
+                        //     },
+                        //     uploadByUrl(url) {},
+                        // },
+                    },
+                },
                 header: {
                     class: Header,
                     config: {

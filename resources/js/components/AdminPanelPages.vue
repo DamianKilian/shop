@@ -98,6 +98,8 @@
             :adminPanelAddPageUrl="adminPanelAddPageUrl"
             :adminPanelGetPageUrl="adminPanelGetPageUrl"
             :adminPanelDeletePageUrl="adminPanelDeletePageUrl"
+            :adminPanelFetchUrlUrl="adminPanelFetchUrlUrl"
+            :adminPanelUploadFileUrl="adminPanelUploadFileUrl"
         />
     </div>
 </template>
@@ -108,6 +110,8 @@ import AdminPanelAddPage from './AdminPanelAddPage.vue';
 export default {
     components: { AdminPanelAddPage },
     props: [
+        'adminPanelFetchUrlUrl',
+        'adminPanelUploadFileUrl',
         'adminPanelDeletePageUrl',
         'adminPanelAddPageUrl',
         'adminPanelGetPagesUrl',
