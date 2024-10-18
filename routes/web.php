@@ -39,4 +39,4 @@ Route::prefix('admin-panel')->group(function () {
     Route::post('/editorjs/fetch-url', [App\Http\Controllers\AdminPanelEditorjsController::class, 'fetchUrl'])->name('admin-panel-fetch-url')->withoutMiddleware([VerifyCsrfToken::class]);
 });
 
-Route::get('/ttt', [App\Http\Controllers\TestController::class, 'ttt']);
+Route::get('/test/ttt', [App\Http\Controllers\TestController::class, 'ttt']);

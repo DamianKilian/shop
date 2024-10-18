@@ -172,8 +172,10 @@ export default {
     watch: {
         pageId(newVal) {
             this.setPage();
+            this.title = __('Add page');
             if (newVal) {
                 this.getPage();
+                this.title = __('Edit page');
             }
         },
     },
