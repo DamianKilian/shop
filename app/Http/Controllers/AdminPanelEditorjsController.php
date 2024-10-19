@@ -4,16 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\PageFile;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
 use Spatie\Image\Image;
 use Spatie\Image\Enums\Fit;
+use Illuminate\Support\Str;
 
 class AdminPanelEditorjsController extends Controller
 {
-    public function saveFile($request)
+    public function saveFile($image)
     {
-        $name = $request->image->hashName();
+        $name = $image->hashName();
         $url = "pages/$name";
         PageFile::create([
             'url' => $url,
@@ -21,7 +23,7 @@ class AdminPanelEditorjsController extends Controller
         $publicStorage = Storage::disk('public');
         $urlFull = env('APP_URL') . Storage::url($url);
         $urlAbsolute = $publicStorage->path($url);
-        $publicStorage->put("pages", $request->image);
+        $publicStorage->put("pages", $image);
         Image::load($urlAbsolute)
             ->fit(Fit::Max, 1920)
             ->save();
@@ -32,9 +34,9 @@ class AdminPanelEditorjsController extends Controller
         ];
     }
 
-    public function uploadFile(Request $request)
+    public function storeFile($image)
     {
-        $return = [
+        $fileData = [
             'file' => [
                 'url' => '',
                 'urlDb' => ''
@@ -42,15 +44,25 @@ class AdminPanelEditorjsController extends Controller
             'success' => 1,
         ];
         try {
-            $return['file'] = $this->saveFile($request);
+            $fileData['file'] = $this->saveFile($image);
         } catch (\Throwable $th) {
-            $return['success'] = 0;
+            $fileData['success'] = 0;
         }
-        return response()->json($return);
+        return $fileData;
+    }
+
+    public function uploadFile(Request $request)
+    {
+        return response()->json($this->storeFile($request->image));
     }
 
     public function fetchUrl(Request $request)
     {
+        $tmpFile = env('TEMP_FOLDER') . '/' . Str::random(40);
+        Storage::put($tmpFile, file_get_contents($request->url));
+        $image = new UploadedFile(Storage::path($tmpFile), 'fetchUrlFile');
+        $fileData = $this->storeFile($image);
+        Storage::delete($tmpFile);
+        return response()->json($fileData);
     }
-
 }
