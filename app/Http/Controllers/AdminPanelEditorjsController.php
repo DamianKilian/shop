@@ -58,11 +58,12 @@ class AdminPanelEditorjsController extends Controller
 
     public function fetchUrl(Request $request)
     {
-        $tmpFile = env('TEMP_FOLDER') . '/' . Str::random(40);
-        Storage::put($tmpFile, file_get_contents($request->url));
-        $image = new UploadedFile(Storage::path($tmpFile), 'fetchUrlFile');
+        $tmpFile = Str::random(40);
+        $tempStorage = Storage::disk('temp');
+        $tempStorage->put($tmpFile, file_get_contents($request->url));
+        $image = new UploadedFile($tempStorage->path($tmpFile), 'fetchUrlFile');
         $fileData = $this->storeFile($image);
-        Storage::delete($tmpFile);
+        $tempStorage->delete($tmpFile);
         return response()->json($fileData);
     }
 }
