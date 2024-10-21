@@ -6,14 +6,32 @@ use App\Models\Page;
 use App\Models\PageFile;
 use App\Models\Suggestion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class CommandTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_prune_temp(): void
+    {
+        $time = time();
+        $weekAgo = $time - 604800;
+        // $month = 2592000;
+        $yearAgo = $time - 31536000;
+        $tempStorage = Storage::fake('temp');
+        $tempStorage->put('file1.jpg', 'content');
+        touch($tempStorage->path('file1.jpg'), $weekAgo);
+        $tempStorage->put('file2', 'content');
+        touch($tempStorage->path('file2'), $weekAgo);
+        $tempStorage->put('file3.jpg', 'content');
+        touch($tempStorage->path('file3.jpg'), $yearAgo);
+        $tempStorage->put('file4', 'content');
+        touch($tempStorage->path('file4'), $yearAgo);
+
+        $this->artisan('prune:temp')->assertExitCode(0);
+        $this->assertTrue(['file1.jpg', 'file2'] == $tempStorage->files());
+    }
 
     public function test_prune_suggestions(): void
     {

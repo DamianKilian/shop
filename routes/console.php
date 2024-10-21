@@ -16,6 +16,19 @@ use Illuminate\Support\Facades\Storage;
 
 // Schedules:
 
+Artisan::command('prune:temp', function () {
+    $tempStorage = Storage::disk('temp');
+    $paths = $tempStorage->files();
+    $month = 2592000;
+    $time = time();
+    foreach ($paths as $path) {
+        if ($time > $month + filemtime($tempStorage->path($path))) {
+            $tempStorage->delete($path);
+        }
+    }
+    $this->comment('Old temp files removed');
+})->purpose('Remove unused suggestions')->daily();
+
 Artisan::command('prune:suggestions', function () {
     DB::table('suggestions')
         ->where('last_used', '<=', now()->subYear())
