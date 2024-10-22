@@ -40,6 +40,9 @@ class EditorjsTest extends TestCase
         $this->assertEquals(1920, $width);
         $this->assertEquals(1000, $height);
         $this->assertEquals(1, count($publicStorage->files('pages')));
+        $this->assertDatabaseHas('page_files', [
+            'url' => $url,
+        ]);
     }
 
     public function test_fetchUrl(): void
@@ -66,5 +69,8 @@ class EditorjsTest extends TestCase
             ]);
         $this->assertEquals(1, count($publicStorage->files('pages')));
         $this->assertEquals(0, count($tempStorage->files()));
+        $this->assertDatabaseHas('page_files', [
+            'url' => $url,
+        ]);
     }
 }
