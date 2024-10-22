@@ -13,6 +13,11 @@ use Illuminate\Support\Str;
 
 class AdminPanelEditorjsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function saveFile($image)
     {
         $name = $image->hashName();
