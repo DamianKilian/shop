@@ -23,9 +23,14 @@ class AdminPanelPagesController extends Controller
 
     public function addPage(AddPageRequest $request)
     {
-        DB::transaction(function () use ($request) {
-            $this->createPage($request);
+        $page = null;
+        DB::transaction(function () use ($request, &$page) {
+            $page = $this->createPage($request);
         });
+        $pageId = $page ? $page->id : null;
+        return response()->json([
+            'pageId' => $pageId,
+        ]);
     }
 
     protected function resetPageImages($page, $request)
@@ -41,13 +46,14 @@ class AdminPanelPagesController extends Controller
             ->when($request->pageId, function (Builder $query, string $pageId) {
                 $query->orWhere('id', $pageId);
             })
-            ->get('url');
+            ->get();
         foreach ($pageFiles as $pageFile) {
             if (false !== array_search($pageFile->url, $imageUrls)) {
                 $pageFile->page_id = $page->id;
             } else {
                 $pageFile->page_id = null;
             }
+            $pageFile->save();
         }
     }
 

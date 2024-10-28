@@ -1,13 +1,28 @@
 <?php
 
-namespace Database\Factories;
+namespace Tests\Feature\AdminPanel;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
-class PageFactory extends Factory
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+use App\Models\User;
+use App\Models\PageFile;
+
+class PagesTest extends TestCase
 {
-    public function definition(): array
+    use RefreshDatabase;
+
+    public function test_addPage(): void
     {
+        $user = User::factory()->create();
+        $urlDb1 = 'pages/urlDb1.jpg';
+        $urlDb2 = 'pages/urlDb2.jpg';
+        PageFile::factory()->count(3)->create();
+        PageFile::factory()->create([
+            'url' => $urlDb1,
+        ]);
+        PageFile::factory()->create([
+            'url' => $urlDb2,
+        ]);
         $pageBodyArray = array(
             'time' => 1729269060460,
             'blocks' => array(0 => array(
@@ -31,8 +46,8 @@ class PageFactory extends Factory
                     'withBackground' => false,
                     'stretched' => false,
                     'file' => array(
-                        'url' => env('APP_URL') . '/storage/pages/Ohg9PuiEHYqDUVNlsWT9OXA0pvbuTbZfXlyMhgpc.jpg',
-                        'urlDb' => 'pages/Ohg9PuiEHYqDUVNlsWT9OXA0pvbuTbZfXlyMhgpc.jpg',
+                        'url' => env('APP_URL') . '/storage/' . $urlDb1,
+                        'urlDb' => $urlDb1,
                     ),
                 ),
             ), 4 => array(
@@ -44,18 +59,31 @@ class PageFactory extends Factory
                     'withBackground' => false,
                     'stretched' => false,
                     'file' => array(
-                        'url' => env('APP_URL') . '/storage/pages/1dv9n7O5lo2yRuAYlKjCFg8nU2JHChA53cAAJpeO.jpg',
-                        'urlDb' => 'pages/1dv9n7O5lo2yRuAYlKjCFg8nU2JHChA53cAAJpeO.jpg',
+                        'url' => env('APP_URL') . '/storage/' . $urlDb2,
+                        'urlDb' => $urlDb2,
                     ),
                 ),
             ),),
             'version' => '2.30.6',
         );
         $pageBody = json_encode($pageBodyArray, JSON_UNESCAPED_SLASHES);
-        return [
+
+        $response = $this->actingAs($user)->postJson('/admin-panel/add-page', [
             'title' => 'title',
+            'slug' => 'slug',
             'body' => $pageBody,
-            'slug' => 'slug'. Str::random(10),
-        ];
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseCount('page_files', 5);
+        $this->assertEquals(2, PageFile::where('page_id', $response['pageId'])->count());
+        $this->assertDatabaseHas('page_files', [
+            'url' => $urlDb1,
+            'page_id' => $response['pageId'],
+        ]);
+        $this->assertDatabaseHas('page_files', [
+            'url' => $urlDb2,
+            'page_id' => $response['pageId'],
+        ]);
     }
 }
