@@ -44,7 +44,7 @@ class AdminPanelPagesController extends Controller
         }
         $pageFiles = PageFile::whereIn('url', $imageUrls)
             ->when($request->pageId, function (Builder $query, string $pageId) {
-                $query->orWhere('id', $pageId);
+                $query->orWhere('page_id', $pageId);
             })
             ->get();
         foreach ($pageFiles as $pageFile) {
