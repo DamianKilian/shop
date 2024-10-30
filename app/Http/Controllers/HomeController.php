@@ -39,7 +39,11 @@ class HomeController extends Controller
     {
         $categories = CategoryService::getCategories();
         $category = Category::where('slug', $slug)->first();
-        $categoryChildrenIds = CategoryService::getCategoryChildrenIds([$category->id], $categories);
+        if (null === $request->categoryChildrenIds) {
+            $categoryChildrenIds = CategoryService::getCategoryChildrenIds([$category->id], $categories);
+        } else {
+            $categoryChildrenIds = json_decode($request->categoryChildrenIds);
+        }
         $products = ProductService::searchFilters($request, $categoryChildrenIds);
         unset($product);
         $activeLinks = '._' . $category->slug;

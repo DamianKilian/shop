@@ -22,12 +22,10 @@ export default {
                 minPrice: null,
                 maxPrice: null,
                 filterOptions: '',
+                categoryChildrenIds: '',
             },
             checkedOptionsGlobal: [],
             queryStrParamsInitialVals: {},
-            getProductsViewData: {
-                categoryChildrenIds: window.categoryChildrenIds,
-            },
             maxProductsPriceCeil: window.maxProductsPrice
                 ? _.ceil(window.maxProductsPrice)
                 : null,
@@ -102,7 +100,7 @@ export default {
                 this.getingProductsView = false;
                 return this.currentPage;
             }
-            if (this.getProductsViewData.categoryChildrenIds) {
+            if (this.queryStrParams.categoryChildrenIds) {
                 return this.getProductsViewRequest();
             } else {
                 return this.getProductsViewRequest(
@@ -119,7 +117,7 @@ export default {
             var url = this.setQueryStrParams(url).toString();
             this.failedValidation = {};
             return axios
-                .post(url, this.getProductsViewData)
+                .post(url)
                 .then(function (response) {
                     that.$refs.productsView.innerHTML = response.data;
                     that.currentPage = that.queryStrParams.page;
@@ -156,7 +154,7 @@ export default {
             var that = this;
             var url = this.setQueryStrParams(this.getProductNumsUrl).toString();
             axios
-                .post(url, this.getProductsViewData)
+                .post(url)
                 .then(function (response) {
                     that.setProductNums(response.data.productNums);
                 })
@@ -232,6 +230,10 @@ export default {
                 ? searchParams.get('filterOptions').split('|')
                 : [];
             this.checkedOptionsGlobal = this.checkedOptionsGlobal.map(Number);
+            this.queryStrParams.categoryChildrenIds =
+                searchParams.get('categoryChildrenIds') ||
+                window.categoryChildrenIds ||
+                '';
         },
         preserveFilters: function () {
             var that = this;
