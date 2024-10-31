@@ -2,8 +2,10 @@
 import FilterDisplayApp from './FilterDisplayApp.vue';
 import SearchApp from './SearchApp.vue';
 import SearchFiltersApp from './SearchFiltersApp.vue';
+import historyNavigation from './historyNavigation';
 
 export default {
+    mixins: [historyNavigation],
     components: { FilterDisplayApp, SearchApp, SearchFiltersApp },
     data() {
         return {
@@ -86,7 +88,7 @@ export default {
             var searchValue = _.trim(searchValue);
             return this.getProductsView({ searchValue: searchValue });
         },
-        getProductsView: function (queryStrParams = {}, pageChange = false) {
+        getProductsView: function (queryStrParams = {}, pageChange = false, historyPushState = true) {
             this.getingProductsView = true;
             if (!queryStrParams.page) {
                 queryStrParams.page = 1;
@@ -98,20 +100,26 @@ export default {
             var page = this.queryStrParams.page;
             if (0 >= page || page > this.lastPage) {
                 this.getingProductsView = false;
-                return this.currentPage;
+                return;
             }
             if (this.queryStrParams.categoryChildrenIds) {
-                return this.getProductsViewRequest();
+                return this.getProductsViewRequest(
+                    this.getProductsViewUrl,
+                    pageChange,
+                    historyPushState
+                );
             } else {
                 return this.getProductsViewRequest(
                     this.getProductsViewAllCategoriesUrl,
-                    pageChange
+                    pageChange,
+                    historyPushState
                 );
             }
         },
         getProductsViewRequest: function (
             url = this.getProductsViewUrl,
-            pageChange = false
+            pageChange = false,
+            historyPushState = true
         ) {
             var that = this;
             var url = this.setQueryStrParams(url).toString();
@@ -121,11 +129,13 @@ export default {
                 .then(function (response) {
                     that.$refs.productsView.innerHTML = response.data;
                     that.currentPage = that.queryStrParams.page;
-                    window.history.replaceState(
-                        null,
-                        null,
-                        that.setQueryStrParams(window.location.href)
-                    );
+                    if (historyPushState) {
+                        window.history.pushState(
+                            { ...that.queryStrParams },
+                            '',
+                            that.setQueryStrParams(window.location.href)
+                        );
+                    }
                     that.lastPage =
                         that.$refs.productsView.querySelector(
                             '#products'
