@@ -11,7 +11,8 @@
                 @endforeach
             </div>
         @endif
-        <a href="#" class="product clearfix">
+        <a href="{{ route('product', [$product->slug]) }}" class="product clearfix"
+            target="{{ env('PRODUCT_OPEN_TARGET') }}">
             <div class="img-container">
                 @if ($product->productPhotos->get(0))
                     <img src="{{ asset('storage/' . $product->productPhotos->get(0)->url_small) }}"

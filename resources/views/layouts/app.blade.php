@@ -17,7 +17,7 @@
     <!-- Scripts -->
     <script>
         window.pageType = '';
-        window.maxProductsPrice = {{ $maxProductsPrice ?? null }};
+        window.maxProductsPrice = {{ $maxProductsPrice ?? 'null' }};
     </script>
     @yield('scriptsHead')
     @php
@@ -91,31 +91,35 @@
                 </div>
                 @php
                     $categoryName = isset($category) ? $category->name : '';
+                    $searchUrl = $searchUrl ?? '';
                 @endphp
-                <search-app @search="searchProducts" category-name='{{ $categoryName }}'
+                <search-app @search="searchProducts($event, '{{ $searchUrl }}')"
+                    category-name='{{ $categoryName }}'
                     get-suggestions-url="{{ route('get-suggestions') }}"></search-app>
             </nav>
         </div>
         <main id="main" class="clearfix">
-            <div id="menu" class="bg-light d-none d-sm-block">
-                <div class="position-absolute d-sm-none" style="top: 0;right: 45px;">
-                    <div class="menu-btn btn-close position-fixed" style="padding: 15px;" type="button"
-                        aria-label="Close">
+            @if (isset($categories))
+                <div id="menu" class="bg-light d-none d-sm-block">
+                    <div class="position-absolute d-sm-none" style="top: 0;right: 45px;">
+                        <div class="menu-btn btn-close position-fixed" style="padding: 15px;" type="button"
+                            aria-label="Close">
+                        </div>
                     </div>
+                    @if (count($categories) > 0)
+                        <ul>
+                            @foreach ($categories as $category)
+                                @if (!$category->parent_id)
+                                    @include('_partials.menu-category')
+                                @endif
+                            @endforeach
+                        </ul>
+                        @include('_partials.filters')
+                    @else
+                        No categories
+                    @endif
                 </div>
-                @if (isset($categories) && count($categories) > 0)
-                    <ul>
-                        @foreach ($categories as $category)
-                            @if (!$category->parent_id)
-                                @include('_partials.menu-category')
-                            @endif
-                        @endforeach
-                    </ul>
-                    @include('_partials.filters')
-                @else
-                    No categories
-                @endif
-            </div>
+            @endif
             <div id="content">
                 <div class="mb-2">
                     @php

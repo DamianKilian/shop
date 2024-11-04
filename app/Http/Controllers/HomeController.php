@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GetProductsViewRequest;
 use App\Models\Category;
 use App\Models\Page;
+use App\Models\Product;
 use App\Models\Suggestion;
 use App\Services\CategoryService;
 use App\Services\EditorJSService;
@@ -128,6 +129,18 @@ class HomeController extends Controller
             'maxProductsPrice' => ProductService::getMaxProductsPrice(),
             'categories' => $categories,
             'products' => $products
+        ]);
+    }
+
+    public function product(Request $request, EditorJSService $editorJS, $slug)
+    {
+        $product = Product::where('slug', $slug)->first();
+        if ($product->description) {
+            $product->bodyHtml = $editorJS->toHtml($product->description);
+        }
+        return view('product', [
+            'product' => $product,
+            'searchUrl' => route('home'),
         ]);
     }
 }

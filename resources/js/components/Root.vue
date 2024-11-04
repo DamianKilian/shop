@@ -84,11 +84,20 @@ export default {
                 true
             );
         },
-        searchProducts: function (searchValue) {
+        searchProducts: function (searchValue, searchUrl = '') {
             var searchValue = _.trim(searchValue);
+            if (searchUrl) {
+                window.location.href =
+                    searchUrl + '/?searchValue=' + searchValue;
+                return;
+            }
             return this.getProductsView({ searchValue: searchValue });
         },
-        getProductsView: function (queryStrParams = {}, pageChange = false, historyPushState = true) {
+        getProductsView: function (
+            queryStrParams = {},
+            pageChange = false,
+            historyPushState = true
+        ) {
             this.getingProductsView = true;
             if (!queryStrParams.page) {
                 queryStrParams.page = 1;
@@ -245,6 +254,10 @@ export default {
                 window.categoryChildrenIds ||
                 '';
         },
+        getQueryStringParam: function (param) {
+            const searchParams = new URLSearchParams(window.location.search);
+            return searchParams.get(param);
+        },
         preserveFilters: function () {
             var that = this;
             document.addEventListener('click', function (e) {
@@ -272,10 +285,21 @@ export default {
             this.applyPageChangeEvents();
             if ('homePage' === window.pageType) {
                 this.preserveFilters();
-                window.history.replaceState(null, '', window.location.pathname);
+                if (!this.getQueryStringParam('searchValue')) {
+                    window.history.replaceState(
+                        null,
+                        '',
+                        window.location.pathname
+                    );
+                }
             }
             this.getQueryStringParameters();
             this.queryStrParamsInitialVals = _.clone(this.queryStrParams);
+            if ('homePage' === window.pageType) {
+                if (this.queryStrParams.searchValue) {
+                    this.getProductNums();
+                }
+            }
         }
     },
 };
