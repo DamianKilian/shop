@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\PageFile;
+use App\Models\ProductFile;
 use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -48,3 +49,16 @@ Artisan::command('prune:pageFiles', function () {
     PageFile::destroy($pageFiles->pluck('id'));
     $this->comment('Unused pageFiles removed');
 })->purpose('Remove unused pageFiles')->daily();
+
+Artisan::command('prune:productFiles', function () {
+    $productFiles = DB::table('product_files')
+        ->where('product_id', null)
+        ->where('created_at', '<=', now()->subMonth())
+        ->get();
+    $publicStorage = Storage::disk('public');
+    foreach ($productFiles as $productFile) {
+        $publicStorage->delete($productFile->url);
+    }
+    ProductFile::destroy($productFiles->pluck('id'));
+    $this->comment('Unused productFiles removed');
+})->purpose('Remove unused productFiles')->daily();

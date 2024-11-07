@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
 use App\Models\Page;
 use App\Models\PageFile;
+use App\Models\Product;
+use App\Models\ProductFile;
 use App\Models\Suggestion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
@@ -106,5 +109,62 @@ class CommandTest extends TestCase
         $publicStorage->assertExists('pages/img7.jpg');
         $publicStorage->assertMissing('pages/img4.jpg');
         $publicStorage->assertMissing('pages/img5.jpg');
+    }
+
+    public function test_prune_productFiles(): void
+    {
+        $publicStorage = Storage::fake('public');
+        // 5 productFiles
+        $publicStorage->put('products/img1.jpg', 'content');
+        ProductFile::factory()->create([
+            'url' => 'products/img1.jpg',
+        ]);
+        $publicStorage->put('products/img2.jpg', 'content');
+        ProductFile::factory()->create([
+            'url' => 'products/img2.jpg',
+            'created_at' => now()->subDay(),
+        ]);
+        $publicStorage->put('products/img3.jpg', 'content');
+        ProductFile::factory()->create([
+            'url' => 'products/img3.jpg',
+            'created_at' => now()->subDays(5),
+        ]);
+        $publicStorage->put('products/img4.jpg', 'content');
+        ProductFile::factory()->create([
+            'url' => 'products/img4.jpg',
+            'created_at' => now()->subWeeks(5),
+        ]);
+        $publicStorage->put('products/img5.jpg', 'content');
+        ProductFile::factory()->create([
+            'url' => 'products/img5.jpg',
+            'created_at' => now()->subWeeks(22),
+        ]);
+        // 7 productFiles (5 + 2)
+        $category = Category::factory()->create();
+        $product = Product::factory()->create([
+            'category_id' => $category->id,
+        ]);
+        $publicStorage->put('products/img6.jpg', 'content');
+        ProductFile::factory()->create([
+            'url' => 'products/img6.jpg',
+            'created_at' => now()->subDay(),
+            'product_id' => $product->id,
+        ]);
+        $publicStorage->put('products/img7.jpg', 'content');
+        ProductFile::factory()->create([
+            'url' => 'products/img7.jpg',
+            'created_at' => now()->subWeeks(22),
+            'product_id' => $product->id,
+        ]);
+
+        $this->artisan('prune:productFiles')->assertExitCode(0);
+        $this->assertDatabaseCount('product_files', 5);
+        $publicStorage->assertExists('products/img1.jpg');
+        $publicStorage->assertExists('products/img2.jpg');
+        $publicStorage->assertExists('products/img3.jpg');
+        $publicStorage->assertExists('products/img6.jpg');
+        $publicStorage->assertExists('products/img7.jpg');
+        $publicStorage->assertMissing('products/img4.jpg');
+        $publicStorage->assertMissing('products/img5.jpg');
     }
 }

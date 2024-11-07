@@ -2,6 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\PageFile;
+use App\Models\ProductFile;
+use Illuminate\Contracts\Database\Query\Builder;
+
 class EditorJSService
 {
     protected function addClass(&$el, $class)
@@ -69,5 +73,38 @@ class EditorJSService
             $doc->appendChild($el);
         }
         return html_entity_decode($doc->saveHTML());
+    }
+
+    public static function resetPageImages($model, $request, $type = 'page')
+    {
+        $json = 'page' === $type ? $model->body : $model->description;
+        $blocks = json_decode($json)->blocks;
+        $imageUrls = [];
+        foreach ($blocks as $block) {
+            if ('image' === $block->type) {
+                $imageUrls[] = $block->data->file->urlDb;
+            }
+        }
+        if ('product' === $type) {
+            $files = ProductFile::whereIn('url', $imageUrls)
+                ->when($request->productId, function (Builder $query, string $productId) {
+                    $query->orWhere('product_id', $productId);
+                })
+                ->get();
+        } elseif ('page' === $type) {
+            $files = PageFile::whereIn('url', $imageUrls)
+                ->when($request->pageId, function (Builder $query, string $pageId) {
+                    $query->orWhere('page_id', $pageId);
+                })
+                ->get();
+        }
+        foreach ($files as $file) {
+            if (false !== array_search($file->url, $imageUrls)) {
+                $file->{$type . '_id'} = $model->id;
+            } else {
+                $file->{$type . '_id'} = null;
+            }
+            $file->save();
+        }
     }
 }

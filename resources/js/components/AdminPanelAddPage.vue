@@ -147,6 +147,7 @@ import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import ImageTool from '@editorjs/image';
 import List from '@editorjs/list';
+import AttachesTool from '@editorjs/attaches';
 import generateSlug from './generateSlug.js';
 
 export default {
@@ -154,6 +155,7 @@ export default {
     props: [
         'adminPanelFetchUrlUrl',
         'adminPanelUploadFileUrl',
+        'adminPanelUploadAttachmentUrl',
         'adminPanelAddPageUrl',
         'adminPanelGetPageUrl',
         'getPages',
@@ -257,12 +259,17 @@ export default {
     },
     created() {},
     mounted() {
-        var that = this;
         this.editor = new EditorJS({
             minHeight: 250,
             maxWidth: 250,
             width: 111,
             tools: {
+                attaches: {
+                    class: AttachesTool,
+                    config: {
+                        endpoint: this.adminPanelUploadAttachmentUrl,
+                    },
+                },
                 list: {
                     class: List,
                     inlineToolbar: true,

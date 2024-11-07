@@ -7,8 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\AddProductRequest;
 use App\Models\Product;
+use App\Models\ProductAttachment;
+use App\Models\ProductFile;
 use App\Models\ProductPhoto;
 use App\Services\CategoryService;
+use App\Services\EditorJSService;
 use App\Services\ProductService;
 use Illuminate\Support\Facades\Storage;
 use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
@@ -46,6 +49,10 @@ class AdminPanelProductsController extends Controller
         foreach ($request->products as $product) {
             $productIds[] = $product['id'];
         }
+        ProductFile::whereIn('product_id', $productIds)
+            ->update(['product_id' => null]);
+        ProductAttachment::whereIn('product_id', $productIds)
+            ->update(['product_id' => null]);
         Product::whereIn('id', $productIds)->delete();
     }
 
@@ -78,9 +85,14 @@ class AdminPanelProductsController extends Controller
 
     public function addProduct(AddProductRequest $request)
     {
-        DB::transaction(function () use ($request) {
-            $this->createProduct($request);
+        $product = null;
+        DB::transaction(function () use ($request, &$product) {
+            $product = $this->createProduct($request);
         });
+        $productId = $product ? $product->id : null;
+        return response()->json([
+            'productId' => $productId,
+        ]);
     }
 
     protected function createProduct($request)
@@ -111,7 +123,8 @@ class AdminPanelProductsController extends Controller
             $this->addImages($request, $product->id);
         }
         $product->filterOptions()->sync($request->filterOptions);
-        return $product->id;
+        EditorJSService::resetPageImages($product, $request, 'product');
+        return $product;
     }
 
     protected function addImages($request, $productId)

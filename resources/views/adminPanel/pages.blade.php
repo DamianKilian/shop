@@ -6,6 +6,7 @@
             admin-panel-get-page-url="{{ route('admin-panel-get-page') }}"
             admin-panel-add-page-url="{{ route('admin-panel-add-page') }}"
             admin-panel-delete-page-url="{{ route('admin-panel-delete-page') }}"
+            admin-panel-upload-attachment-url="{{ route('admin-panel-upload-attachment') }}"
             admin-panel-fetch-url-url="{{ route('admin-panel-fetch-url') }}"
             admin-panel-upload-file-url="{{ route('admin-panel-upload-file') }}"></admin-panel-pages>
     </div>

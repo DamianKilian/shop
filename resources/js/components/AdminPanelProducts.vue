@@ -61,6 +61,7 @@
     <AdminPanelAddProduct :editProduct='editProduct' :getProducts='getProducts'
         :adminPanelFetchUrlUrl="adminPanelFetchUrlUrl"
         :adminPanelUploadFileUrl="adminPanelUploadFileUrl"
+        :adminPanelUploadAttachmentUrl="adminPanelUploadAttachmentUrl"
         :adminPanelAddProductUrl='adminPanelAddProductUrl'
         :adminPanelGetProductFilterOptionsUrl='adminPanelGetProductFilterOptionsUrl'
         :adminPanelGetProductDescUrl='adminPanelGetProductDescUrl'
@@ -115,6 +116,7 @@ export default {
     props: ['categoriesProp',
         'adminPanelFetchUrlUrl',
         'adminPanelUploadFileUrl',
+        'adminPanelUploadAttachmentUrl',
         'adminPanelGetProductsUrl',
         'adminPanelAddProductUrl',
         'adminPanelGetProductFilterOptionsUrl',

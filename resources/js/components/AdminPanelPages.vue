@@ -100,6 +100,7 @@
             :adminPanelDeletePageUrl="adminPanelDeletePageUrl"
             :adminPanelFetchUrlUrl="adminPanelFetchUrlUrl"
             :adminPanelUploadFileUrl="adminPanelUploadFileUrl"
+            :adminPanelUploadAttachmentUrl="adminPanelUploadAttachmentUrl"
         />
     </div>
 </template>
@@ -112,6 +113,7 @@ export default {
     props: [
         'adminPanelFetchUrlUrl',
         'adminPanelUploadFileUrl',
+        'adminPanelUploadAttachmentUrl',
         'adminPanelDeletePageUrl',
         'adminPanelAddPageUrl',
         'adminPanelGetPagesUrl',
