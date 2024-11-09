@@ -69,10 +69,40 @@ class EditorJSService
                     $el->appendChild($imgDiv);
                     $el->appendChild($figcaption);
                     break;
+                case 'attaches':
+                    $el = $doc->createElement('a');
+                    $el->setAttribute('class', 'btn btn-outline-primary btn-sm d-block mb-2 text-start');
+                    $el->setAttribute('href', $block->data->file->url);
+                    $fileName = substr($block->data->title ?: 'attachment', 0, -4) . '.' . pathinfo($block->data->file->url, PATHINFO_EXTENSION);
+                    $el->setAttribute('download', $fileName);
+                    $i = $doc->createElement('i');
+                    $i->setAttribute('class', 'fa-solid fa-paperclip me-2');
+                    $el->appendChild($i);
+                    $text = $doc->createTextNode($fileName . " - {$this->formatSizeUnits($block->data->file->size)}");
+                    $el->appendChild($text);
+                    break;
             }
             $doc->appendChild($el);
         }
         return html_entity_decode($doc->saveHTML());
+    }
+
+    protected function formatSizeUnits($bytes)
+    {
+        if ($bytes >= 1073741824) {
+            $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+        } elseif ($bytes >= 1048576) {
+            $bytes = number_format($bytes / 1048576, 2) . ' MB';
+        } elseif ($bytes >= 1024) {
+            $bytes = number_format($bytes / 1024, 2) . ' KB';
+        } elseif ($bytes > 1) {
+            $bytes = $bytes . ' bytes';
+        } elseif ($bytes == 1) {
+            $bytes = $bytes . ' byte';
+        } else {
+            $bytes = '0 bytes';
+        }
+        return $bytes;
     }
 
     public static function resetPageImages($model, $request, $type = 'page')

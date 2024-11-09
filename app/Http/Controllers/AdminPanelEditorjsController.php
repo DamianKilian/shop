@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PageAttachment;
 use App\Models\PageFile;
+use App\Models\ProductAttachment;
 use App\Models\ProductFile;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -19,45 +21,80 @@ class AdminPanelEditorjsController extends Controller
         $this->middleware('auth');
     }
 
-    public function saveFile($image, $type)
+    public function uploadAttachment(Request $request, $type = 'page')
     {
-        $name = $image->hashName();
-        $folder = $type . 's';
-        $url = "$folder/$name";
+        return response()->json($this->storeFile($request->file, $type, 'attachment'));
+    }
+
+    protected function getStorageFolder($type, $fileType)
+    {
         if ('product' === $type) {
-            ProductFile::create([
-                'url' => $url,
-            ]);
+            if ('attachment' === $fileType) {
+                return env('PRODUCT_ATTACHMENT_FOLDER');
+            } elseif ('image' === $fileType) {
+                return env('PRODUCT_IMAGE_FOLDER');
+            }
         } elseif ('page' === $type) {
-            PageFile::create([
-                'url' => $url,
-            ]);
+            if ('attachment' === $fileType) {
+                return env('PAGE_ATTACHMENT_FOLDER');
+            } elseif ('image' === $fileType) {
+                return env('PAGE_IMAGE_FOLDER');
+            }
         }
+    }
+
+    protected function saveFileInDb($type, $fileType, $url)
+    {
+        if ('product' === $type) {
+            if ('attachment' === $fileType) {
+                ProductAttachment::create(['url' => $url,]);
+            } elseif ('image' === $fileType) {
+                ProductFile::create(['url' => $url,]);
+            }
+        } elseif ('page' === $type) {
+            if ('attachment' === $fileType) {
+                PageAttachment::create(['url' => $url,]);
+            } elseif ('image' === $fileType) {
+                PageFile::create(['url' => $url,]);
+            }
+        }
+    }
+
+    public function saveFile($file, $type, $fileType)
+    {
+        $name = $file->hashName();
+        $folder = $this->getStorageFolder($type, $fileType);
+        $url = "$folder/$name";
+        $this->saveFileInDb($type, $fileType, $url);
         $publicStorage = Storage::disk('public');
         $urlFull = env('APP_URL') . Storage::url($url);
         $urlAbsolute = $publicStorage->path($url);
-        $publicStorage->put($folder, $image);
-        Image::load($urlAbsolute)
-            ->fit(Fit::Max, 1920)
-            ->save();
-        ImageOptimizer::optimize($urlAbsolute);
+        $publicStorage->put($folder, $file);
+        if ('image' === $fileType) {
+            Image::load($urlAbsolute)
+                ->fit(Fit::Max, 1920)
+                ->save();
+            ImageOptimizer::optimize($urlAbsolute);
+        }
         return [
             'url' => $urlFull,
-            'urlDb' => $url
+            'urlDb' => $url,
+            'size' => $file->getSize(),
         ];
     }
 
-    public function storeFile($file, $type)
+    public function storeFile($file, $type, $fileType = 'image')
     {
         $fileData = [
             'file' => [
                 'url' => '',
-                'urlDb' => ''
+                'urlDb' => '',
+                'size' => 0,
             ],
             'success' => 1,
         ];
         try {
-            $fileData['file'] = $this->saveFile($file, $type);
+            $fileData['file'] = $this->saveFile($file, $type, $fileType);
         } catch (\Throwable $th) {
             $fileData['success'] = 0;
         }

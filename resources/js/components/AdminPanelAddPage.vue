@@ -96,14 +96,14 @@
                                 id="editorjs"
                                 :class="{
                                     'is-invalid border-danger':
-                                        failedValidation.description,
+                                        failedValidation.body,
                                 }"
                                 class="border color bg-white padding-form-control"
                             ></div>
                             <div class="invalid-feedback">
                                 {{
-                                    failedValidation.description
-                                        ? failedValidation.description[0]
+                                    failedValidation.body
+                                        ? failedValidation.body[0]
                                         : ''
                                 }}
                             </div>

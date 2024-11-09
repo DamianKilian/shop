@@ -24,6 +24,7 @@ class AddPageRequest extends FormRequest
                 'max:255',
                 Rule::unique('pages')->ignore($this->pageId),
             ],
+            'body' => 'required',
         ];
     }
 
@@ -31,11 +32,9 @@ class AddPageRequest extends FormRequest
     {
         return [
             'slug.unique' => __('Slug must be unique'),
+            'body.required' => __('Description is required'),
         ];
     }
-
-
-
 
     protected function failedValidation(Validator $validator)
     {

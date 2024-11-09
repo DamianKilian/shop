@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\PageAttachment;
 use App\Models\PageFile;
+use App\Models\ProductAttachment;
 use App\Models\ProductFile;
 use App\Models\User;
 use Illuminate\Foundation\Inspiring;
@@ -62,3 +64,29 @@ Artisan::command('prune:productFiles', function () {
     ProductFile::destroy($productFiles->pluck('id'));
     $this->comment('Unused productFiles removed');
 })->purpose('Remove unused productFiles')->daily();
+
+Artisan::command('prune:productAttachments', function () {
+    $productAttachments = DB::table('product_attachments')
+        ->where('product_id', null)
+        ->where('created_at', '<=', now()->subMonth())
+        ->get();
+    $publicStorage = Storage::disk('public');
+    foreach ($productAttachments as $productAttachment) {
+        $publicStorage->delete($productAttachment->url);
+    }
+    ProductAttachment::destroy($productAttachments->pluck('id'));
+    $this->comment('Unused productAttachments removed');
+})->purpose('Remove unused productAttachments')->daily();
+
+Artisan::command('prune:pageAttachments', function () {
+    $pageAttachments = DB::table('page_attachments')
+        ->where('page_id', null)
+        ->where('created_at', '<=', now()->subMonth())
+        ->get();
+    $publicStorage = Storage::disk('public');
+    foreach ($pageAttachments as $pageAttachment) {
+        $publicStorage->delete($pageAttachment->url);
+    }
+    PageAttachment::destroy($pageAttachments->pluck('id'));
+    $this->comment('Unused pageAttachments removed');
+})->purpose('Remove unused pageAttachments')->daily();

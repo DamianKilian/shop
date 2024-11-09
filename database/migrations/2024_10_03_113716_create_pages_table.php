@@ -13,13 +13,14 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique()->nullable();
-            $table->text('body')->nullable();
+            $table->text('body');
             $table->timestamps();
         });
 
         Page::create([
             'title' => __('Home Page'),
             'slug' => null,
+            'body' => '{"time":1731146119711,"blocks":[{"id":"xmvRdvrELy","type":"paragraph","data":{"text":"Home page<br>"}}],"version":"2.30.6"}',
         ]);
     }
 
