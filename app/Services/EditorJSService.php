@@ -81,6 +81,25 @@ class EditorJSService
                     $text = $doc->createTextNode($fileName . " - {$this->formatSizeUnits($block->data->file->size)}");
                     $el->appendChild($text);
                     break;
+                case 'embed':
+                    $el = $doc->createElement('figure');
+                    $this->addClass($el, 'figure-editorjs');
+                    $iframeDiv = $doc->createElement('div');
+                    $this->addClass($iframeDiv, 'embed-tool');
+                    $iframe = $doc->createElement('iframe');
+                    $iframe->setAttribute('src', $block->data->embed);
+                    $iframe->setAttribute('style', 'width:100%; max-width:560px; height:315px');
+                    $iframe->setAttribute('frameborder', '0');
+                    $iframe->setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+                    $iframe->setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+                    $iframe->setAttribute('allowfullscreen', 'true');
+                    $iframeDiv->appendChild($iframe);
+                    $figcaption = $doc->createElement('figcaption');
+                    $caption = $doc->createTextNode($block->data->caption);
+                    $figcaption->appendChild($caption);
+                    $el->appendChild($iframeDiv);
+                    $el->appendChild($figcaption);
+                    break;
             }
             $doc->appendChild($el);
         }

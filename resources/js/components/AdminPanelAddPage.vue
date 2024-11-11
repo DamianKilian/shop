@@ -148,6 +148,7 @@ import Header from '@editorjs/header';
 import ImageTool from '@editorjs/image';
 import List from '@editorjs/list';
 import AttachesTool from '@editorjs/attaches';
+import Embed from '@editorjs/embed';
 import generateSlug from './generateSlug.js';
 
 export default {
@@ -261,9 +262,11 @@ export default {
     mounted() {
         this.editor = new EditorJS({
             minHeight: 250,
-            maxWidth: 250,
-            width: 111,
             tools: {
+                embed: {
+                    class: Embed,
+                    inlineToolbar: true,
+                },
                 attaches: {
                     class: AttachesTool,
                     config: {

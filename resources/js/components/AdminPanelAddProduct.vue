@@ -263,6 +263,7 @@ import Header from '@editorjs/header';
 import ImageTool from '@editorjs/image';
 import List from '@editorjs/list';
 import AttachesTool from '@editorjs/attaches';
+import Embed from '@editorjs/embed';
 import FilterDisplay from './FilterDisplay.vue';
 import getProductFilterOptions from './getProductFilterOptions.js';
 import generateSlug from './generateSlug.js';
@@ -438,6 +439,10 @@ export default {
         this.editor = new EditorJS({
             minHeight: 250,
             tools: {
+                embed: {
+                    class: Embed,
+                    inlineToolbar: true,
+                },
                 attaches: {
                     class: AttachesTool,
                     config: {
