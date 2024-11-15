@@ -96,13 +96,20 @@ $topHeight: 60px;
             position: relative;
             right: 29px;
         }
-        &:hover, &.active {
+        &:hover,
+        &.active {
             background-image: var(--bs-gradient);
             --bs-bg-opacity: 1;
             background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity));
             --bs-text-opacity: 1;
             color: rgba(var(--bs-white-rgb), var(--bs-text-opacity));
         }
+    }
+}
+
+#page-content {
+    img {
+        max-width: 100%;
     }
 }
 

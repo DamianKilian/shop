@@ -264,6 +264,7 @@ import ImageTool from '@editorjs/image';
 import List from '@editorjs/list';
 import AttachesTool from '@editorjs/attaches';
 import Embed from '@editorjs/embed';
+import SimpleImage from '../editorjs/simple-image-tutorial/simple-image.js';
 import FilterDisplay from './FilterDisplay.vue';
 import getProductFilterOptions from './getProductFilterOptions.js';
 import generateSlug from './generateSlug.js';
@@ -456,6 +457,7 @@ export default {
                         defaultStyle: 'unordered',
                     },
                 },
+                imageExternal: SimpleImage,
                 image: {
                     class: ImageTool,
                     config: {

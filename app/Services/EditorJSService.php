@@ -42,6 +42,7 @@ class EditorJSService
                     }
                     break;
                 case 'image':
+                case 'imageExternal':
                     $el = $doc->createElement('figure');
                     $this->addClass($el, 'figure-editorjs');
                     $imgDiv = $doc->createElement('div');
