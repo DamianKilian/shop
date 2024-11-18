@@ -281,7 +281,13 @@ export default {
                         defaultStyle: 'unordered',
                     },
                 },
-                imageExternal: SimpleImage,
+                imageExternal: {
+                    class: SimpleImage,
+                    inlineToolbar: true,
+                    config: {
+                        placeholder: __('Paste an image URL') + '...',
+                    },
+                },
                 image: {
                     class: ImageTool,
                     config: {

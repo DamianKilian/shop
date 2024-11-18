@@ -121,7 +121,7 @@ export default class SimpleImage {
 
     const input = document.createElement('input');
 
-    input.placeholder = this.config.placeholder || __('Paste an image URL') + '...';
+    input.placeholder = this.config.placeholder || 'Paste an image URL...';
     input.addEventListener('paste', (event) => {
       this._createImage(event.clipboardData.getData('text'));
     });
@@ -163,9 +163,9 @@ export default class SimpleImage {
 
     return Object.assign(this.data, {
       file: {
-        url: image.src,
+        url: image ? image.src : '',
       },
-      caption: caption.innerHTML || ''
+      caption: caption ? (caption.innerHTML || '') : ''
     });
   }
 
