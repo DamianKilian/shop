@@ -1,5 +1,5 @@
 <template>
-    <div id="filters">
+    <div id="admin-panel-filters">
         <div class="mt-3 actions-global clearfix">
             <div class='float-start'>
                 <select @change='getFilters()' v-model="selectedCategoryId" id='category-select' class="form-select">

@@ -38,7 +38,8 @@ import PaginationWidget from './components/PaginationWidget.vue';
 app.component('pagination-widget', PaginationWidget);
 import LoadingOverlay from './components/LoadingOverlay.vue';
 app.component('loading-overlay', LoadingOverlay);
-
+import AdminPanelSettings from './components/AdminPanelSettings.vue'
+app.component('admin-panel-settings', AdminPanelSettings);
 
 
 /**

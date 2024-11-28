@@ -1,5 +1,5 @@
 <template>
-    <div id="pages">
+    <div id="admin-panel-pages">
         <table class="table table-bordered table-hover fs-5">
             <colgroup>
                 <col style="width: 40px;">
@@ -37,7 +37,7 @@
                         <button
                             class="btn btn-danger btn-sm ms-1"
                             data-bs-toggle="modal"
-                            data-bs-target="#exampleModal"
+                            data-bs-target="#deleteModal"
                             @click="
                                 deleteModal.title = `${__(
                                     'Do you want to delete'
@@ -53,15 +53,14 @@
         </table>
         <div
             class="modal fade"
-            id="exampleModal"
+            id="deleteModal"
             tabindex="-1"
-            aria-labelledby="exampleModalLabel"
             aria-hidden="true"
         >
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                        <h1 class="modal-title fs-5">
                             {{ deleteModal.title }}
                         </h1>
                         <button

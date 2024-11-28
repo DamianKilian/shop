@@ -24,12 +24,17 @@ Route::prefix('admin-panel')->group(function () {
 
     Route::get('/categories', [App\Http\Controllers\AdminPanelCategoriesController::class, 'categories'])->name('admin-panel-categories');
     Route::post('/save-categories', [App\Http\Controllers\AdminPanelCategoriesController::class, 'saveCategories'])->name('admin-panel-save-categories');
-    
+
     Route::get('/filters', [App\Http\Controllers\AdminPanelFiltersController::class, 'filters'])->name('admin-panel-filters');
     Route::post('/get-filters', [App\Http\Controllers\AdminPanelFiltersController::class, 'getFilters'])->name('admin-panel-get-filters');
     Route::post('/add-filter', [App\Http\Controllers\AdminPanelFiltersController::class, 'addFilter'])->name('admin-panel-add-filter');
     Route::post('/delete-filters', [App\Http\Controllers\AdminPanelFiltersController::class, 'deleteFilters'])->name('admin-panel-delete-filters');
-    
+
+    Route::get('/settings', [App\Http\Controllers\AdminPanelSettingsController::class, 'settings'])->name('admin-panel-settings');
+    Route::post('/get-settings', [App\Http\Controllers\AdminPanelSettingsController::class, 'getSettings'])->name('admin-panel-get-settings');
+    Route::post('/restore-settings', [App\Http\Controllers\AdminPanelSettingsController::class, 'restoreSettings'])->name('admin-panel-restore-settings');
+    Route::post('/save-setting', [App\Http\Controllers\AdminPanelSettingsController::class, 'saveSetting'])->name('admin-panel-save-setting');
+
     Route::get('/pages', [App\Http\Controllers\AdminPanelPagesController::class, 'pages'])->name('admin-panel-pages');
     Route::post('/get-pages', [App\Http\Controllers\AdminPanelPagesController::class, 'getPages'])->name('admin-panel-get-pages');
     Route::post('/get-page', [App\Http\Controllers\AdminPanelPagesController::class, 'getPage'])->name('admin-panel-get-page');
