@@ -4,11 +4,18 @@ use App\Models\Setting;
 use App\Models\SettingCategory;
 use App\Models\SettingValue;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
     public function up(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        SettingValue::truncate();
+        Setting::truncate();
+        SettingCategory::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         $mainSettings = SettingCategory::create([
             'name' => __('Main settings'),
             'order_priority' => 1000,
