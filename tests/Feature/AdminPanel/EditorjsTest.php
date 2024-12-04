@@ -14,12 +14,13 @@ class EditorjsTest extends TestCase
 
     public function test_uploadAttachment(): void
     {
-        $this->uploadAttachment('/admin-panel/editorjs/upload-attachment', env('ATTACHMENTS_FOLDER'), 'page_attachments');
-        $this->uploadAttachment('/admin-panel/editorjs/upload-attachment/product', env('ATTACHMENTS_FOLDER'), 'product_attachments');
+        $this->uploadAttachment('/admin-panel/editorjs/upload-attachment', 'page_attachments');
+        $this->uploadAttachment('/admin-panel/editorjs/upload-attachment/product', 'product_attachments');
     }
 
-    public function uploadAttachment($uploadAttachmentUrl, $folder, $table): void
+    public function uploadAttachment($uploadAttachmentUrl, $table): void
     {
+        $folder = env('ATTACHMENTS_FOLDER');
         $user = User::factory()->create();
         $publicStorage = Storage::fake('public');
         $size = 1024;
@@ -51,12 +52,14 @@ class EditorjsTest extends TestCase
 
     public function test_uploadFile(): void
     {
-        $this->uploadFile('/admin-panel/editorjs/upload-file', env('IMAGES_FOLDER'), 'page_files');
-        $this->uploadFile('/admin-panel/editorjs/upload-file/product', env('IMAGES_FOLDER'), 'product_files');
+        $this->uploadFile('/admin-panel/editorjs/upload-file', 'page_files', $thumbnail = true);
+        $this->uploadFile('/admin-panel/editorjs/upload-file/product', 'product_files');
     }
 
-    public function uploadFile($uploadFileUrl, $folder, $table): void
+    public function uploadFile($uploadFileUrl, $table, $thumbnail = false): void
     {
+        $tfolder = env('THUMBNAILS_FOLDER');
+        $folder = env('IMAGES_FOLDER');
         $user = User::factory()->create();
         $publicStorage = Storage::fake('public');
         $image = UploadedFile::fake()->image('image.jpg', 3840, 2000);
@@ -66,9 +69,18 @@ class EditorjsTest extends TestCase
 
         $response = $this->actingAs($user)->post($uploadFileUrl, [
             'image' => $image,
+            'thumbnail' => $thumbnail
         ]);
         $urlAbsolute = $publicStorage->path($publicStorage->files($folder)[0]);
         list($width, $height) = getimagesize($urlAbsolute);
+        if ($thumbnail) {
+            $turlAbsolute = $publicStorage->path($publicStorage->files($tfolder)[0]);
+            list($twidth, $theight) = getimagesize($turlAbsolute);
+
+            $this->assertEquals(1, count($publicStorage->files($tfolder)));
+            $this->assertEquals(sett('THUMBNAIL_MAX_SIZE'), $twidth);
+            $this->assertTrue($twidth > $theight);
+        }
 
         $response
             ->assertStatus(200)
@@ -90,12 +102,13 @@ class EditorjsTest extends TestCase
 
     public function test_fetchUrl(): void
     {
-        $this->fetchUrl('/admin-panel/editorjs/fetch-url', env('IMAGES_FOLDER'), 'page_files');
-        $this->fetchUrl('/admin-panel/editorjs/fetch-url/product', env('IMAGES_FOLDER'), 'product_files');
+        $this->fetchUrl('/admin-panel/editorjs/fetch-url', 'page_files');
+        $this->fetchUrl('/admin-panel/editorjs/fetch-url/product', 'product_files');
     }
 
-    public function fetchUrl($fetchUrl, $folder, $table): void
+    public function fetchUrl($fetchUrl, $table): void
     {
+        $folder = env('IMAGES_FOLDER');
         $user = User::factory()->create();
         $publicStorage = Storage::fake('public');
         $tempStorage = Storage::fake('temp');
