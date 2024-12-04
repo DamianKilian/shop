@@ -1,0 +1,27 @@
+// https://github.com/avalon-studio/Bootstrap-Lightbox
+
+document.addEventListener("DOMContentLoaded", function (event) {
+    if (!document.querySelectorAll(".bs-lightbox .gallery").length) {
+        return;
+    }
+    const body_element = document.querySelector('html body');
+    const modal_div = document.createElement("div");
+    let modal_window = document.body.appendChild(modal_div);
+    let modal_html =
+        '<div class="modal fade" id="lightboxModalFullscreen" tabindex="-1" aria-labelledby="lightboxModalFullscreenLabel" aria-hidden="true">'
+        + '<div class="modal-dialog modal-fullscreen" data-bs-dismiss="modal" aria-label="Close">'
+        + '<div class="modal-content border-0">'
+        + '<div class="modal-body d-flex align-self-center align-items-center justify-content-center">'
+        + '<img src="" id="LightboxCanvas" data-bs-dismiss="modal" aria-label="Close" /><div id="lightboxCaption" class="carousel-caption fs-4"></div></div></div></div></div>'
+    modal_window.innerHTML = modal_html;
+    Array.from(document.querySelectorAll('[data-modal*="bs-lightbox"]')).forEach((href) => {
+        href.setAttribute('data-bs-toggle', 'modal');
+        href.setAttribute('data-bs-target', '#lightboxModalFullscreen');
+        href.addEventListener('click', (e) => {
+            const target_href = href.getAttribute('href');
+            document.getElementById('LightboxCanvas').src = target_href;
+            document.getElementById('lightboxCaption').innerHTML = href.dataset.caption;
+            e.preventDefault();
+        })
+    });
+});

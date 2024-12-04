@@ -26,20 +26,12 @@ class AdminPanelEditorjsController extends Controller
         return response()->json($this->storeFile($request->file, $type, 'attachment'));
     }
 
-    protected function getStorageFolder($type, $fileType)
+    protected function getStorageFolder($fileType)
     {
-        if ('product' === $type) {
-            if ('attachment' === $fileType) {
-                return env('PRODUCT_ATTACHMENT_FOLDER');
-            } elseif ('image' === $fileType) {
-                return env('PRODUCT_IMAGE_FOLDER');
-            }
-        } elseif ('page' === $type) {
-            if ('attachment' === $fileType) {
-                return env('PAGE_ATTACHMENT_FOLDER');
-            } elseif ('image' === $fileType) {
-                return env('PAGE_IMAGE_FOLDER');
-            }
+        if ('attachment' === $fileType) {
+            return env('ATTACHMENTS_FOLDER');
+        } elseif ('image' === $fileType) {
+            return env('IMAGES_FOLDER');
         }
     }
 
@@ -60,14 +52,14 @@ class AdminPanelEditorjsController extends Controller
         }
     }
 
-    public function saveFile($file, $type, $fileType)
+    public function saveFile($file, $type, $fileType, $thumbnail)
     {
+        $folder = $this->getStorageFolder($fileType);
         $name = $file->hashName();
-        $folder = $this->getStorageFolder($type, $fileType);
         $url = "$folder/$name";
+        $urlFull = env('APP_URL') . Storage::url($url);
         $this->saveFileInDb($type, $fileType, $url);
         $publicStorage = Storage::disk('public');
-        $urlFull = env('APP_URL') . Storage::url($url);
         $urlAbsolute = $publicStorage->path($url);
         $publicStorage->put($folder, $file);
         if ('image' === $fileType) {
@@ -75,6 +67,16 @@ class AdminPanelEditorjsController extends Controller
                 ->fit(Fit::Max, 1920)
                 ->save();
             ImageOptimizer::optimize($urlAbsolute);
+            if ($thumbnail) {
+                $tfolder = env('THUMBNAILS_FOLDER');
+                $turl = "$tfolder/$name";
+                $turlAbsolute = $publicStorage->path($turl);
+                $publicStorage->put($tfolder, $file);
+                Image::load($turlAbsolute)
+                    ->fit(Fit::Contain, sett('THUMBNAIL_MAX_SIZE'), sett('THUMBNAIL_MAX_SIZE'))
+                    ->save();
+                ImageOptimizer::optimize($turlAbsolute);
+            }
         }
         return [
             'url' => $urlFull,
@@ -83,7 +85,7 @@ class AdminPanelEditorjsController extends Controller
         ];
     }
 
-    public function storeFile($file, $type, $fileType = 'image')
+    public function storeFile($file, $type, $fileType, $thumbnail = false)
     {
         $fileData = [
             'file' => [
@@ -94,7 +96,7 @@ class AdminPanelEditorjsController extends Controller
             'success' => 1,
         ];
         try {
-            $fileData['file'] = $this->saveFile($file, $type, $fileType);
+            $fileData['file'] = $this->saveFile($file, $type, $fileType, $thumbnail);
         } catch (\Throwable $th) {
             $fileData['success'] = 0;
         }
@@ -103,7 +105,8 @@ class AdminPanelEditorjsController extends Controller
 
     public function uploadFile(Request $request, $type = 'page')
     {
-        return response()->json($this->storeFile($request->image, $type));
+        $thumbnail = !!$request->thumbnail;
+        return response()->json($this->storeFile($request->image, $type, 'image', $thumbnail));
     }
 
     public function fetchUrl(Request $request, $type = 'page')
@@ -112,7 +115,8 @@ class AdminPanelEditorjsController extends Controller
         $tempStorage = Storage::disk('temp');
         $tempStorage->put($tmpFile, file_get_contents($request->url));
         $image = new UploadedFile($tempStorage->path($tmpFile), 'fetchUrlFile');
-        $fileData = $this->storeFile($image, $type);
+        $thumbnail = !!$request->thumbnail;
+        $fileData = $this->storeFile($image, $type, 'image', $thumbnail);
         $tempStorage->delete($tmpFile);
         return response()->json($fileData);
     }

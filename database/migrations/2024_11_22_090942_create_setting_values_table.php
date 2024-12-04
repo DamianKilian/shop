@@ -17,8 +17,6 @@ return new class extends Migration
             $table->string("value");
             $table->text("desc")->nullable();
             $table->unsignedInteger('order_priority')->nullable();
-            $table->unsignedBigInteger('setting_id');
-            $table->foreign('setting_id')->references('id')->on('settings')->cascadeOnDelete();
             $table->timestamps();
         });
     }

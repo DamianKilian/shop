@@ -39,18 +39,17 @@ class SettingsTest extends TestCase
             'input_type' => 'select',
             'setting_category_id' => $settingCategory->id,
         ]);
-        SettingValue::factory()->create([
+        $s1 = SettingValue::factory()->create([
             'name' => 'settingValueName',
             'value' => '_blank',
             'order_priority' => 1000,
-            'setting_id' => $setting->id,
         ]);
-        SettingValue::factory()->create([
+        $s2 = SettingValue::factory()->create([
             'name' => 'settingValueName2',
             'value' => '_self',
             'order_priority' => 2000,
-            'setting_id' => $setting->id,
         ]);
+        $setting->settingValues()->attach([$s1->id, $s2->id]);
         $settingCategory2 = SettingCategory::factory()->create([
             'name' => 'settingCategoryName2',
             'order_priority' => 1000,

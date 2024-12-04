@@ -264,6 +264,7 @@ import ImageTool from '@editorjs/image';
 import List from '@editorjs/list';
 import AttachesTool from '@editorjs/attaches';
 import Embed from '@editorjs/embed';
+import Gallery from '@vtchinh/gallery-editorjs';
 import SimpleImage from '../editorjs/simple-image-tutorial/simple-image.js';
 import FilterDisplay from './FilterDisplay.vue';
 import getProductFilterOptions from './getProductFilterOptions.js';
@@ -462,6 +463,18 @@ export default {
                     inlineToolbar: true,
                     config: {
                         placeholder: __('Paste an image URL') + '...',
+                    },
+                },
+                gallery: {
+                    class: Gallery,
+                    config: {
+                        endpoints: {
+                            byFile: this.adminPanelUploadFileUrl, // Your backend file uploader endpoint
+                            byUrl: this.adminPanelFetchUrlUrl, // Your endpoint that provides uploading by Url
+                        },
+                        additionalRequestData: {
+                            thumbnail: true,
+                        },
                     },
                 },
                 image: {

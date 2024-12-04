@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Setting extends Model
 {
@@ -24,8 +25,8 @@ class Setting extends Model
         return $this->belongsTo(SettingCategory::class);
     }
 
-    public function settingValues()
+    public function settingValues(): BelongsToMany
     {
-        return $this->hasMany(SettingValue::class);
+        return $this->belongsToMany(SettingValue::class);
     }
 }

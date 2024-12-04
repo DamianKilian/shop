@@ -14,8 +14,8 @@ class EditorjsTest extends TestCase
 
     public function test_uploadAttachment(): void
     {
-        $this->uploadAttachment('/admin-panel/editorjs/upload-attachment', env('PAGE_ATTACHMENT_FOLDER'), 'page_attachments');
-        $this->uploadAttachment('/admin-panel/editorjs/upload-attachment/product', env('PRODUCT_ATTACHMENT_FOLDER'), 'product_attachments');
+        $this->uploadAttachment('/admin-panel/editorjs/upload-attachment', env('ATTACHMENTS_FOLDER'), 'page_attachments');
+        $this->uploadAttachment('/admin-panel/editorjs/upload-attachment/product', env('ATTACHMENTS_FOLDER'), 'product_attachments');
     }
 
     public function uploadAttachment($uploadAttachmentUrl, $folder, $table): void
@@ -51,8 +51,8 @@ class EditorjsTest extends TestCase
 
     public function test_uploadFile(): void
     {
-        $this->uploadFile('/admin-panel/editorjs/upload-file', env('PAGE_IMAGE_FOLDER'), 'page_files');
-        $this->uploadFile('/admin-panel/editorjs/upload-file/product', env('PRODUCT_IMAGE_FOLDER'), 'product_files');
+        $this->uploadFile('/admin-panel/editorjs/upload-file', env('IMAGES_FOLDER'), 'page_files');
+        $this->uploadFile('/admin-panel/editorjs/upload-file/product', env('IMAGES_FOLDER'), 'product_files');
     }
 
     public function uploadFile($uploadFileUrl, $folder, $table): void
@@ -90,8 +90,8 @@ class EditorjsTest extends TestCase
 
     public function test_fetchUrl(): void
     {
-        $this->fetchUrl('/admin-panel/editorjs/fetch-url', env('PAGE_IMAGE_FOLDER'), 'page_files');
-        $this->fetchUrl('/admin-panel/editorjs/fetch-url/product', env('PRODUCT_IMAGE_FOLDER'), 'product_files');
+        $this->fetchUrl('/admin-panel/editorjs/fetch-url', env('IMAGES_FOLDER'), 'page_files');
+        $this->fetchUrl('/admin-panel/editorjs/fetch-url/product', env('IMAGES_FOLDER'), 'product_files');
     }
 
     public function fetchUrl($fetchUrl, $folder, $table): void

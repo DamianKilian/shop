@@ -404,6 +404,11 @@
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-4.6.2.tgz#057d2ded94c4e71b94e9814f92dcd9306317aa46"
   integrity sha512-kqf7SGFoG+80aZG6Pf+gsZIVvGSCKE98JbiWqcCV9cThtg91Jav0yvYFC9Zb+jKetNGF6ZKeoaxgZfND21fWKw==
 
+"@vtchinh/gallery-editorjs@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@vtchinh/gallery-editorjs/-/gallery-editorjs-1.2.3.tgz#1500a570df9efc73e027adf9a06eff0db6a0a1e7"
+  integrity sha512-EzZvLmstr7a6iJd9J8a5BwH1pAptPgr2PQizIUj01eAWz5jbrhp+d+qLDDPrEifbBqOA+TEu8KJwL2OsZtEQsQ==
+
 "@vue/compiler-core@3.5.12":
   version "3.5.12"
   resolved "https://registry.yarnpkg.com/@vue/compiler-core/-/compiler-core-3.5.12.tgz#bd70b7dabd12b0b6f31bc53418ba3da77994c437"
