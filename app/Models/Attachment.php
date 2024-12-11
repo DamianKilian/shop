@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PageFile extends Model
+class Attachment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['url', 'page_id'];
+    protected $fillable = ['url', 'page_id', 'product_id', 'hash'];
 }

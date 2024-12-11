@@ -98,6 +98,9 @@ class ProductService
         }
         $descStr = '';
         foreach (json_decode($description, true)['blocks'] as $block) {
+            if (false === array_search($block['type'], ['header', 'paragraph', 'list'])) {
+                continue;
+            }
             $data = $block['data'];
             if (isset($data['text'])) {
                 $descStr .= $data['text'] . ' ';

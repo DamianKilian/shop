@@ -2,11 +2,12 @@
 
 namespace Tests\Feature\AdminPanel;
 
+use App\Models\Attachment;
 use App\Models\Category;
+use App\Models\File;
 use App\Models\Filter;
 use App\Models\FilterOption;
 use App\Models\Product;
-use App\Models\ProductFile;
 use App\Models\ProductPhoto;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -221,6 +222,13 @@ class ProductsTest extends TestCase
         $product3 = Product::factory()->create([
             'category_id' => $category->id,
         ]);
+        $file = File::factory()->create([
+            'product_id' => $product->id,
+        ]);
+        $attachment = Attachment::factory()->create([
+            'product_id' => $product2->id,
+        ]);
+
         $user = User::factory()->create();
 
         $this->actingAs($user)->postJson('/admin-panel/delete-products', [
@@ -233,63 +241,129 @@ class ProductsTest extends TestCase
         $this->assertSoftDeleted($product);
         $this->assertSoftDeleted($product2);
         $this->assertNotSoftDeleted($product3);
+        $this->assertTrue(null ===  $file->productId);
+        $this->assertTrue(null ===  $attachment->productId);
     }
 
-    public function test_addProduct_images(): void
+    public function test_addProduct_images()
+    {
+        $this->addProduct_images();
+    }
+    public function test_addProduct_imagesGallery()
+    {
+        $this->addProduct_images('gallery');
+    }
+    public function test_edit_addProduct_images()
+    {
+        $this->edit_addProduct_images();
+    }
+    public function test_edit_addProduct_imagesGallery()
+    {
+        $this->edit_addProduct_images('gallery');
+    }
+    public function test_deleteProducts_images()
+    {
+        $this->deleteProducts_images();
+    }
+    public function test_deleteProducts_imagesGallery()
+    {
+        $this->deleteProducts_images('gallery');
+    }
+
+    protected function getDescArr($urls, $displayType = '')
+    {
+        $descArr = array(
+            'time' => 1729269060460,
+            'version' => '2.30.6',
+        );
+        $blocks = array(array(
+            'id' => 'gM2YmfoYJC',
+            'type' => 'paragraph',
+            'data' => array('text' => 'aaaa',),
+        ), array(
+            'id' => 'yJ7a1OpjJo',
+            'type' => 'paragraph',
+            'data' => array('text' => 'bbbb',),
+        ), array(
+            'id' => 'knvHiCRklt',
+            'type' => 'paragraph',
+            'data' => array('text' => 'cccc',),
+        ),);
+        $blocksType = [];
+        if ('image' === $displayType) {
+            foreach ($urls as $url) {
+                $blocksType[] = [
+                    'id' => 'AMFSAziZvQ',
+                    'type' => 'image',
+                    'data' => array(
+                        'caption' => 'dddd',
+                        'withBorder' => false,
+                        'withBackground' => false,
+                        'stretched' => false,
+                        'file' => array(
+                            'url' => env('APP_URL') . '/storage/' . $url,
+                            'urlDb' => $url,
+                        ),
+                    ),
+                ];
+            }
+        } elseif ('gallery' === $displayType) {
+            $items = [];
+            foreach ($urls as $url) {
+                $items[] = [
+                    "url" => $url,
+                    "caption" => "ccc"
+                ];
+            }
+            $blocksType[] = [
+                "id" => "SAfSXhLpv1",
+                "type" => "gallery",
+                "data" => [
+                    "items" => $items,
+                    "config" => "standard",
+                    "countItemEachRow" => "1"
+                ]
+            ];
+        } elseif ('' === $displayType) {
+            foreach ($urls as $url) {
+                $blocksType[] = [
+                    'id' => 'kW24e62oTp',
+                    'type' => 'attaches',
+                    'data' => [
+                        'title' => 'ttt',
+                        'file' => array(
+                            'url' => env('APP_URL') . '/storage/' . $url,
+                            'urlDb' => $url,
+                        ),
+                    ],
+                ];
+            }
+        }
+        $descArr['blocks'] = array_merge($blocks, $blocksType);
+        return $descArr;
+    }
+
+    protected function addProduct_images($displayType = 'image')
     {
         $user = User::factory()->create();
         $urlDb1 = 'products/urlDb1.jpg';
         $urlDb2 = 'products/urlDb2.jpg';
-        ProductFile::factory()->count(3)->create();
-        ProductFile::factory()->create([
+        File::factory()->count(3)->create([
+            'display_type' => $displayType,
+        ]);
+        File::factory()->create([
             'url' => $urlDb1,
+            'display_type' => $displayType,
         ]);
-        ProductFile::factory()->create([
+        File::factory()->create([
             'url' => $urlDb2,
+            'display_type' => $displayType,
         ]);
-        $descriptionArray = array(
-            'time' => 1729269060460,
-            'blocks' => array(0 => array(
-                'id' => 'gM2YmfoYJC',
-                'type' => 'paragraph',
-                'data' => array('text' => 'aaaa',),
-            ), 1 => array(
-                'id' => 'yJ7a1OpjJo',
-                'type' => 'paragraph',
-                'data' => array('text' => 'bbbb',),
-            ), 2 => array(
-                'id' => 'knvHiCRklt',
-                'type' => 'paragraph',
-                'data' => array('text' => 'cccc',),
-            ), 3 => array(
-                'id' => 'AMFSAziZvQ',
-                'type' => 'image',
-                'data' => array(
-                    'caption' => 'dddd',
-                    'withBorder' => false,
-                    'withBackground' => false,
-                    'stretched' => false,
-                    'file' => array(
-                        'url' => env('APP_URL') . '/storage/' . $urlDb1,
-                        'urlDb' => $urlDb1,
-                    ),
-                ),
-            ), 4 => array(
-                'id' => 'Z0bBpnqCkU',
-                'type' => 'image',
-                'data' => array(
-                    'caption' => 'dddd2',
-                    'withBorder' => false,
-                    'withBackground' => false,
-                    'stretched' => false,
-                    'file' => array(
-                        'url' => env('APP_URL') . '/storage/' . $urlDb2,
-                        'urlDb' => $urlDb2,
-                    ),
-                ),
-            ),),
-            'version' => '2.30.6',
-        );
+        File::factory()->create([
+            'url' => $urlDb2,
+            'display_type' => $displayType,
+        ]);
+        $descriptionArray = $this->getDescArr([$urlDb1, $urlDb2], $displayType);
         $description = json_encode($descriptionArray, JSON_UNESCAPED_SLASHES);
         $category = Category::factory()->create();
 
@@ -303,68 +377,29 @@ class ProductsTest extends TestCase
             'files' => [],
             'filesArr' => json_encode([]),
         ]);
+
         $response->assertStatus(200);
-        $this->assertDatabaseCount('product_files', 5);
-        $this->assertEquals(2, ProductFile::where('product_id', $response['productId'])->count());
-        $this->assertDatabaseHas('product_files', [
+        $this->assertDatabaseCount('files', 6);
+        $this->assertEquals(2, File::where('product_id', $response['productId'])->count());
+        $this->assertDatabaseHas('files', [
             'url' => $urlDb1,
             'product_id' => $response['productId'],
+            'page_id' => null,
         ]);
-        $this->assertDatabaseHas('product_files', [
+        $this->assertDatabaseHas('files', [
             'url' => $urlDb2,
             'product_id' => $response['productId'],
+            'page_id' => null,
         ]);
     }
 
-    public function test_edit_addProduct_images(): void
+    protected function edit_addProduct_images($displayType = 'image')
     {
         $user = User::factory()->create();
         $urlDbOld = 'products/urlDbOld.jpg';
         $urlDbNew = 'products/urlDbNew.jpg';
         $urlDbRemoved = 'products/urlDbRemoved.jpg';
-        $descriptionArray = array(
-            'time' => 1729269060460,
-            'blocks' => array(0 => array(
-                'id' => 'gM2YmfoYJC',
-                'type' => 'paragraph',
-                'data' => array('text' => 'aaaa',),
-            ), 1 => array(
-                'id' => 'yJ7a1OpjJo',
-                'type' => 'paragraph',
-                'data' => array('text' => 'bbbb',),
-            ), 2 => array(
-                'id' => 'knvHiCRklt',
-                'type' => 'paragraph',
-                'data' => array('text' => 'cccc',),
-            ), 3 => array(
-                'id' => 'AMFSAziZvQ',
-                'type' => 'image',
-                'data' => array(
-                    'caption' => 'dddd',
-                    'withBorder' => false,
-                    'withBackground' => false,
-                    'stretched' => false,
-                    'file' => array(
-                        'url' => env('APP_URL') . '/storage/' . $urlDbOld,
-                        'urlDb' => $urlDbOld,
-                    ),
-                ),
-            ), 4 => array(
-                'id' => 'Z0bBpnqCkU',
-                'type' => 'image',
-                'data' => array(
-                    'caption' => 'dddd2',
-                    'withBorder' => false,
-                    'withBackground' => false,
-                    'stretched' => false,
-                    'file' => array(
-                        'url' => env('APP_URL') . '/storage/' . $urlDbRemoved,
-                        'urlDb' => $urlDbRemoved,
-                    ),
-                ),
-            ),),
-            'version' => '2.30.6',
-        );
+        $descriptionArray = $this->getDescArr([$urlDbOld, $urlDbRemoved], $displayType);
         $description = json_encode($descriptionArray, JSON_UNESCAPED_SLASHES);
         $category = Category::factory()->create();
         $product = Product::factory()->create([
@@ -374,61 +409,32 @@ class ProductsTest extends TestCase
             'quantity' => 22,
             'category_id' => $category->id,
         ]);
-        ProductFile::factory()->count(3)->create();
-        ProductFile::factory()->create([
+        File::factory()->count(3)->create([
+            'display_type' => $displayType,
+        ]);
+        File::factory()->create([
             'url' => $urlDbOld,
             'product_id' => $product->id,
+            'display_type' => $displayType,
         ]);
-        ProductFile::factory()->create([
+        File::factory()->create([
+            'url' => $urlDbOld,
+            'display_type' => $displayType,
+        ]);
+        File::factory()->count(2)->create([
             'url' => $urlDbNew,
+            'display_type' => $displayType,
         ]);
-        ProductFile::factory()->create([
+        File::factory()->create([
             'url' => $urlDbRemoved,
             'product_id' => $product->id,
+            'display_type' => $displayType,
         ]);
-        $descriptionArrayNew = array(
-            'time' => 1729269060460,
-            'blocks' => array(0 => array(
-                'id' => 'gM2YmfoYJC',
-                'type' => 'paragraph',
-                'data' => array('text' => 'aaaa',),
-            ), 1 => array(
-                'id' => 'yJ7a1OpjJo',
-                'type' => 'paragraph',
-                'data' => array('text' => 'bbbb',),
-            ), 2 => array(
-                'id' => 'knvHiCRklt',
-                'type' => 'paragraph',
-                'data' => array('text' => 'cccc',),
-            ), 3 => array(
-                'id' => 'AMFSAziZvQ',
-                'type' => 'image',
-                'data' => array(
-                    'caption' => 'dddd',
-                    'withBorder' => false,
-                    'withBackground' => false,
-                    'stretched' => false,
-                    'file' => array(
-                        'url' => env('APP_URL') . '/storage/' . $urlDbOld,
-                        'urlDb' => $urlDbOld,
-                    ),
-                ),
-            ), 4 => array(
-                'id' => 'Z0bBpnqCkU',
-                'type' => 'image',
-                'data' => array(
-                    'caption' => 'dddd2',
-                    'withBorder' => false,
-                    'withBackground' => false,
-                    'stretched' => false,
-                    'file' => array(
-                        'url' => env('APP_URL') . '/storage/' . $urlDbNew,
-                        'urlDb' => $urlDbNew,
-                    ),
-                ),
-            ),),
-            'version' => '2.30.6',
-        );
+        File::factory()->create([
+            'url' => $urlDbRemoved,
+            'display_type' => $displayType,
+        ]);
+        $descriptionArrayNew = $this->getDescArr([$urlDbOld, $urlDbNew], $displayType);
         $descriptionNew = json_encode($descriptionArrayNew, JSON_UNESCAPED_SLASHES);
 
         $response = $this->actingAs($user)->postJson('/admin-panel/add-product', [
@@ -444,70 +450,28 @@ class ProductsTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $this->assertDatabaseCount('product_files', 6);
-        $this->assertEquals(2, ProductFile::where('product_id', $product->id)->count());
-        $this->assertDatabaseHas('product_files', [
+        $this->assertDatabaseCount('files', 9);
+        $this->assertEquals(2, File::where('product_id', $product->id)->count());
+        $this->assertDatabaseHas('files', [
             'url' => $urlDbOld,
             'product_id' => $product->id,
         ]);
-        $this->assertDatabaseHas('product_files', [
+        $this->assertDatabaseHas('files', [
             'url' => $urlDbNew,
             'product_id' => $product->id,
         ]);
-        $this->assertDatabaseMissing('product_files', [
+        $this->assertDatabaseMissing('files', [
             'url' => $urlDbRemoved,
             'product_id' => $product->id,
         ]);
     }
 
-    public function test_deleteProducts_images(): void
+    protected function deleteProducts_images($displayType = 'image')
     {
         $user = User::factory()->create();
         $urlDb = ['products/urlDb1.jpg', 'products/urlDb2.jpg', 'products/urlDb3.jpg', 'products/urlDb4.jpg'];
         for ($x = 1; $x <= 2; $x++) {
-            $descriptionArray[$x] = array(
-                'time' => 1729269060460,
-                'blocks' => array(0 => array(
-                    'id' => 'gM2YmfoYJC',
-                    'type' => 'paragraph',
-                    'data' => array('text' => 'aaaa',),
-                ), 1 => array(
-                    'id' => 'yJ7a1OpjJo',
-                    'type' => 'paragraph',
-                    'data' => array('text' => 'bbbb',),
-                ), 2 => array(
-                    'id' => 'knvHiCRklt',
-                    'type' => 'paragraph',
-                    'data' => array('text' => 'cccc',),
-                ), 3 => array(
-                    'id' => 'AMFSAziZvQ',
-                    'type' => 'image',
-                    'data' => array(
-                        'caption' => 'dddd',
-                        'withBorder' => false,
-                        'withBackground' => false,
-                        'stretched' => false,
-                        'file' => array(
-                            'url' => env('APP_URL') . '/storage/' . $urlDb[$x],
-                            'urlDb' => $urlDb[$x],
-                        ),
-                    ),
-                ), 4 => array(
-                    'id' => 'Z0bBpnqCkU',
-                    'type' => 'image',
-                    'data' => array(
-                        'caption' => 'dddd2',
-                        'withBorder' => false,
-                        'withBackground' => false,
-                        'stretched' => false,
-                        'file' => array(
-                            'url' => env('APP_URL') . '/storage/' . $urlDb[$x + 1],
-                            'urlDb' => $urlDb[$x + 1],
-                        ),
-                    ),
-                ),),
-                'version' => '2.30.6',
-            );
+            $descriptionArray[$x] = $this->getDescArr([$urlDb[$x], $urlDb[$x + 1]], $displayType);
         }
         $description = json_encode($descriptionArray[1], JSON_UNESCAPED_SLASHES);
         $description2 = json_encode($descriptionArray[2], JSON_UNESCAPED_SLASHES);
@@ -523,12 +487,23 @@ class ProductsTest extends TestCase
         $product3 = Product::factory()->create([
             'category_id' => $category->id,
         ]);
-        ProductFile::factory()->count(3)->create();
+        File::factory()->count(3)->create([
+            'display_type' => $displayType,
+        ]);
         foreach ($urlDb as $key => $value) {
-            ProductFile::factory()->create([
-                'url' => $value,
-                'product_id' => $product->id,
-            ]);
+            if ($key < 2) {
+                File::factory()->create([
+                    'url' => $value,
+                    'product_id' => $product->id,
+                    'display_type' => $displayType,
+                ]);
+            } else {
+                File::factory()->create([
+                    'url' => $value,
+                    'product_id' => $product2->id,
+                    'display_type' => $displayType,
+                ]);
+            }
         }
 
         $response = $this->actingAs($user)->postJson('/admin-panel/delete-products', [
@@ -540,7 +515,167 @@ class ProductsTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $this->assertDatabaseCount('product_files', 7);
-        $this->assertEquals(7, ProductFile::where('product_id', null)->count());
+        $this->assertDatabaseCount('files', 7);
+        $this->assertEquals(7, File::where('product_id', null)->count());
+    }
+
+    public function test_addProduct_attachments()
+    {
+        $user = User::factory()->create();
+        $urlDb1 = 'attachments/urlDb1.jpg';
+        $urlDb2 = 'attachments/urlDb2.jpg';
+        Attachment::factory()->count(3)->create();
+        Attachment::factory()->create([
+            'url' => $urlDb1,
+        ]);
+        Attachment::factory()->create([
+            'url' => $urlDb2,
+        ]);
+        Attachment::factory()->create([
+            'url' => $urlDb2,
+        ]);
+        $descriptionArray = $this->getDescArr([$urlDb1, $urlDb2]);
+        $description = json_encode($descriptionArray, JSON_UNESCAPED_SLASHES);
+        $category = Category::factory()->create();
+
+        $response = $this->actingAs($user)->postJson('/admin-panel/add-product', [
+            'title' => 'title',
+            'slug' => 'slug',
+            'description' => $description,
+            'price' => 11,
+            'quantity' => 22,
+            'categoryId' => $category->id,
+            'files' => [],
+            'filesArr' => json_encode([]),
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseCount('attachments', 6);
+        $this->assertEquals(2, Attachment::where('product_id', $response['productId'])->count());
+        $this->assertDatabaseHas('attachments', [
+            'url' => $urlDb1,
+            'product_id' => $response['productId'],
+            'page_id' => null,
+        ]);
+        $this->assertDatabaseHas('attachments', [
+            'url' => $urlDb2,
+            'product_id' => $response['productId'],
+            'page_id' => null,
+        ]);
+    }
+
+    public function test_edit_addProduct_attachments()
+    {
+        $user = User::factory()->create();
+        $urlDbOld = 'attachments/urlDbOld.jpg';
+        $urlDbNew = 'attachments/urlDbNew.jpg';
+        $urlDbRemoved = 'attachments/urlDbRemoved.jpg';
+        $descriptionArray = $this->getDescArr([$urlDbOld, $urlDbRemoved]);
+        $description = json_encode($descriptionArray, JSON_UNESCAPED_SLASHES);
+        $category = Category::factory()->create();
+        $product = Product::factory()->create([
+            'title' => 'title',
+            'description' => $description,
+            'price' => 11,
+            'quantity' => 22,
+            'category_id' => $category->id,
+        ]);
+        Attachment::factory()->count(3)->create();
+        Attachment::factory()->create([
+            'url' => $urlDbOld,
+            'product_id' => $product->id,
+        ]);
+        Attachment::factory()->create([
+            'url' => $urlDbOld,
+        ]);
+        Attachment::factory()->count(2)->create([
+            'url' => $urlDbNew,
+        ]);
+        Attachment::factory()->create([
+            'url' => $urlDbRemoved,
+            'product_id' => $product->id,
+        ]);
+        Attachment::factory()->create([
+            'url' => $urlDbRemoved,
+        ]);
+        $descriptionArrayNew = $this->getDescArr([$urlDbOld, $urlDbNew]);
+        $descriptionNew = json_encode($descriptionArrayNew, JSON_UNESCAPED_SLASHES);
+
+        $response = $this->actingAs($user)->postJson('/admin-panel/add-product', [
+            'productId' => $product->id,
+            'title' => 'titleEdited',
+            'slug' => 'slug',
+            'description' => $descriptionNew,
+            'price' => 111,
+            'quantity' => 222,
+            'categoryId' => $category->id,
+            'files' => [],
+            'filesArr' => json_encode([]),
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseCount('attachments', 9);
+        $this->assertEquals(2, Attachment::where('product_id', $product->id)->count());
+        $this->assertDatabaseHas('attachments', [
+            'url' => $urlDbOld,
+            'product_id' => $product->id,
+        ]);
+        $this->assertDatabaseHas('attachments', [
+            'url' => $urlDbNew,
+            'product_id' => $product->id,
+        ]);
+        $this->assertDatabaseMissing('attachments', [
+            'url' => $urlDbRemoved,
+            'product_id' => $product->id,
+        ]);
+    }
+
+    public function test_deleteProducts_attachments()
+    {
+        $user = User::factory()->create();
+        $urlDb = ['attachments/urlDb1.jpg', 'attachments/urlDb2.jpg', 'attachments/urlDb3.jpg', 'attachments/urlDb4.jpg'];
+        for ($x = 1; $x <= 2; $x++) {
+            $descriptionArray[$x] = $this->getDescArr([$urlDb[$x], $urlDb[$x + 1]]);
+        }
+        $description = json_encode($descriptionArray[1], JSON_UNESCAPED_SLASHES);
+        $description2 = json_encode($descriptionArray[2], JSON_UNESCAPED_SLASHES);
+        $category = Category::factory()->create();
+        $product = Product::factory()->create([
+            'description' => $description,
+            'category_id' => $category->id,
+        ]);
+        $product2 = Product::factory()->create([
+            'description' => $description2,
+            'category_id' => $category->id,
+        ]);
+        $product3 = Product::factory()->create([
+            'category_id' => $category->id,
+        ]);
+        Attachment::factory()->count(3)->create();
+        foreach ($urlDb as $key => $value) {
+            if ($key < 2) {
+                Attachment::factory()->create([
+                    'url' => $value,
+                    'product_id' => $product->id,
+                ]);
+            } else {
+                Attachment::factory()->create([
+                    'url' => $value,
+                    'product_id' => $product2->id,
+                ]);
+            }
+        }
+
+        $response = $this->actingAs($user)->postJson('/admin-panel/delete-products', [
+            'products' => [
+                ['id' => $product->id,],
+                ['id' => $product2->id,],
+                ['id' => $product3->id,],
+            ]
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseCount('attachments', 7);
+        $this->assertEquals(7, Attachment::where('product_id', null)->count());
     }
 }

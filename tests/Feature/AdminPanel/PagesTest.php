@@ -2,11 +2,12 @@
 
 namespace Tests\Feature\AdminPanel;
 
+use App\Models\Attachment;
 use App\Models\Page;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
-use App\Models\PageFile;
+use App\Models\File;
 
 class PagesTest extends TestCase
 {
@@ -65,15 +66,15 @@ class PagesTest extends TestCase
         $page = Page::factory()->create([
             'body' => $pageBody,
         ]);
-        PageFile::factory()->count(3)->create();
-        PageFile::factory()->create([
+        File::factory()->count(3)->create();
+        File::factory()->create([
             'url' => $urlDbOld,
             'page_id' => $page->id,
         ]);
-        PageFile::factory()->create([
+        File::factory()->create([
             'url' => $urlDbNew,
         ]);
-        PageFile::factory()->create([
+        File::factory()->create([
             'url' => $urlDbRemoved,
             'page_id' => $page->id,
         ]);
@@ -130,17 +131,17 @@ class PagesTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $this->assertDatabaseCount('page_files', 6);
-        $this->assertEquals(2, PageFile::where('page_id', $page->id)->count());
-        $this->assertDatabaseHas('page_files', [
+        $this->assertDatabaseCount('files', 6);
+        $this->assertEquals(2, File::where('page_id', $page->id)->count());
+        $this->assertDatabaseHas('files', [
             'url' => $urlDbOld,
             'page_id' => $page->id,
         ]);
-        $this->assertDatabaseHas('page_files', [
+        $this->assertDatabaseHas('files', [
             'url' => $urlDbNew,
             'page_id' => $page->id,
         ]);
-        $this->assertDatabaseMissing('page_files', [
+        $this->assertDatabaseMissing('files', [
             'url' => $urlDbRemoved,
             'page_id' => $page->id,
         ]);
@@ -151,11 +152,11 @@ class PagesTest extends TestCase
         $user = User::factory()->create();
         $urlDb1 = 'pages/urlDb1.jpg';
         $urlDb2 = 'pages/urlDb2.jpg';
-        PageFile::factory()->count(3)->create();
-        PageFile::factory()->create([
+        File::factory()->count(3)->create();
+        File::factory()->create([
             'url' => $urlDb1,
         ]);
-        PageFile::factory()->create([
+        File::factory()->create([
             'url' => $urlDb2,
         ]);
         $pageBodyArray = array(
@@ -210,13 +211,13 @@ class PagesTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $this->assertDatabaseCount('page_files', 5);
-        $this->assertEquals(2, PageFile::where('page_id', $response['pageId'])->count());
-        $this->assertDatabaseHas('page_files', [
+        $this->assertDatabaseCount('files', 5);
+        $this->assertEquals(2, File::where('page_id', $response['pageId'])->count());
+        $this->assertDatabaseHas('files', [
             'url' => $urlDb1,
             'page_id' => $response['pageId'],
         ]);
-        $this->assertDatabaseHas('page_files', [
+        $this->assertDatabaseHas('files', [
             'url' => $urlDb2,
             'page_id' => $response['pageId'],
         ]);
@@ -225,72 +226,29 @@ class PagesTest extends TestCase
     public function test_deletePage(): void
     {
         $user = User::factory()->create();
-        $urlDb1 = 'pages/urlDb1.jpg';
-        $urlDb2 = 'pages/urlDb2.jpg';
-        $pageBodyArray = array(
-            'time' => 1729269060460,
-            'blocks' => array(0 => array(
-                'id' => 'gM2YmfoYJC',
-                'type' => 'paragraph',
-                'data' => array('text' => 'aaaa',),
-            ), 1 => array(
-                'id' => 'yJ7a1OpjJo',
-                'type' => 'paragraph',
-                'data' => array('text' => 'bbbb',),
-            ), 2 => array(
-                'id' => 'knvHiCRklt',
-                'type' => 'paragraph',
-                'data' => array('text' => 'cccc',),
-            ), 3 => array(
-                'id' => 'AMFSAziZvQ',
-                'type' => 'image',
-                'data' => array(
-                    'caption' => 'dddd',
-                    'withBorder' => false,
-                    'withBackground' => false,
-                    'stretched' => false,
-                    'file' => array(
-                        'url' => env('APP_URL') . '/storage/' . $urlDb1,
-                        'urlDb' => $urlDb1,
-                    ),
-                ),
-            ), 4 => array(
-                'id' => 'Z0bBpnqCkU',
-                'type' => 'image',
-                'data' => array(
-                    'caption' => 'dddd2',
-                    'withBorder' => false,
-                    'withBackground' => false,
-                    'stretched' => false,
-                    'file' => array(
-                        'url' => env('APP_URL') . '/storage/' . $urlDb2,
-                        'urlDb' => $urlDb2,
-                    ),
-                ),
-            ),),
-            'version' => '2.30.6',
-        );
-        $pageBody = json_encode($pageBodyArray, JSON_UNESCAPED_SLASHES);
-        $page = Page::factory()->create([
-            'body' => $pageBody,
-        ]);
-        PageFile::factory()->count(3)->create();
-        PageFile::factory()->create([
-            'url' => $urlDb1,
+        $page = Page::factory()->create();
+        File::factory()->count(3)->create();
+        File::factory()->create([
             'page_id' => $page->id,
         ]);
-        PageFile::factory()->create([
-            'url' => $urlDb2,
+        File::factory()->create([
             'page_id' => $page->id,
         ]);
-
+        Attachment::factory()->count(3)->create();
+        Attachment::factory()->create([
+            'page_id' => $page->id,
+        ]);
+        Attachment::factory()->create([
+            'page_id' => $page->id,
+        ]);
         $response = $this->actingAs($user)->postJson('/admin-panel/delete-page', [
             'pageId' => $page->id,
         ]);
 
         $response->assertStatus(200);
-        $this->assertDatabaseCount('page_files', 5);
-        $this->assertEquals(5, PageFile::where('page_id', null)->count());
+        $this->assertDatabaseCount('files', 5);
+        $this->assertDatabaseCount('attachments', 5);
+        $this->assertEquals(5, File::where('page_id', null)->count());
+        $this->assertEquals(5, Attachment::where('page_id', null)->count());
     }
-
 }

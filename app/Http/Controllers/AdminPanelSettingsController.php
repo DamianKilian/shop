@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Setting;
 use App\Models\SettingCategory;
-use App\Services\AppService;
-use App\Services\SettingService;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 

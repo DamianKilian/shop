@@ -474,6 +474,7 @@ export default {
                         },
                         additionalRequestData: {
                             thumbnail: true,
+                            displayType: 'gallery',
                         },
                     },
                 },

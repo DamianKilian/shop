@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddPageRequest;
+use App\Models\Attachment;
+use App\Models\File;
 use App\Models\Page;
-use App\Models\PageAttachment;
-use App\Models\PageFile;
 use App\Services\EditorJSService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -50,7 +50,9 @@ class AdminPanelPagesController extends Controller
                 'body' => $request->body,
             ]);
         }
-        EditorJSService::resetPageImages($page, $request);
+        EditorJSService::resetPageImages($page, 'page', update: !!$request->pageId);
+        EditorJSService::resetPageGalleryImages($page, 'page', update: !!$request->pageId);
+        EditorJSService::resetAttachments($page, 'page', update: !!$request->pageId);
         return $page;
     }
 
@@ -72,9 +74,9 @@ class AdminPanelPagesController extends Controller
 
     public function deletePage(Request $request)
     {
-        PageFile::where('page_id', $request->pageId)
+        File::where('page_id', $request->pageId)
             ->update(['page_id' => null]);
-        PageAttachment::where('page_id', $request->pageId)
+        Attachment::where('page_id', $request->pageId)
             ->update(['page_id' => null]);
         Page::where('id', $request->pageId)->delete();
     }

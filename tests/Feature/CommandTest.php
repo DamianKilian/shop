@@ -2,13 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\Attachment;
 use App\Models\Category;
+use App\Models\File;
 use App\Models\Page;
-use App\Models\PageAttachment;
-use App\Models\PageFile;
 use App\Models\Product;
-use App\Models\ProductAttachment;
-use App\Models\ProductFile;
 use App\Models\Suggestion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
@@ -52,7 +50,7 @@ class CommandTest extends TestCase
             'last_used' => now()->subMonths(13),
         ]);
         Suggestion::factory()->create([
-            'last_used' => now()->subMonths(22),
+            'last_used' => now()->subYears(2),
         ]);
 
         $this->artisan('prune:suggestions')->assertExitCode(0);
@@ -61,17 +59,22 @@ class CommandTest extends TestCase
 
     public function test_prune_files(): void
     {
-        $this->prune_files(PageFile::factory(), 'prune:pageFiles', 'page_files', 'page');
-        $this->prune_files(ProductFile::factory(), 'prune:productFiles', 'product_files', 'product');
-        $this->prune_files(PageAttachment::factory(), 'prune:pageAttachments', 'page_attachments', 'page');
-        $this->prune_files(ProductAttachment::factory(), 'prune:productAttachments', 'product_attachments', 'product');
+        $this->prune_files(File::factory(), 'prune:files', 'files');
     }
 
-    public function prune_files($factory, $command, $table, $type): void
+    public function test_prune_attachments(): void
+    {
+        $this->prune_files(Attachment::factory(), 'prune:attachments', 'attachments');
+    }
+
+    public function prune_files($factory, $command, $table): void
     {
         $publicStorage = Storage::fake('public');
         // 5 pageFiles
         $publicStorage->put('test/img1.jpg', 'content');
+        if ('files' === $table) {
+            $publicStorage->put(env('THUMBNAILS_FOLDER') . '/img1.jpg', 'content');
+        }
         $factory->create([
             'url' => 'test/img1.jpg',
         ]);
@@ -86,6 +89,9 @@ class CommandTest extends TestCase
             'created_at' => now()->subDays(5),
         ]);
         $publicStorage->put('test/img4.jpg', 'content');
+        if ('files' === $table) {
+            $publicStorage->put(env('THUMBNAILS_FOLDER') . '/img4.jpg', 'content');
+        }
         $factory->create([
             'url' => 'test/img4.jpg',
             'created_at' => now()->subWeeks(5),
@@ -93,43 +99,53 @@ class CommandTest extends TestCase
         $publicStorage->put('test/img5.jpg', 'content');
         $factory->create([
             'url' => 'test/img5.jpg',
-            'created_at' => now()->subWeeks(22),
+            'created_at' => now()->subMonths(5),
         ]);
-        // 7 pageFiles (5 + 2)
+        // files with id
+        $category = Category::factory()->create();
+        $product = Product::factory()->create([
+            'category_id' => $category->id
+        ]);
+        $page = Page::factory()->create();
         $publicStorage->put('test/img6.jpg', 'content');
+        $factory->create([
+            'url' => 'test/img6.jpg',
+            'page_id' => $page->id,
+            'created_at' => now()->subDay(),
+        ]);
         $publicStorage->put('test/img7.jpg', 'content');
-
-        if ('page' === $type) {
-            $page = Page::factory()->create();
-            $factory->create([
-                'url' => 'test/img6.jpg',
-                'created_at' => now()->subDay(),
-                'page_id' => $page->id,
-            ]);
-            $factory->create([
-                'url' => 'test/img7.jpg',
-                'created_at' => now()->subWeeks(22),
-                'page_id' => $page->id,
-            ]);
-        } elseif ('product' === $type) {
-            $category = Category::factory()->create();
-            $product = Product::factory()->create([
-                'category_id' => $category->id,
-            ]);
-            $factory->create([
-                'url' => 'products/img6.jpg',
-                'created_at' => now()->subDay(),
-                'product_id' => $product->id,
-            ]);
-            $factory->create([
-                'url' => 'products/img7.jpg',
-                'created_at' => now()->subWeeks(22),
-                'product_id' => $product->id,
-            ]);
+        $factory->create([
+            'url' => 'test/img7.jpg',
+            'page_id' => $page->id,
+            'created_at' => now()->subMonths(5),
+        ]);
+        // files used in another models
+        $publicStorage->put('test/img8.jpg', 'content');
+        $factory->create([
+            'url' => 'test/img8.jpg',
+            'created_at' => now()->subMonths(5),
+        ]);
+        $factory->create([
+            'url' => 'test/img8.jpg',
+            'created_at' => now()->subMonths(5),
+            'page_id' => $page->id,
+        ]);
+        $publicStorage->put('test/img9.jpg', 'content');
+        if ('files' === $table) {
+            $publicStorage->put(env('THUMBNAILS_FOLDER') . '/img9.jpg', 'content');
         }
+        $factory->create([
+            'url' => 'test/img9.jpg',
+            'created_at' => now()->subMonths(5),
+        ]);
+        $factory->create([
+            'url' => 'test/img9.jpg',
+            'created_at' => now()->subMonths(5),
+            'product_id' => $product->id,
+        ]);
 
         $this->artisan($command)->assertExitCode(0);
-        $this->assertDatabaseCount($table, 5);
+        $this->assertDatabaseCount($table, 7);
         $publicStorage->assertExists('test/img1.jpg');
         $publicStorage->assertExists('test/img2.jpg');
         $publicStorage->assertExists('test/img3.jpg');
@@ -137,5 +153,17 @@ class CommandTest extends TestCase
         $publicStorage->assertExists('test/img7.jpg');
         $publicStorage->assertMissing('test/img4.jpg');
         $publicStorage->assertMissing('test/img5.jpg');
+        // files used in another models
+        $publicStorage->assertExists('test/img8.jpg');
+        $publicStorage->assertExists('test/img9.jpg');
+        if ('files' === $table) {
+            $publicStorage->assertExists(env('THUMBNAILS_FOLDER') . '/img1.jpg');
+        }
+        if ('files' === $table) {
+            $publicStorage->assertMissing(env('THUMBNAILS_FOLDER') . '/img4.jpg');
+        }
+        if ('files' === $table) {
+            $publicStorage->assertExists(env('THUMBNAILS_FOLDER') . '/img9.jpg');
+        }
     }
 }

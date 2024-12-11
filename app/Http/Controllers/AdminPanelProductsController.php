@@ -6,9 +6,9 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\AddProductRequest;
+use App\Models\Attachment;
+use App\Models\File;
 use App\Models\Product;
-use App\Models\ProductAttachment;
-use App\Models\ProductFile;
 use App\Models\ProductPhoto;
 use App\Services\CategoryService;
 use App\Services\EditorJSService;
@@ -49,9 +49,9 @@ class AdminPanelProductsController extends Controller
         foreach ($request->products as $product) {
             $productIds[] = $product['id'];
         }
-        ProductFile::whereIn('product_id', $productIds)
+        File::whereIn('product_id', $productIds)
             ->update(['product_id' => null]);
-        ProductAttachment::whereIn('product_id', $productIds)
+        Attachment::whereIn('product_id', $productIds)
             ->update(['product_id' => null]);
         Product::whereIn('id', $productIds)->delete();
     }
@@ -123,7 +123,9 @@ class AdminPanelProductsController extends Controller
             $this->addImages($request, $product->id);
         }
         $product->filterOptions()->sync($request->filterOptions);
-        EditorJSService::resetPageImages($product, $request, 'product');
+        EditorJSService::resetPageImages($product, 'product', update: !!$request->productId);
+        EditorJSService::resetPageGalleryImages($product, 'product', update: !!$request->productId);
+        EditorJSService::resetAttachments($product, 'product', update: !!$request->productId);
         return $product;
     }
 

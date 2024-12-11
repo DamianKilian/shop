@@ -2,9 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\PageFile;
-use App\Models\ProductFile;
-use Illuminate\Contracts\Database\Query\Builder;
+use App\Models\Attachment;
+use App\Models\File;
 
 class EditorJSService
 {
@@ -195,7 +194,43 @@ class EditorJSService
         return $bytes;
     }
 
-    public static function resetPageImages($model, $request, $type = 'page')
+    protected static function resetImages($model, $type, $update, $imageUrls, $displayType)
+    {
+        $c = $type . '_id';
+        $type2 = 'page' === $type ? 'product' : 'page';
+        $c2 = $type2 . '_id';
+        if ($update) {
+            $filesOld = File::where($c, $model->id)
+                ->whereDisplayType($displayType)
+                ->get();
+            foreach ($filesOld as $fileOld) {
+                $key = array_search($fileOld->url, $imageUrls);
+                if (false === $key) {
+                    $fileOld->{$c} = null;
+                    $fileOld->save();
+                } else {
+                    unset($imageUrls[$key]);
+                }
+            }
+        }
+        $files = File::where($c, null)
+            ->where($c2, null)
+            ->whereIn('url', $imageUrls)
+            ->whereDisplayType($displayType)
+            ->get();
+        foreach ($files as $file) {
+            $key = array_search($file->url, $imageUrls);
+            if (false === $key) {
+                continue;
+            } else {
+                $file->{$c} = $model->id;
+                $file->save();
+                unset($imageUrls[$key]);
+            }
+        }
+    }
+
+    public static function resetPageImages($model, $type, $update)
     {
         $json = 'page' === $type ? $model->body : $model->description;
         $blocks = json_decode($json)->blocks;
@@ -205,26 +240,70 @@ class EditorJSService
                 $imageUrls[] = $block->data->file->urlDb;
             }
         }
-        if ('product' === $type) {
-            $files = ProductFile::whereIn('url', $imageUrls)
-                ->when($request->productId, function (Builder $query, string $productId) {
-                    $query->orWhere('product_id', $productId);
-                })
-                ->get();
-        } elseif ('page' === $type) {
-            $files = PageFile::whereIn('url', $imageUrls)
-                ->when($request->pageId, function (Builder $query, string $pageId) {
-                    $query->orWhere('page_id', $pageId);
-                })
-                ->get();
+        if ($imageUrls) {
+            self::resetImages($model, $type, $update, $imageUrls, displayType: 'image');
         }
-        foreach ($files as $file) {
-            if (false !== array_search($file->url, $imageUrls)) {
-                $file->{$type . '_id'} = $model->id;
-            } else {
-                $file->{$type . '_id'} = null;
+    }
+
+    public static function resetPageGalleryImages($model, $type, $update)
+    {
+        $json = 'page' === $type ? $model->body : $model->description;
+        $blocks = json_decode($json)->blocks;
+        $imageUrls = [];
+        foreach ($blocks as $block) {
+            if ('gallery' !== $block->type) {
+                continue;
             }
-            $file->save();
+            foreach ($block->data->items as $item) {
+                $imageUrls[] = $item->url;
+            }
+        }
+        if ($imageUrls) {
+            self::resetImages($model, $type, $update, $imageUrls, displayType: 'gallery');
+        }
+    }
+
+    public static function resetAttachments($model, $type, $update)
+    {
+        $json = 'page' === $type ? $model->body : $model->description;
+        $c = $type . '_id';
+        $type2 = 'page' === $type ? 'product' : 'page';
+        $c2 = $type2 . '_id';
+        $blocks = json_decode($json)->blocks;
+        $attachmentUrls = [];
+        foreach ($blocks as $block) {
+            if ('attaches' === $block->type) {
+                $attachmentUrls[] = $block->data->file->urlDb;
+            }
+        }
+        if (!$attachmentUrls) {
+            return;
+        }
+        if ($update) {
+            $attachmentsOld = Attachment::where($c, $model->id)->get();
+            foreach ($attachmentsOld as $attachmentOld) {
+                $key = array_search($attachmentOld->url, $attachmentUrls);
+                if (false === $key) {
+                    $attachmentOld->{$type . '_id'} = null;
+                    $attachmentOld->save();
+                } else {
+                    unset($attachmentUrls[$key]);
+                }
+            }
+        }
+        $attachments = Attachment::where($c, null)
+            ->where($c2, null)
+            ->whereIn('url', $attachmentUrls)
+            ->get();
+        foreach ($attachments as $attachment) {
+            $key = array_search($attachment->url, $attachmentUrls);
+            if (false === $key) {
+                continue;
+            } else {
+                $attachment->{$c} = $model->id;
+                $attachment->save();
+                unset($attachmentUrls[$key]);
+            }
         }
     }
 }
