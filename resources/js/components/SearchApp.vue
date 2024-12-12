@@ -9,7 +9,11 @@
         </div>
         <div class="input-group search-container">
             <input
-                @keypress.enter.prevent="$emit('search', searchValue)"
+                @keypress.enter.prevent="
+                    $emit('search', searchValue);
+                    suggestions = [];
+                    selectedSuggestion = -1;
+                "
                 @keydown.arrow-down.prevent="suggestionSelect(1)"
                 @keydown.arrow-up.prevent="suggestionSelect(-1)"
                 @input="getSuggestions"
@@ -30,7 +34,7 @@
             <div v-if="suggestions.length" id="suggestions-container">
                 <div id="suggestions" class="border">
                     <div
-                        v-if='suggestions[0]'
+                        v-if="suggestions[0]"
                         v-for="suggestion in suggestions"
                         @click="suggestionSelectClick(suggestion)"
                         ref="suggestions"
@@ -41,11 +45,8 @@
                         <i class="fa-solid fa-magnifying-glass"></i>
                         {{ suggestion.suggestion }}
                     </div>
-                    <div
-                        v-else
-                        class="suggestion p-1"
-                    >
-                        <i class='text-muted'>{{__('No suggestions')}}</i>
+                    <div v-else class="suggestion p-1">
+                        <i class="text-muted">{{ __('No suggestions') }}</i>
                     </div>
                 </div>
             </div>
@@ -128,7 +129,7 @@ export default {
                 })
                 .then(function (response) {
                     that.suggestions = response.data.suggestions;
-                    if(!that.suggestions.length){
+                    if (!that.suggestions.length) {
                         that.suggestions.push('');
                     }
                 });
@@ -140,7 +141,10 @@ export default {
             this.$refs.clear.classList.remove('d-none');
         }
         document.addEventListener('click', function (e) {
-            if (!e.target.closest('.search-container') || e.target.classList.contains('btn')) {
+            if (
+                !e.target.closest('.search-container') ||
+                e.target.classList.contains('btn')
+            ) {
                 that.suggestions = [];
             }
         });
