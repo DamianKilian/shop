@@ -112,6 +112,10 @@ export default {
                 : '';
         },
         getSuggestions: _.debounce(function () {
+            if (!this.searchValue) {
+                this.suggestions = [];
+                return;
+            }
             if (!this.getSuggestionsUrl || !this.searchValue) {
                 return;
             }
