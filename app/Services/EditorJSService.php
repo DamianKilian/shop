@@ -84,8 +84,8 @@ class EditorJSService
                             $a->setAttribute('target', '_blank');
                             $a->setAttribute('data-caption', $item->caption);
                             $img = $doc->createElement('img');
-                            $thumbnailUrl = preg_replace('/storage\//', 'storage/' . env('THUMBNAILS_FOLDER') . '/', $item->url, 1);
-                            $img->setAttribute('src', $thumbnailUrl);
+                            $urlExplode = explode('/', $item->url);
+                            $img->setAttribute('src', '/storage/' . env('THUMBNAILS_FOLDER') . '/' . end($urlExplode));
                             $a->appendChild($img);
                             $gallery->appendChild($a);
                         }
