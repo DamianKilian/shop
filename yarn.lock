@@ -28,6 +28,20 @@
     "@babel/helper-validator-identifier" "^7.25.7"
     to-fast-properties "^2.0.0"
 
+"@calumk/editorjs-columns@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@calumk/editorjs-columns/-/editorjs-columns-0.3.2.tgz#a93ce77e0049ff5dc23b55efbce11970187ac4b9"
+  integrity sha512-/2dIbuy3Kip7eEt6Z+qGU2js93b7ZtJqVCFCiYdPKuqeYLZlUveueTHvlbOECtZ1sDxUFrVaKbm0wPOR1W0ntw==
+  dependencies:
+    "@editorjs/editorjs" "^2.26.5"
+    sweetalert2 "^11.4.10"
+    uuid "^8.3.2"
+
+"@calumk/editorjs-paragraph-linebreakable@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@calumk/editorjs-paragraph-linebreakable/-/editorjs-paragraph-linebreakable-1.0.0.tgz#deb63acbac48eaefd2d5a66f85b002b5a99f69b3"
+  integrity sha512-wP2gCkckp9PSOEvlOLd31ZOI8mDdtIsuNsDEyPpQE7o3QjipczoPNlNb3iTFjVIOfXP+0HH6eME7JBvVbSV4Xw==
+
 "@codexteam/icons@^0.0.4":
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/@codexteam/icons/-/icons-0.0.4.tgz#8b72dcd3f3a1b0d880bdceb2abebd74b46d3ae13"
@@ -54,6 +68,11 @@
   integrity sha512-D+dj55EsC5bvXV///Dh/+KN4unuI0j6SU3f5QcMA5zrfda47PNKwbKOuwMBJwn0O+o5qwqrFv67g98lAo2qqVQ==
   dependencies:
     "@codexteam/icons" "^0.0.4"
+
+"@editorjs/editorjs@^2.26.5":
+  version "2.30.7"
+  resolved "https://registry.yarnpkg.com/@editorjs/editorjs/-/editorjs-2.30.7.tgz#6ba210490c1040c55ef7e5ef040c4c6e3dc722e7"
+  integrity sha512-FfdeUqrgcKWC+Cy2GW6Dxup6s2TaRKokR4FL+HKXshu6h9Y//rrx4SQkURgkZOCSbV77t9btbmAXdFXWGB+diw==
 
 "@editorjs/editorjs@^2.29.1":
   version "2.30.6"
@@ -957,6 +976,11 @@ strip-ansi@^7.0.1:
   dependencies:
     ansi-regex "^6.0.1"
 
+sweetalert2@^11.4.10:
+  version "11.15.0"
+  resolved "https://registry.yarnpkg.com/sweetalert2/-/sweetalert2-11.15.0.tgz#d591d2cba05c14b696ff7343e1644de0c82d176a"
+  integrity sha512-34Xs0CFBac6I1cGG9d+XaBqJrp0F/0prr8rMYOcU0shU/XmkGkRtlCxWNi7PdKYGw9Qf6aoEHNYicX3au37nkw==
+
 to-fast-properties@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/to-fast-properties/-/to-fast-properties-2.0.0.tgz#dc5e698cbd079265bc73e0377681a4e4e83f616e"
@@ -968,6 +992,11 @@ to-regex-range@^5.0.1:
   integrity sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==
   dependencies:
     is-number "^7.0.0"
+
+uuid@^8.3.2:
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
+  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 vite-plugin-full-reload@^1.1.0:
   version "1.2.0"

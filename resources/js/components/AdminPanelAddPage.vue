@@ -143,7 +143,9 @@
 </template>
 
 <script>
-import Table from '@editorjs/table'
+import editorjsColumns from '@calumk/editorjs-columns';
+import editorjsParagraphLinebreakable from '@calumk/editorjs-paragraph-linebreakable';
+import Table from '@editorjs/table';
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import ImageTool from '@editorjs/image';
@@ -263,78 +265,88 @@ export default {
     },
     created() {},
     mounted() {
-        this.editor = new EditorJS({
-            minHeight: 250,
-            tools: {
-                table: Table,
-                embed: {
-                    class: Embed,
-                    inlineToolbar: true,
+        let tools = {
+            paragraph: editorjsParagraphLinebreakable,
+            table: Table,
+            embed: {
+                class: Embed,
+                inlineToolbar: true,
+            },
+            attaches: {
+                class: AttachesTool,
+                config: {
+                    endpoint: this.adminPanelUploadAttachmentUrl,
                 },
-                attaches: {
-                    class: AttachesTool,
-                    config: {
-                        endpoint: this.adminPanelUploadAttachmentUrl,
+            },
+            list: {
+                class: List,
+                inlineToolbar: true,
+                config: {
+                    defaultStyle: 'unordered',
+                },
+            },
+            imageExternal: {
+                class: SimpleImage,
+                inlineToolbar: true,
+                config: {
+                    placeholder: __('Paste an image URL') + '...',
+                },
+            },
+            gallery: {
+                class: Gallery,
+                config: {
+                    endpoints: {
+                        byFile: this.adminPanelUploadFileUrl, // Your backend file uploader endpoint
+                        byUrl: this.adminPanelFetchUrlUrl, // Your endpoint that provides uploading by Url
                     },
-                },
-                list: {
-                    class: List,
-                    inlineToolbar: true,
-                    config: {
-                        defaultStyle: 'unordered',
-                    },
-                },
-                imageExternal: {
-                    class: SimpleImage,
-                    inlineToolbar: true,
-                    config: {
-                        placeholder: __('Paste an image URL') + '...',
-                    },
-                },
-                gallery: {
-                    class: Gallery,
-                    config: {
-                        endpoints: {
-                            byFile: this.adminPanelUploadFileUrl, // Your backend file uploader endpoint
-                            byUrl: this.adminPanelFetchUrlUrl, // Your endpoint that provides uploading by Url
-                        },
-                        additionalRequestData: {
-                            thumbnail: true,
-                            displayType: 'gallery',
-                        },
-                    },
-                },
-                image: {
-                    class: ImageTool,
-                    config: {
-                        endpoints: {
-                            byFile: this.adminPanelUploadFileUrl, // Your backend file uploader endpoint
-                            byUrl: this.adminPanelFetchUrlUrl, // Your endpoint that provides uploading by Url
-                        },
-                        // uploader: {
-                        //     uploadByFile(file) {
-                        //         const form = new FormData();
-                        //         form.append('file', file);
-                        //         form.append('pageId', that.pageId);
-                        //         return axios
-                        //             .post(that.adminPanelUploadFileUrl, form)
-                        //             .then(function (response) {
-                        //                 return response.data;
-                        //             });
-                        //     },
-                        //     uploadByUrl(url) {},
-                        // },
-                    },
-                },
-                header: {
-                    class: Header,
-                    config: {
-                        placeholder: __('Enter a header'),
-                        levels: [2, 3, 4],
-                        defaultLevel: 2,
+                    additionalRequestData: {
+                        thumbnail: true,
+                        displayType: 'gallery',
                     },
                 },
             },
+            image: {
+                class: ImageTool,
+                config: {
+                    endpoints: {
+                        byFile: this.adminPanelUploadFileUrl, // Your backend file uploader endpoint
+                        byUrl: this.adminPanelFetchUrlUrl, // Your endpoint that provides uploading by Url
+                    },
+                    // uploader: {
+                    //     uploadByFile(file) {
+                    //         const form = new FormData();
+                    //         form.append('file', file);
+                    //         form.append('pageId', that.pageId);
+                    //         return axios
+                    //             .post(that.adminPanelUploadFileUrl, form)
+                    //             .then(function (response) {
+                    //                 return response.data;
+                    //             });
+                    //     },
+                    //     uploadByUrl(url) {},
+                    // },
+                },
+            },
+            header: {
+                class: Header,
+                config: {
+                    placeholder: __('Enter a header'),
+                    levels: [2, 3, 4],
+                    defaultLevel: 2,
+                },
+            },
+        };
+        let columnTools = _.clone(tools);
+        tools.columns = {
+            class: editorjsColumns,
+            config: {
+                EditorJsLibrary: EditorJS,
+                tools: columnTools,
+            },
+        };
+        this.editor = new EditorJS({
+            minHeight: 250,
+            tools: tools,
         });
     },
 };
