@@ -70,74 +70,10 @@ class EditorJSService
                     $el->appendChild($figcaption);
                     break;
                 case 'gallery':
-                    $config = $block->data->config;
-                    $el = $doc->createElement('div');
-                    $el->setAttribute('class', "bs-lightbox");
-                    if ('standard' === $config || 'masonry' === $config) {
-                        $gallery = $doc->createElement('div');
-                        $gallery->setAttribute('class', "$config gallery");
-                        $el->appendChild($gallery);
-                        foreach ($block->data->items as $item) {
-                            $a = $doc->createElement('a');
-                            $a->setAttribute('data-modal', 'bs-lightbox');
-                            $a->setAttribute('href', $item->url);
-                            $a->setAttribute('target', '_blank');
-                            $a->setAttribute('data-caption', $item->caption);
-                            $img = $doc->createElement('img');
-                            $urlExplode = explode('/', $item->url);
-                            $img->setAttribute('src', '/storage/' . env('THUMBNAILS_FOLDER') . '/' . end($urlExplode));
-                            $a->appendChild($img);
-                            $gallery->appendChild($a);
-                        }
-                    } elseif ('carousel' === $config) {
-                        $items = $block->data->items;
-                        $id = "gallery" . rand();
-                        $carousel = $doc->createElement('div');
-                        $carousel->setAttribute('class', "carousel slide");
-                        $carousel->setAttribute('id', $id);
-                        $el->appendChild($carousel);
-                        $carouselIndicators = $doc->createElement('div');
-                        $carouselIndicators->setAttribute('class', "carousel-indicators");
-                        foreach ($items as $key => $item) {
-                            $button = $doc->createElement('button');
-                            $button->setAttribute('data-bs-target', "#$id");
-                            $button->setAttribute('data-bs-slide-to', $key);
-                            if (0 === $key) {
-                                $button->setAttribute('class', "active");
-                            }
-                            $carouselIndicators->appendChild($button);
-                        }
-                        $carousel->appendChild($carouselIndicators);
-                        $carouselInner = $doc->createElement('div');
-                        $carouselInner->setAttribute('class', "carousel-inner");
-                        foreach ($items as $key => $item) {
-                            $carouselItem = $doc->createElement('div');
-                            $carouselItem->setAttribute('class', 'carousel-item' . (0 === $key ? " active" : ''));
-                            $img = $doc->createElement('img');
-                            $img->setAttribute('class', 'd-block w-100');
-                            $img->setAttribute('src', $item->url);
-                            $carouselItem->appendChild($img);
-                            $caption = $doc->createElement('div');
-                            $caption->setAttribute('class', 'carousel-caption fs-5');
-                            $caption->append($item->caption);
-                            $carouselItem->appendChild($caption);
-                            $carouselInner->appendChild($carouselItem);
-                        }
-                        $carousel->appendChild($carouselInner);
-                        $carouselControl = <<<EOT
-                            <button class="carousel-control-prev" data-bs-target="#$id" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" data-bs-target="#$id" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
-                        EOT;
-                        $carouselControlTemplate = $doc->createDocumentFragment();
-                        $carouselControlTemplate->appendXML($carouselControl);
-                        $carousel->appendChild($carouselControlTemplate);
-                    }
+                    $el = $this->toHtmlGallery($doc, $block);
+                    break;
+                case 'table':
+                    $el = $this->toHtmlTable($doc, $block);
                     break;
                 case 'attaches':
                     $el = $doc->createElement('a');
@@ -174,6 +110,114 @@ class EditorJSService
             $doc->appendChild($el);
         }
         return html_entity_decode($doc->saveHTML());
+    }
+
+    protected function toHtmlTable($doc, $block)
+    {
+        $el = $doc->createElement('table');
+        $this->addClass($el, 'table table-striped table-hover');
+        if (!$block->data->stretched) {
+            $this->addClass($el, 'w-auto');
+        }
+        $tbody = $doc->createElement('tbody');
+        $thead = null;
+        foreach ($block->data->content as $i => $row) {
+            $tr = $doc->createElement('tr');
+            if ($block->data->withHeadings && 0 === $i) {
+                $thead = $doc->createElement('thead');
+                foreach ($row as $cell) {
+                    $th = $doc->createElement('th');
+                    $th->append($cell);
+                    $tr->appendChild($th);
+                }
+                $thead->appendChild($tr);
+                continue;
+            }
+            foreach ($row as $cell) {
+                $td = $doc->createElement('td');
+                $td->append($cell);
+                $tr->appendChild($td);
+            }
+            $tbody->appendChild($tr);
+        }
+        if ($thead) {
+            $el->appendChild($thead);
+        }
+        $el->appendChild($tbody);
+        return $el;
+    }
+
+    protected function toHtmlGallery($doc, $block)
+    {
+        $config = $block->data->config;
+        $el = $doc->createElement('div');
+        $el->setAttribute('class', "bs-lightbox");
+        if ('standard' === $config || 'masonry' === $config) {
+            $gallery = $doc->createElement('div');
+            $gallery->setAttribute('class', "$config gallery");
+            $el->appendChild($gallery);
+            foreach ($block->data->items as $item) {
+                $a = $doc->createElement('a');
+                $a->setAttribute('data-modal', 'bs-lightbox');
+                $a->setAttribute('href', $item->url);
+                $a->setAttribute('target', '_blank');
+                $a->setAttribute('data-caption', $item->caption);
+                $img = $doc->createElement('img');
+                $urlExplode = explode('/', $item->url);
+                $img->setAttribute('src', '/storage/' . env('THUMBNAILS_FOLDER') . '/' . end($urlExplode));
+                $a->appendChild($img);
+                $gallery->appendChild($a);
+            }
+        } elseif ('carousel' === $config) {
+            $items = $block->data->items;
+            $id = "gallery" . rand();
+            $carousel = $doc->createElement('div');
+            $carousel->setAttribute('class', "carousel slide");
+            $carousel->setAttribute('id', $id);
+            $el->appendChild($carousel);
+            $carouselIndicators = $doc->createElement('div');
+            $carouselIndicators->setAttribute('class', "carousel-indicators");
+            foreach ($items as $key => $item) {
+                $button = $doc->createElement('button');
+                $button->setAttribute('data-bs-target', "#$id");
+                $button->setAttribute('data-bs-slide-to', $key);
+                if (0 === $key) {
+                    $button->setAttribute('class', "active");
+                }
+                $carouselIndicators->appendChild($button);
+            }
+            $carousel->appendChild($carouselIndicators);
+            $carouselInner = $doc->createElement('div');
+            $carouselInner->setAttribute('class', "carousel-inner");
+            foreach ($items as $key => $item) {
+                $carouselItem = $doc->createElement('div');
+                $carouselItem->setAttribute('class', 'carousel-item' . (0 === $key ? " active" : ''));
+                $img = $doc->createElement('img');
+                $img->setAttribute('class', 'd-block w-100');
+                $img->setAttribute('src', $item->url);
+                $carouselItem->appendChild($img);
+                $caption = $doc->createElement('div');
+                $caption->setAttribute('class', 'carousel-caption fs-5');
+                $caption->append($item->caption);
+                $carouselItem->appendChild($caption);
+                $carouselInner->appendChild($carouselItem);
+            }
+            $carousel->appendChild($carouselInner);
+            $carouselControl = <<<EOT
+                <button class="carousel-control-prev" data-bs-target="#$id" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" data-bs-target="#$id" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            EOT;
+            $carouselControlTemplate = $doc->createDocumentFragment();
+            $carouselControlTemplate->appendXML($carouselControl);
+            $carousel->appendChild($carouselControlTemplate);
+        }
+        return $el;
     }
 
     protected function formatSizeUnits($bytes)

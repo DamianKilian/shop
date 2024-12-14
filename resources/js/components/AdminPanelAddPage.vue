@@ -143,6 +143,7 @@
 </template>
 
 <script>
+import Table from '@editorjs/table'
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import ImageTool from '@editorjs/image';
@@ -265,6 +266,7 @@ export default {
         this.editor = new EditorJS({
             minHeight: 250,
             tools: {
+                table: Table,
                 embed: {
                     class: Embed,
                     inlineToolbar: true,
