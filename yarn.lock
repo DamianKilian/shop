@@ -37,11 +37,6 @@
     sweetalert2 "^11.4.10"
     uuid "^8.3.2"
 
-"@calumk/editorjs-paragraph-linebreakable@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@calumk/editorjs-paragraph-linebreakable/-/editorjs-paragraph-linebreakable-1.0.0.tgz#deb63acbac48eaefd2d5a66f85b002b5a99f69b3"
-  integrity sha512-wP2gCkckp9PSOEvlOLd31ZOI8mDdtIsuNsDEyPpQE7o3QjipczoPNlNb3iTFjVIOfXP+0HH6eME7JBvVbSV4Xw==
-
 "@codexteam/icons@^0.0.4":
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/@codexteam/icons/-/icons-0.0.4.tgz#8b72dcd3f3a1b0d880bdceb2abebd74b46d3ae13"
@@ -107,6 +102,13 @@
   integrity sha512-zXCHaNcIscpefnteBOS3x+98f/qBgEVsv+OvtKoTDZipMNqck2uVG+X2qMQr8xcwtJrj9ySX54lUac9FDlAHnA==
   dependencies:
     "@codexteam/icons" "^0.0.4"
+
+"@editorjs/marker@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@editorjs/marker/-/marker-1.4.0.tgz#c5553c54ced70d28502fb47f2dbc7d50c53fc88e"
+  integrity sha512-5ipEXfL44jTTRzgNp/p/YjMO7jT08S5z4V8qA3FFJTfdhKgQyM3mvP1zpdYKw47ZZpVWMCncvk5Nto3BxihEtg==
+  dependencies:
+    "@codexteam/icons" "^0.0.5"
 
 "@editorjs/raw@^2.5.1":
   version "2.5.1"

@@ -143,9 +143,9 @@
 </template>
 
 <script>
+import Marker from '@editorjs/marker';
 import RawTool from '@editorjs/raw';
 import editorjsColumns from '@calumk/editorjs-columns';
-import editorjsParagraphLinebreakable from '@calumk/editorjs-paragraph-linebreakable';
 import Table from '@editorjs/table';
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
@@ -267,8 +267,11 @@ export default {
     created() {},
     mounted() {
         let tools = {
+            Marker: {
+                class: Marker,
+                shortcut: 'CMD+SHIFT+M',
+            },
             raw: RawTool,
-            paragraph: editorjsParagraphLinebreakable,
             table: Table,
             embed: {
                 class: Embed,
