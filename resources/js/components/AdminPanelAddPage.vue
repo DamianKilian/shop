@@ -143,6 +143,7 @@
 </template>
 
 <script>
+import RawTool from '@editorjs/raw';
 import editorjsColumns from '@calumk/editorjs-columns';
 import editorjsParagraphLinebreakable from '@calumk/editorjs-paragraph-linebreakable';
 import Table from '@editorjs/table';
@@ -266,6 +267,7 @@ export default {
     created() {},
     mounted() {
         let tools = {
+            raw: RawTool,
             paragraph: editorjsParagraphLinebreakable,
             table: Table,
             embed: {

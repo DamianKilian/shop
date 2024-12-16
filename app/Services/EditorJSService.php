@@ -18,7 +18,10 @@ class EditorJSService
         $blocks = $json->blocks;
         $doc = new \DOMDocument();
         foreach ($blocks as  $block) {
-            $doc->appendChild($this->getElement($block, $doc));
+            $el = $this->getElement($block, $doc);
+            if ($el) {
+                $doc->appendChild($el);
+            }
         }
         return html_entity_decode($doc->saveHTML());
     }
@@ -115,8 +118,19 @@ class EditorJSService
             case 'columns':
                 $el = $this->toHtmlColumns($doc, $block);
                 break;
+            case 'raw':
+                $el = $this->toHtmlRaw($doc, $block);
+                break;
         }
         return $el;
+    }
+
+    protected function toHtmlRaw($doc, $block)
+    {
+        $rawHtml = $block->data->html;
+        $template = $doc->createDocumentFragment();
+        $template->appendXML($rawHtml);
+        $doc->appendChild($template);
     }
 
     protected function toHtmlColumns($doc, $block)
