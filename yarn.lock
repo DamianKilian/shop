@@ -644,6 +644,11 @@ eastasianwidth@^0.2.0:
   resolved "https://registry.yarnpkg.com/eastasianwidth/-/eastasianwidth-0.2.0.tgz#696ce2ec0aa0e6ea93a397ffcf24aa7840c827cb"
   integrity sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==
 
+editorjs-change-case@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/editorjs-change-case/-/editorjs-change-case-0.0.3.tgz#05169afe0fa5aff679eef045377c6553dd7ff502"
+  integrity sha512-1g5RueRFLGsvKNiKdpq9nLgn0xeHylXmXJLMqqobAhB7uNJ7N978vN1mKGgMSThxi4y6mU45aNYhBJy9xQFrZA==
+
 editorjs-inline-tool@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/editorjs-inline-tool/-/editorjs-inline-tool-0.4.0.tgz#a674d419bf6562c86cb74c7ffcefcfb3007db1a8"

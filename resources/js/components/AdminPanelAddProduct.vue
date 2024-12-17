@@ -258,6 +258,7 @@
 
 <script>
 import DragDropFileUploader from './DragDropFileUploader.vue';
+import ChangeCase from 'editorjs-change-case';
 import { createGenericInlineTool as createGenericInlineToolFix } from '../editorjs/editorjsFix.js';
 import createGenericInlineTool, {
     ItalicInlineTool,
@@ -449,6 +450,7 @@ export default {
     created() {},
     mounted() {
         let tools = {
+            changeCase: ChangeCase,
             bold: StrongInlineTool,
             italic: ItalicInlineTool,
             underline: UnderlineInlineTool,
