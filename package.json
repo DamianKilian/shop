@@ -2,7 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "vite",
+        "dev": "vite --force",
         "build": "vite build"
     },
     "devDependencies": {
@@ -22,6 +22,7 @@
         "@vtchinh/gallery-editorjs": "^1.2.3",
         "axios": "^1.6.4",
         "bootstrap": "^5.2.3",
+        "editorjs-inline-tool": "^0.4.0",
         "glob": "^10.3.12",
         "laravel-vite-plugin": "^1.0",
         "lodash": "^4.17.21",

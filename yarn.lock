@@ -644,6 +644,11 @@ eastasianwidth@^0.2.0:
   resolved "https://registry.yarnpkg.com/eastasianwidth/-/eastasianwidth-0.2.0.tgz#696ce2ec0aa0e6ea93a397ffcf24aa7840c827cb"
   integrity sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==
 
+editorjs-inline-tool@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/editorjs-inline-tool/-/editorjs-inline-tool-0.4.0.tgz#a674d419bf6562c86cb74c7ffcefcfb3007db1a8"
+  integrity sha512-Ppb4e8IFPjWuNcoNM4tg9bDSo7FgMYAlqP4UhuV5W2JoJBubV5pUcpLrFrSyGTt1HJVEpbrib134zf4wxO+7VA==
+
 emoji-regex@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"

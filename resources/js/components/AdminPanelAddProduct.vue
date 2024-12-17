@@ -258,6 +258,12 @@
 
 <script>
 import DragDropFileUploader from './DragDropFileUploader.vue';
+import { createGenericInlineTool as createGenericInlineToolFix } from '../editorjs/editorjsFix.js';
+import createGenericInlineTool, {
+    ItalicInlineTool,
+    StrongInlineTool,
+    UnderlineInlineTool,
+} from 'editorjs-inline-tool';
 import Marker from '@editorjs/marker';
 import RawTool from '@editorjs/raw';
 import editorjsColumns from '@calumk/editorjs-columns';
@@ -443,6 +449,9 @@ export default {
     created() {},
     mounted() {
         let tools = {
+            bold: StrongInlineTool,
+            italic: ItalicInlineTool,
+            underline: UnderlineInlineTool,
             Marker: {
                 class: Marker,
                 shortcut: 'CMD+SHIFT+M',
@@ -529,6 +538,7 @@ export default {
             minHeight: 250,
             tools: tools,
         });
+        createGenericInlineToolFix();
     },
 };
 </script>
