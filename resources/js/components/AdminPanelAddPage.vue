@@ -145,12 +145,11 @@
 <script>
 import TextVariantTune from '@editorjs/text-variant-tune';
 import ChangeCase from 'editorjs-change-case';
-import { createGenericInlineTool as createGenericInlineToolFix } from '../editorjs/editorjsFix.js';
 import createGenericInlineTool, {
     ItalicInlineTool,
     StrongInlineTool,
     UnderlineInlineTool,
-} from 'editorjs-inline-tool';
+} from '../editorjs/editorjs-inline-tool';
 import Marker from '@editorjs/marker';
 import RawTool from '@editorjs/raw';
 import editorjsColumns from '@calumk/editorjs-columns';
@@ -369,7 +368,6 @@ export default {
             minHeight: 250,
             tools: tools,
         });
-        createGenericInlineToolFix();
     },
 };
 </script>
