@@ -143,6 +143,7 @@
 </template>
 
 <script>
+import TextVariantTune from '@editorjs/text-variant-tune';
 import ChangeCase from 'editorjs-change-case';
 import { createGenericInlineTool as createGenericInlineToolFix } from '../editorjs/editorjsFix.js';
 import createGenericInlineTool, {
@@ -274,6 +275,7 @@ export default {
     created() {},
     mounted() {
         let tools = {
+            textVariant: TextVariantTune,
             changeCase: ChangeCase,
             bold: StrongInlineTool,
             italic: ItalicInlineTool,
@@ -350,6 +352,9 @@ export default {
                     levels: [2, 3, 4],
                     defaultLevel: 2,
                 },
+            },
+            paragraph: {
+                tunes: ['textVariant'],
             },
         };
         let columnTools = _.clone(tools);

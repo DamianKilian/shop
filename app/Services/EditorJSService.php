@@ -19,11 +19,35 @@ class EditorJSService
         $doc = new \DOMDocument();
         foreach ($blocks as  $block) {
             $el = $this->getElement($block, $doc);
-            if ($el) {
-                $doc->appendChild($el);
-            }
+            $doc->appendChild($el);
         }
         return html_entity_decode($doc->saveHTML());
+    }
+
+    protected function toHtmlParagraph($doc, $block)
+    {
+        $text = $doc->createTextNode($block->data->text);
+        $textVariant = $block->tunes->textVariant;
+        if ('details' === $textVariant) {
+            $el = $doc->createElement('p');
+            $small = $doc->createElement('small');
+            $small->appendChild($text);
+            $el->appendChild($small);
+        } elseif ('call-out' === $textVariant) {
+            $el = $doc->createElement('p');
+            $el->setAttribute('class', 'alert alert-warning');
+            $el->appendChild($text);
+        } elseif ('citation' === $textVariant) {
+            $el = $doc->createElement('blockquote');
+            $el->setAttribute('class', 'blockquote');
+            $p = $doc->createElement('p');
+            $p->appendChild($text);
+            $el->appendChild($p);
+        } else {
+            $el = $doc->createElement('p');
+            $el->appendChild($text);
+        }
+        return $el;
     }
 
     protected function getElement($block, $doc)
@@ -35,9 +59,7 @@ class EditorJSService
                 $el->appendChild($text);
                 break;
             case 'paragraph':
-                $el = $doc->createElement('p');
-                $text = $doc->createTextNode($block->data->text);
-                $el->appendChild($text);
+                $el = $this->toHtmlParagraph($doc, $block);
                 break;
             case 'list':
                 $listType = 'unordered' === $block->data->style ? 'ul' : 'ol';
@@ -128,9 +150,9 @@ class EditorJSService
     protected function toHtmlRaw($doc, $block)
     {
         $rawHtml = $block->data->html;
-        $template = $doc->createDocumentFragment();
-        $template->appendXML($rawHtml);
-        $doc->appendChild($template);
+        $el = $doc->createDocumentFragment();
+        $el->appendXML($rawHtml);
+        return $el;
     }
 
     protected function toHtmlColumns($doc, $block)

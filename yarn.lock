@@ -124,6 +124,11 @@
   dependencies:
     "@codexteam/icons" "^0.0.6"
 
+"@editorjs/text-variant-tune@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@editorjs/text-variant-tune/-/text-variant-tune-1.0.3.tgz#d6004c88db75d3af35b4ba12b7a24fed62fc1290"
+  integrity sha512-zET/uTEnyY0wPYkFI41M6PhtBNqp5DHiUf/sbig4xpq1uwF9xgoJBZh92VultEJSjvLHFAQtD/dP8x7NJ7rouQ==
+
 "@esbuild/aix-ppc64@0.21.5":
   version "0.21.5"
   resolved "https://registry.yarnpkg.com/@esbuild/aix-ppc64/-/aix-ppc64-0.21.5.tgz#c7184a326533fcdf1b8ee0733e21c713b975575f"
