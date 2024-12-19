@@ -172,4 +172,3 @@ var createGenericInlineTool = function (_a) {
         _b;
 };
 export default createGenericInlineTool;
-//# sourceMappingURL=tool.js.map

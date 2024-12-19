@@ -93,4 +93,3 @@ declare const createGenericInlineTool: ({ sanitize, shortcut, tagName, toolboxIc
     readonly sanitize: {};
 };
 export default createGenericInlineTool;
-//# sourceMappingURL=tool.d.ts.map

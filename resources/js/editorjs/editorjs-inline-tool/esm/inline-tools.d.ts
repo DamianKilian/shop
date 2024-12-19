@@ -64,4 +64,3 @@ export declare const UnderlineInlineTool: {
     isInline: boolean;
     readonly sanitize: {};
 };
-//# sourceMappingURL=inline-tools.d.ts.map

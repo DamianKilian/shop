@@ -277,6 +277,7 @@ import AttachesTool from '@editorjs/attaches';
 import Embed from '@editorjs/embed';
 import Gallery from '@vtchinh/gallery-editorjs';
 import SimpleImage from '../editorjs/simple-image-tutorial/simple-image.js';
+import TextAlign from '../editorjs/text-align/text-align';
 import FilterDisplay from './FilterDisplay.vue';
 import getProductFilterOptions from './getProductFilterOptions.js';
 import generateSlug from './generateSlug.js';
@@ -450,6 +451,7 @@ export default {
     created() {},
     mounted() {
         let tools = {
+            alignVariant: TextAlign,
             textVariant: TextVariantTune,
             changeCase: ChangeCase,
             bold: StrongInlineTool,
@@ -529,7 +531,7 @@ export default {
                 },
             },
             paragraph: {
-                tunes: ['textVariant'],
+                tunes: ['textVariant', 'alignVariant'],
             },
         };
         let columnTools = _.clone(tools);

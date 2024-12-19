@@ -28,6 +28,7 @@ class EditorJSService
     {
         $text = $doc->createTextNode($block->data->text);
         $textVariant = $block->tunes->textVariant;
+        $alignVariant = $block->tunes->alignVariant;
         if ('details' === $textVariant) {
             $el = $doc->createElement('p');
             $small = $doc->createElement('small');
@@ -46,6 +47,15 @@ class EditorJSService
         } else {
             $el = $doc->createElement('p');
             $el->appendChild($text);
+        }
+        if ('center' === $alignVariant) {
+            $this->addClass($el, 'text-center');
+        } elseif ('right' === $alignVariant) {
+            $this->addClass($el, 'text-end');
+        } elseif ('justify' === $alignVariant) {
+            $el->setAttribute('style', 'text-align: justify;');
+        } else {
+            $this->addClass($el, 'text-start');
         }
         return $el;
     }

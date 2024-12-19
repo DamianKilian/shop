@@ -1,0 +1,20 @@
+.cdx-text-align--left {
+    text-align: left;
+}
+.cdx-text-align--center {
+    text-align: center;
+}
+.cdx-text-align--right {
+    text-align: right;
+}
+.cdx-text-align--justify {
+    text-align: justify;
+}
+.cdx-text-align__toggler {
+    text-align: center;
+    padding-top: 5px;
+    .fa-solid {
+        width: 20px;
+        height: 20px;
+    }
+}
