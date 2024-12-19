@@ -529,6 +529,7 @@ export default {
                     levels: [2, 3, 4],
                     defaultLevel: 2,
                 },
+                tunes: ['alignVariant'],
             },
             paragraph: {
                 tunes: ['textVariant', 'alignVariant'],

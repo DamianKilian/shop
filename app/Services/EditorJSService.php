@@ -28,7 +28,6 @@ class EditorJSService
     {
         $text = $doc->createTextNode($block->data->text);
         $textVariant = $block->tunes->textVariant;
-        $alignVariant = $block->tunes->alignVariant;
         if ('details' === $textVariant) {
             $el = $doc->createElement('p');
             $small = $doc->createElement('small');
@@ -48,6 +47,21 @@ class EditorJSService
             $el = $doc->createElement('p');
             $el->appendChild($text);
         }
+        $this->alignVariant($el, $block->tunes->alignVariant);
+        return $el;
+    }
+
+    protected function toHtmlHeader($doc, $block)
+    {
+        $el = $doc->createElement('h' . $block->data->level);
+        $text = $doc->createTextNode($block->data->text);
+        $el->appendChild($text);
+        $this->alignVariant($el, $block->tunes->alignVariant);
+        return $el;
+    }
+
+    protected function alignVariant(&$el, $alignVariant)
+    {
         if ('center' === $alignVariant) {
             $this->addClass($el, 'text-center');
         } elseif ('right' === $alignVariant) {
@@ -57,16 +71,13 @@ class EditorJSService
         } else {
             $this->addClass($el, 'text-start');
         }
-        return $el;
     }
 
     protected function getElement($block, $doc)
     {
         switch ($block->type) {
             case 'header':
-                $el = $doc->createElement('h' . $block->data->level);
-                $text = $doc->createTextNode($block->data->text);
-                $el->appendChild($text);
+                $el = $this->toHtmlHeader($doc, $block);
                 break;
             case 'paragraph':
                 $el = $this->toHtmlParagraph($doc, $block);
