@@ -27,7 +27,13 @@ class EditorJSService
     protected function toHtmlParagraph($doc, $block)
     {
         $text = $doc->createTextNode($block->data->text);
-        $textVariant = $block->tunes->textVariant;
+        if (isset($block->tunes)) {
+            $textVariant = $block->tunes->textVariant;
+            $alignVariant = $block->tunes->alignVariant;
+        } else {
+            $textVariant = '';
+            $alignVariant = '';
+        }
         if ('details' === $textVariant) {
             $el = $doc->createElement('p');
             $small = $doc->createElement('small');
@@ -47,7 +53,7 @@ class EditorJSService
             $el = $doc->createElement('p');
             $el->appendChild($text);
         }
-        $this->alignVariant($el, $block->tunes->alignVariant);
+        $this->alignVariant($el, $alignVariant);
         return $el;
     }
 
@@ -56,7 +62,8 @@ class EditorJSService
         $el = $doc->createElement('h' . $block->data->level);
         $text = $doc->createTextNode($block->data->text);
         $el->appendChild($text);
-        $this->alignVariant($el, $block->tunes->alignVariant);
+        $alignVariant = isset($block->tunes) ? $block->tunes->alignVariant : '';
+        $this->alignVariant($el, $alignVariant);
         return $el;
     }
 
