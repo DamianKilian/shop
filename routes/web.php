@@ -35,6 +35,10 @@ Route::prefix('admin-panel')->group(function () {
     Route::post('/restore-settings', [App\Http\Controllers\AdminPanelSettingsController::class, 'restoreSettings'])->name('admin-panel-restore-settings');
     Route::post('/save-setting', [App\Http\Controllers\AdminPanelSettingsController::class, 'saveSetting'])->name('admin-panel-save-setting');
 
+    Route::get('/footer', [App\Http\Controllers\AdminPanelFooterController::class, 'footer'])->name('admin-panel-footer');
+    Route::post('/get-footer', [App\Http\Controllers\AdminPanelFooterController::class, 'getFooter'])->name('admin-panel-get-footer');
+    Route::post('/save-footer', [App\Http\Controllers\AdminPanelFooterController::class, 'saveFooter'])->name('admin-panel-save-footer');
+
     Route::get('/pages', [App\Http\Controllers\AdminPanelPagesController::class, 'pages'])->name('admin-panel-pages');
     Route::post('/get-pages', [App\Http\Controllers\AdminPanelPagesController::class, 'getPages'])->name('admin-panel-get-pages');
     Route::post('/get-page', [App\Http\Controllers\AdminPanelPagesController::class, 'getPage'])->name('admin-panel-get-page');

@@ -14,12 +14,20 @@ class EditorJSService
 
     public function toHtml($json)
     {
+        if(!$json){
+            return '';
+        }
         $json = json_decode($json);
         $blocks = $json->blocks;
         $doc = new \DOMDocument();
         foreach ($blocks as  $block) {
             $el = $this->getElement($block, $doc);
-            $doc->appendChild($el);
+            if ($el) {
+                $doc->appendChild($el);
+            }
+        }
+        if(!$doc->hasChildNodes()){
+            return '';
         }
         return html_entity_decode($doc->saveHTML());
     }
@@ -178,6 +186,9 @@ class EditorJSService
     protected function toHtmlRaw($doc, $block)
     {
         $rawHtml = $block->data->html;
+        if (!$rawHtml) {
+            return;
+        }
         $el = $doc->createDocumentFragment();
         $el->appendXML($rawHtml);
         return $el;

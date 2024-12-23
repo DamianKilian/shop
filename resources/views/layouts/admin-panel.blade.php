@@ -23,6 +23,7 @@
         @vite("resources/js/locale/$locale.js")
     @endif
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @yield('styles')
 </head>
 
 <body>
@@ -103,6 +104,7 @@
                     <a class="nav-link _filters" href="{{ route('admin-panel-filters') }}">{{ __('Filters') }}</a>
                     <a class="nav-link _pages" href="{{ route('admin-panel-pages') }}">{{ __('Pages') }}</a>
                     <a class="nav-link _settings" href="{{ route('admin-panel-settings') }}">{{ __('Settings') }}</a>
+                    <a class="nav-link _footer" href="{{ route('admin-panel-footer') }}">{{ __('Footer') }}</a>
                 </nav>
             </div>
             <div id="content">

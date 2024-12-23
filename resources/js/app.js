@@ -40,6 +40,8 @@ import LoadingOverlay from './components/LoadingOverlay.vue';
 app.component('loading-overlay', LoadingOverlay);
 import AdminPanelSettings from './components/AdminPanelSettings.vue'
 app.component('admin-panel-settings', AdminPanelSettings);
+import AdminPanelFooter from './components/AdminPanelFooter.vue'
+app.component('admin-panel-footer', AdminPanelFooter);
 
 
 /**

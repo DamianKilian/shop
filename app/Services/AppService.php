@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Footer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Schema;
@@ -9,6 +10,17 @@ use Illuminate\Support\Facades\Storage;
 
 class AppService
 {
+    public static function getFooterHtml(EditorJSService $editorJS)
+    {
+        return cache()->remember('footerHtml', 60, function () use ($editorJS) {
+            $html = Footer::whereDataKey('html')->first();
+            if (!$html) {
+                return '';
+            }
+            return $editorJS->toHtml($html->value);
+        });
+    }
+
     public static function isSqlite($migrationClass): bool
     {
         return 'sqlite' === Schema::connection($migrationClass->getConnection())

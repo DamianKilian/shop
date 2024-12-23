@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Page;
 use App\Models\Product;
 use App\Models\Suggestion;
+use App\Services\AppService;
 use App\Services\CategoryService;
 use App\Services\EditorJSService;
 use App\Services\ProductService;
@@ -36,7 +37,7 @@ class HomeController extends Controller
         ]);
     }
 
-    public function category(Request $request, $slug)
+    public function category(Request $request, EditorJSService $editorJS, $slug)
     {
         $categories = CategoryService::getCategories();
         $category = Category::where('slug', $slug)->first();
@@ -66,6 +67,7 @@ class HomeController extends Controller
             'category' => $category,
             'selectedCategory' => $category,
             'categories' => $categories,
+            'footerHtml' => AppService::getFooterHtml($editorJS),
         ]);
     }
 
@@ -128,7 +130,8 @@ class HomeController extends Controller
             'page' => $page,
             'maxProductsPrice' => ProductService::getMaxProductsPrice(),
             'categories' => $categories,
-            'products' => $products
+            'products' => $products,
+            'footerHtml' => AppService::getFooterHtml($editorJS),
         ]);
     }
 
@@ -141,6 +144,7 @@ class HomeController extends Controller
         return view('product', [
             'product' => $product,
             'searchUrl' => route('home'),
+            'footerHtml' => AppService::getFooterHtml($editorJS),
         ]);
     }
 }

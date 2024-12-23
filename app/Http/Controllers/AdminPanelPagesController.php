@@ -34,7 +34,7 @@ class AdminPanelPagesController extends Controller
         ]);
     }
 
-    protected function createPage($request)
+    protected function createPage(Request $request)
     {
         if ($request->pageId) {
             $page = Page::find($request->pageId);
@@ -64,7 +64,7 @@ class AdminPanelPagesController extends Controller
         ]);
     }
 
-    public function getPages(Request $request)
+    public function getPages()
     {
         $pages = Page::all('id', 'title');
         return response()->json([
