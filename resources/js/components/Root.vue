@@ -232,6 +232,14 @@ export default {
             });
             return newUrl;
         },
+        deleteQueryStrParams: function () {
+            const newUrl = new URL(window.location.href);
+            var that = this;
+            _.forEach(this.queryStrParams, function (value, key) {
+                newUrl.searchParams.delete(key);
+            });
+            window.history.replaceState(null, '', newUrl);
+        },
         getQueryStringParameters: function () {
             const searchParams = new URLSearchParams(window.location.search);
             this.currentPage = parseInt(searchParams.get('page') || 1);
@@ -286,11 +294,7 @@ export default {
             if ('homePage' === window.pageType) {
                 this.preserveFilters();
                 if (!this.getQueryStringParam('searchValue')) {
-                    window.history.replaceState(
-                        null,
-                        '',
-                        window.location.pathname
-                    );
+                    this.deleteQueryStrParams();
                 }
             }
             this.getQueryStringParameters();
