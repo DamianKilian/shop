@@ -26,3 +26,5 @@
         window.pageType = 'homePage';
     </script>
 @endsection
+
+@include('_partials.settings')

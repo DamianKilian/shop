@@ -89,7 +89,7 @@
                 </div>
             </nav>
         </div>
-        <main id="main" class="clearfix">
+        <div id="main" class="clearfix">
             <div id="menu" class="bg-light d-none d-sm-block">
                 <div class="position-absolute d-sm-none" style="top: 0;right: 45px;">
                     <div class="menu-btn btn-close position-fixed" style="padding: 15px;" type="button"
@@ -110,7 +110,7 @@
             <div id="content">
                 @yield('content')
             </div>
-        </main>
+        </div>
     </div>
     <div id="menu-overlay" class="overlay d-none d-sm-none menu-btn"></div>
     <script type="module">

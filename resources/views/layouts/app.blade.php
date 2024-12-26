@@ -27,31 +27,7 @@
         @vite("resources/js/locale/$locale.js")
     @endif
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-    <style>
-        .bs-lightbox .gallery {
-            column-width: {{ sett('GALLERY_COLUMN_WIDTH') }}px;
-            column-gap: 5px;
-        }
-
-        .bs-lightbox .gallery>* {
-            margin-bottom: {{ sett('GALLERY_ROW_GAP') }}px;
-        }
-
-        /* standard */
-        .bs-lightbox .standard img {
-            object-fit: {{ sett('GALLERY_IMG_FIT') }};
-        }
-
-        /* masonry */
-        .bs-lightbox .masonry img {
-            object-fit: {{ sett('GALLERY_IMG_FIT_MASONRY') }};
-        }
-
-        /* carousel */
-        .bs-lightbox .carousel img {
-            object-fit: {{ sett('CAROUSEL_IMG_FIT') }};
-        }
-    </style>
+    @yield('styles')
 </head>
 
 <body class="shop">
@@ -123,7 +99,7 @@
                     get-suggestions-url="{{ route('get-suggestions') }}"></search-app>
             </nav>
         </div>
-        <main id="main" class="clearfix">
+        <div id="main" class="clearfix">
             @if (isset($categories))
                 <div id="menu" class="bg-light d-none d-sm-block">
                     <div class="position-absolute d-sm-none" style="top: 0;right: 45px;">
@@ -163,7 +139,7 @@
             </div>
             <pagination-widget :get-products-view='getProductsView' :current-page='currentPage'
                 :geting-products-view='getingProductsView' :last-page='lastPage'></pagination-widget>
-        </main>
+        </div>
     </div>
     <footer class="bg-secondary">
         @include('_partials.footer')

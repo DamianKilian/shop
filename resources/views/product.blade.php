@@ -5,3 +5,5 @@
         @include('_partials.product-content')
     </div>
 @endsection
+
+@include('_partials.settings')
