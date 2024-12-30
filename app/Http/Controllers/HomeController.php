@@ -13,6 +13,7 @@ use App\Services\EditorJSService;
 use App\Services\ProductService;
 use App\Services\SearchService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -122,9 +123,15 @@ class HomeController extends Controller
                 $product->categories = CategoryService::getParentCategories($product->category_id, $categories);
             }
         }
-        $page = Page::where('slug', $slug)->first();
-        if ($page->body) {
-            $page->bodyHtml = $editorJS->toHtml($page->body);
+        if ($slug === env('PREVIEW_SLUG') && !Auth::check()) {
+            return redirect()->guest('login');
+        }
+        $page = Page::whereSlug($slug)->whereActive(true)->first();
+        if (!$page) {
+            abort(404);
+        }
+        if ($page->body_prod) {
+            $page->bodyHtml = $editorJS->toHtml($page->body_prod);
         }
         return view('home', [
             'page' => $page,

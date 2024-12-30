@@ -122,6 +122,24 @@
                             <i class="fa-solid fa-plus"></i>
                             {{ title }}
                         </button>
+                        <div class="btn-group">
+                            <button
+                                type="button"
+                                class="btn btn-outline-primary"
+                                @click="addPage($event, true)"
+                            >
+                                {{ __('Refresh') }}
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-outline-primary"
+                                @click="previewPage"
+                                :disabled="!previewPageUrl"
+                            >
+                                <i class="fa-solid fa-eye"></i>
+                                {{ __('Preview') }}
+                            </button>
+                        </div>
                         <div
                             v-if="globalError"
                             class="text-bg-danger float-end mt-1"
@@ -179,6 +197,7 @@ export default {
     ],
     data() {
         return {
+            previewPageUrl: '',
             addingPage: false,
             globalError: '',
             globalSuccess: '',
@@ -197,6 +216,9 @@ export default {
         },
     },
     methods: {
+        previewPage: function () {
+            window.open(this.previewPageUrl, '_blank').focus();
+        },
         setSlug: function (slug) {
             this.page.slug = slug;
         },
@@ -224,12 +246,12 @@ export default {
                 this.page.slugCustomized = false;
             }
         },
-        addPage: function (e) {
+        addPage: function (e, preview = false) {
             var that = this;
             this.addingPage = true;
             e.preventDefault();
             let formData = new FormData(this.$refs.addPage);
-            // formData.append('filesArr', JSON.stringify(this.filesArr));
+            formData.append('preview', preview);
             if (this.pageId) {
                 formData.append('pageId', this.pageId);
             }
@@ -244,11 +266,15 @@ export default {
                     axios
                         .post(this.adminPanelAddPageUrl, formData)
                         .then(function (response) {
-                            that.globalSuccess = `"${
-                                that.$refs.title.value
-                            }" ${__('saved!')}`;
-                            that.getPages();
-                            that.$refs.closeModal.click();
+                            if (preview) {
+                                that.previewPageUrl = response.data.previewUrl;
+                            } else {
+                                that.globalSuccess = `"${
+                                    that.$refs.title.value
+                                }" ${__('saved!')}`;
+                                that.getPages();
+                                that.$refs.closeModal.click();
+                            }
                         })
                         .catch(function (error) {
                             if (

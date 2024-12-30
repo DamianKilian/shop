@@ -5,6 +5,8 @@
         <admin-panel-pages admin-panel-get-pages-url="{{ route('admin-panel-get-pages') }}"
             admin-panel-get-page-url="{{ route('admin-panel-get-page') }}"
             admin-panel-add-page-url="{{ route('admin-panel-add-page') }}"
+            admin-panel-apply-changes-url="{{ route('admin-panel-apply-changes') }}"
+            admin-panel-toggle-active-url="{{ route('admin-panel-toggle-active') }}"
             admin-panel-delete-page-url="{{ route('admin-panel-delete-page') }}"
             admin-panel-upload-attachment-url="{{ route('admin-panel-upload-attachment') }}"
             admin-panel-fetch-url-url="{{ route('admin-panel-fetch-url') }}"

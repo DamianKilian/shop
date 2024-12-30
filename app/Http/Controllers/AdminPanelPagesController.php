@@ -31,28 +31,36 @@ class AdminPanelPagesController extends Controller
         $pageId = $page ? $page->id : null;
         return response()->json([
             'pageId' => $pageId,
+            'previewUrl' => $request->preview ? route('home', ['slug' => env('PREVIEW_SLUG')]) : '',
         ]);
     }
 
     protected function createPage(Request $request)
     {
-        if ($request->pageId) {
-            $page = Page::find($request->pageId);
+        $pageId = $request->pageId;
+        if ('true' === $request->preview) {
+            $page = Page::whereSlug(env('PREVIEW_SLUG'))->first();
+            $pageId = $page->id;
             $page->update([
                 'title' => $request->title,
-                'slug' => $request->slug,
-                'body' => $request->body,
+                'body_prod' => $request->body,
             ]);
         } else {
-            $page = Page::create([
+            $vals = [
                 'title' => $request->title,
                 'slug' => $request->slug,
                 'body' => $request->body,
-            ]);
+            ];
+            if ($pageId) {
+                $page = Page::find($pageId);
+                $page->update($vals);
+            } else {
+                $page = Page::create($vals);
+            }
         }
-        EditorJSService::resetPageImages($page, 'page', update: !!$request->pageId);
-        EditorJSService::resetPageGalleryImages($page, 'page', update: !!$request->pageId);
-        EditorJSService::resetAttachments($page, 'page', update: !!$request->pageId);
+        EditorJSService::resetPageImages($page, 'page', update: !!$pageId);
+        EditorJSService::resetPageGalleryImages($page, 'page', update: !!$pageId);
+        EditorJSService::resetAttachments($page, 'page', update: !!$pageId);
         return $page;
     }
 
@@ -66,10 +74,24 @@ class AdminPanelPagesController extends Controller
 
     public function getPages()
     {
-        $pages = Page::all('id', 'title');
+        $pages = Page::where('slug', '!=', env('PREVIEW_SLUG'))->orWhere('slug', null)->get(['id', 'title', 'active']);
         return response()->json([
             'pages' => $pages,
         ]);
+    }
+
+    public function toggleActive(Request $request)
+    {
+        $page = Page::whereId($request->pageId)->first();
+        $page->active = $request->active;
+        $page->save();
+    }
+
+    public function applyChanges(Request $request)
+    {
+        $page = Page::whereId($request->pageId)->first();
+        $page->body_prod = $page->body;
+        $page->save();
     }
 
     public function deletePage(Request $request)

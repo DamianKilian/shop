@@ -223,6 +223,40 @@ class PagesTest extends TestCase
         ]);
     }
 
+    public function test_addPage_preview(): void
+    {
+        $user = User::factory()->create();
+        $pageBodyArray = array(
+            'time' => 1729269060460,
+            'blocks' => array(0 => array(
+                'id' => 'gM2YmfoYJC',
+                'type' => 'paragraph',
+                'data' => array('text' => 'aaaa',),
+            ), 1 => array(
+                'id' => 'yJ7a1OpjJo',
+                'type' => 'paragraph',
+                'data' => array('text' => 'bbbb',),
+            ),),
+            'version' => '2.30.6',
+        );
+        $pageBody = json_encode($pageBodyArray, JSON_UNESCAPED_SLASHES);
+
+        $response = $this->actingAs($user)->post('/admin-panel/add-page', [
+            'title' => 'title',
+            'preview' => 'true',
+            'body' => $pageBody,
+        ]);
+        $previewPage = Page::whereSlug(env('PREVIEW_SLUG'))->first();
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'previewUrl' => route('home', ['slug' => env('PREVIEW_SLUG')]),
+            ]);
+        $this->assertEquals($previewPage->body_prod, $pageBody);
+        $this->assertEquals($previewPage->title, 'title');
+    }
+
     public function test_deletePage(): void
     {
         $user = User::factory()->create();
@@ -250,5 +284,66 @@ class PagesTest extends TestCase
         $this->assertDatabaseCount('attachments', 5);
         $this->assertEquals(5, File::where('page_id', null)->count());
         $this->assertEquals(5, Attachment::where('page_id', null)->count());
+    }
+
+    public function test_getPages(): void
+    {
+        $user = User::factory()->create();
+        $page = Page::factory()->count(2)->create();
+        $pageNotActive = Page::factory()->create([
+            'active' => false,
+        ]);
+        $pageActive = Page::factory()->create([
+            'active' => true,
+        ]);
+
+        $response = $this->actingAs($user)->postJson('/admin-panel/get-pages');
+
+        $response->assertStatus(200);
+        $this->assertEquals(5, count($response['pages']));
+    }
+
+    public function test_toggleActive(): void
+    {
+        $user = User::factory()->create();
+        Page::factory()->count(2)->create();
+        $page = Page::factory()->create([
+            'active' => false,
+        ]);
+
+        $response = $this->actingAs($user)->postJson('/admin-panel/toggle-active', [
+            'pageId' => $page->id,
+            'active' => true,
+        ]);
+        $page = Page::whereId($page->id)->first();
+
+        $response->assertStatus(200);
+        $this->assertTrue(1 === $page->active);
+
+        $response = $this->actingAs($user)->postJson('/admin-panel/toggle-active', [
+            'pageId' => $page->id,
+            'active' => false,
+        ]);
+        $page = Page::whereId($page->id)->first();
+
+        $this->assertTrue(0 === $page->active);
+    }
+
+    public function test_applyChanges(): void
+    {
+        $user = User::factory()->create();
+        Page::factory()->count(2)->create();
+        $page = Page::factory()->create([
+            'body' => 'body',
+            'body_prod' => 'body_prod',
+        ]);
+
+        $response = $this->actingAs($user)->postJson('/admin-panel/apply-changes', [
+            'pageId' => $page->id,
+        ]);
+        $page = Page::whereId($page->id)->first();
+
+        $response->assertStatus(200);
+        $this->assertTrue('body' === $page->body_prod);
     }
 }

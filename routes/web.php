@@ -43,6 +43,8 @@ Route::prefix('admin-panel')->group(function () {
     Route::post('/get-pages', [App\Http\Controllers\AdminPanelPagesController::class, 'getPages'])->name('admin-panel-get-pages');
     Route::post('/get-page', [App\Http\Controllers\AdminPanelPagesController::class, 'getPage'])->name('admin-panel-get-page');
     Route::post('/add-page', [App\Http\Controllers\AdminPanelPagesController::class, 'addPage'])->name('admin-panel-add-page');
+    Route::post('/toggle-active', [App\Http\Controllers\AdminPanelPagesController::class, 'toggleActive'])->name('admin-panel-toggle-active');
+    Route::post('/apply-changes', [App\Http\Controllers\AdminPanelPagesController::class, 'applyChanges'])->name('admin-panel-apply-changes');
     Route::post('/delete-page', [App\Http\Controllers\AdminPanelPagesController::class, 'deletePage'])->name('admin-panel-delete-page');
 
     Route::post('/editorjs/upload-attachment', [App\Http\Controllers\AdminPanelEditorjsController::class, 'uploadAttachment'])->name('admin-panel-upload-attachment')->withoutMiddleware([VerifyCsrfToken::class]);

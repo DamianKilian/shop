@@ -55,6 +55,8 @@ class PageFactory extends Factory
         return [
             'title' => 'title',
             'body' => $pageBody,
+            'body_prod' => $pageBody,
+            'active' => true,
             'slug' => 'slug'. Str::random(10),
         ];
     }

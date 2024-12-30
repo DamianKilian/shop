@@ -52,6 +52,36 @@ class MainTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_index_when_product_is_inactive(): void
+    {
+        $active = false;
+        $slug = 'slug';
+        $category = Category::factory()->create();
+        Product::factory()->create([
+            'active' => $active,
+            'slug' => $slug,
+            'category_id' => $category->id,
+        ]);
+
+        $response = $this->get("/$slug");
+
+        $response->assertStatus(404);
+    }
+
+    public function test_index_when_PREVIEW_SLUG_and_user_unauth(): void
+    {
+        $slug = env('PREVIEW_SLUG');
+        $category = Category::factory()->create();
+        Product::factory()->create([
+            'slug' => $slug,
+            'category_id' => $category->id,
+        ]);
+
+        $response = $this->get("/$slug");
+
+        $response->assertRedirect('/login');
+    }
+
     public function test_product(): void
     {
         $slug = 'slug';

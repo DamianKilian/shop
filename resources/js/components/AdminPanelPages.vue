@@ -2,7 +2,7 @@
     <div id="admin-panel-pages">
         <table class="table table-bordered table-hover fs-5">
             <colgroup>
-                <col style="width: 40px;">
+                <col style="width: 40px" />
             </colgroup>
             <thead>
                 <tr>
@@ -33,6 +33,48 @@
                             class="btn btn-primary btn-sm"
                         >
                             {{ __('Edit') }}
+                        </button>
+                        <button
+                            class="btn btn-success btn-sm ms-1"
+                            :disabled='page.applyChangesClicked'
+                            @click="applyChanges(page)"
+                        >
+                            <template v-if="page.applyChangesClicked">
+                                <span
+                                    class="spinner-border spinner-border-sm"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
+                                Loading...
+                            </template>
+                            <template v-else>
+                                {{ __('Apply changes') }}
+                            </template>
+                        </button>
+                        <button
+                            class="btn btn-sm ms-1"
+                            :class="{
+                                'btn-outline-warning': page.active,
+                                'btn-warning': !page.active,
+                            }"
+                            :disabled='page.toggleActiveClicked'
+                            @click="toggleActive(page)"
+                        >
+                            <template v-if="page.toggleActiveClicked">
+                                <span
+                                    class="spinner-border spinner-border-sm"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
+                                Loading...
+                            </template>
+                            <template v-else>
+                                {{
+                                    page.active
+                                        ? __('Disactivate')
+                                        : __('Activate')
+                                }}
+                            </template>
                         </button>
                         <button
                             class="btn btn-danger btn-sm ms-1"
@@ -113,6 +155,8 @@ export default {
         'adminPanelFetchUrlUrl',
         'adminPanelUploadFileUrl',
         'adminPanelUploadAttachmentUrl',
+        'adminPanelToggleActiveUrl',
+        'adminPanelApplyChangesUrl',
         'adminPanelDeletePageUrl',
         'adminPanelAddPageUrl',
         'adminPanelGetPagesUrl',
@@ -134,6 +178,29 @@ export default {
         };
     },
     methods: {
+        toggleActive: function (page) {
+            var active = !page.active;
+            var that = this;
+            page.toggleActiveClicked = true;
+            axios
+                .post(this.adminPanelToggleActiveUrl, {
+                    pageId: page.id,
+                    active: active,
+                })
+                .then(function (response) {
+                    page.active = active;
+                    page.toggleActiveClicked = false;
+                });
+        },
+        applyChanges: function (page) {
+            var that = this;
+            page.applyChangesClicked = true;
+            axios
+                .post(this.adminPanelApplyChangesUrl, { pageId: page.id })
+                .then(function (response) {
+                    page.applyChangesClicked = false;
+                });
+        },
         deletePage: function (pageId) {
             var that = this;
             axios
@@ -153,6 +220,8 @@ export default {
         arrangePages: function (pages) {
             var that = this;
             _.forEach(pages, function (page) {
+                page.applyChangesClicked = false;
+                page.toggleActiveClicked = false;
                 that.pages.push(page);
             });
         },

@@ -10,10 +10,10 @@ class Page extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'slug', 'body'];
+    protected $fillable = ['title', 'slug', 'body', 'body_prod', 'active'];
 
     public function pageFiles(): HasMany
     {
-        return $this->hasMany(PageFile::class);
+        return $this->hasMany(File::class);
     }
 }
