@@ -13,7 +13,6 @@ return new class extends Migration
         Schema::create('attachments', function (Blueprint $table) {
             $table->id();
             $table->string('url')->index();
-            $table->string('hash')->index();
             $table->unsignedBigInteger('page_id')->nullable();
             $table->foreign('page_id')
                 ->references('id')

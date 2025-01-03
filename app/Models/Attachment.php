@@ -9,5 +9,5 @@ class Attachment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['url', 'page_id', 'product_id', 'hash'];
+    protected $fillable = ['url', 'page_id', 'product_id'];
 }

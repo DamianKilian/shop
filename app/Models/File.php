@@ -9,5 +9,5 @@ class File extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['url', 'page_id', 'product_id', 'hash', 'thumbnail', 'display_type'];
+    protected $fillable = ['url', 'page_id', 'product_id', 'position', 'url_thumbnail', 'display_type'];
 }

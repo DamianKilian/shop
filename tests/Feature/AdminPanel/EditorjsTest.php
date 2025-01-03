@@ -7,6 +7,7 @@ use App\Models\File;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
+use App\Services\FileService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,16 +15,34 @@ class EditorjsTest extends TestCase
 {
     use RefreshDatabase;
 
+
+    protected function getFileData($fileType, $file, $maxWidth = 1920)
+    {
+        $hash = hash_file('sha256', $file);
+        $folder = FileService::getStorageFolder($fileType);
+        if ($extension = $file->guessExtension()) {
+            $extension = '.' . $extension;
+        }
+        $name = $hash . '_' . FileService::finalWidth($file, $fileType, $maxWidth) . $extension;
+        $url = "$folder/$name";
+        return [
+            'name' => $name,
+            'folder' => $folder,
+            'url' => $url,
+            'urlFull' => env('APP_URL') . Storage::url($url),
+        ];
+    }
+
     public function test_uploadAttachment(): void
     {
-        $folder = env('ATTACHMENTS_FOLDER');
         $user = User::factory()->create();
         $publicStorage = Storage::fake('public');
         $size = 1024;
         $attachment = UploadedFile::fake()->create('test.txt', $size / 1024, 'text/plain');
-        $name = $attachment->hashName();
-        $url = $folder . "/$name";
-        $urlFull = env('APP_URL') . Storage::url($url);
+        $fileData = $this->getFileData('attachment', $attachment);
+        $folder = $fileData['folder'];
+        $url = $fileData['url'];
+        $urlFull = $fileData['urlFull'];
 
         $response = $this->actingAs($user)->post('/admin-panel/editorjs/upload-attachment', [
             'file' => $attachment,
@@ -39,23 +58,23 @@ class EditorjsTest extends TestCase
                 ],
                 'success' => 1,
             ]);
-        $publicStorage->assertExists($folder . '/' . $attachment->hashName());
+        $publicStorage->assertExists($folder . '/' . $fileData['name']);
         $this->assertEquals(1, count($publicStorage->files($folder)));
         $this->assertDatabaseHas('attachments', [
             'url' => $url,
         ]);
     }
 
-    public function test_uploadAttachmentTwice(): void
+    public function test_uploadAttachment_twice(): void
     {
-        $folder = env('ATTACHMENTS_FOLDER');
         $user = User::factory()->create();
         $publicStorage = Storage::fake('public');
         $size = 1024;
         $attachment = UploadedFile::fake()->create('test.txt', $size / 1024, 'text/plain');
-        $name = $attachment->hashName();
-        $url = $folder . "/$name";
-        $urlFull = env('APP_URL') . Storage::url($url);
+        $fileData = $this->getFileData('attachment', $attachment);
+        $folder = $fileData['folder'];
+        $url = $fileData['url'];
+        $urlFull = $fileData['urlFull'];
 
         $response = $this->actingAs($user)->post('/admin-panel/editorjs/upload-attachment', [
             'file' => $attachment,
@@ -74,12 +93,12 @@ class EditorjsTest extends TestCase
                 ],
                 'success' => 1,
             ]);
-        $publicStorage->assertExists($folder . '/' . $attachment->hashName());
+        $publicStorage->assertExists($folder . '/' . $fileData['name']);
         $this->assertEquals(1, count($publicStorage->files($folder)));
         $this->assertEquals(2, Attachment::whereUrl($url)->get()->count());
     }
 
-    public function test_uploadFileGallery(): void
+    public function test_uploadFile_gallery(): void
     {
         $this->uploadFile(thumbnail: true, displayType: 'gallery');
     }
@@ -91,14 +110,22 @@ class EditorjsTest extends TestCase
 
     public function uploadFile($thumbnail = false, $displayType = 'image'): void
     {
-        $tfolder = env('THUMBNAILS_FOLDER');
-        $folder = env('IMAGES_FOLDER');
+        // $tfolder = env('THUMBNAILS_FOLDER');
+        // $folder = env('IMAGES_FOLDER');
+        // $user = User::factory()->create();
+        // $publicStorage = Storage::fake('public');
+        // $image = UploadedFile::fake()->image('image.jpg', 3840, 2000);
+        // $name = $image->hashName();
+        // $url = $folder . "/$name";
+        // $urlFull = env('APP_URL') . Storage::url($url);
+
         $user = User::factory()->create();
         $publicStorage = Storage::fake('public');
         $image = UploadedFile::fake()->image('image.jpg', 3840, 2000);
-        $name = $image->hashName();
-        $url = $folder . "/$name";
-        $urlFull = env('APP_URL') . Storage::url($url);
+        $fileData = $this->getFileData('image', $image);
+        $folder = $fileData['folder'];
+        $url = $fileData['url'];
+        $urlFull = $fileData['urlFull'];
 
         $response = $this->actingAs($user)->post('/admin-panel/editorjs/upload-file', [
             'image' => $image,
@@ -107,8 +134,11 @@ class EditorjsTest extends TestCase
         ]);
         $urlAbsolute = $publicStorage->path($publicStorage->files($folder)[0]);
         list($width, $height) = getimagesize($urlAbsolute);
+        $turl = null;
         if ($thumbnail) {
-            $turlAbsolute = $publicStorage->path($publicStorage->files($tfolder)[0]);
+            $tfolder = env('THUMBNAILS_FOLDER');
+            $turl = $publicStorage->files($tfolder)[0];
+            $turlAbsolute = $publicStorage->path($turl);
             list($twidth, $theight) = getimagesize($turlAbsolute);
         }
 
@@ -121,13 +151,13 @@ class EditorjsTest extends TestCase
                 ],
                 'success' => 1,
             ]);
-        $publicStorage->assertExists($folder . '/' . $image->hashName());
+        $publicStorage->assertExists($folder . '/' . $fileData['name']);
         $this->assertEquals(1920, $width);
         $this->assertEquals(1000, $height);
         $this->assertEquals(1, count($publicStorage->files($folder)));
         $this->assertDatabaseHas('files', [
             'url' => $url,
-            'thumbnail' => (int)$thumbnail,
+            'url_thumbnail' => $turl,
             'display_type' => $displayType,
         ]);
         if ($thumbnail) {
@@ -137,37 +167,36 @@ class EditorjsTest extends TestCase
         }
     }
 
-    public function test_uploadFileTwice(): void
+    public function test_uploadFile_twice(): void
     {
-        $this->uploadFileTwice([false, false]);
+        $this->uploadFile_twice([false, false]);
     }
 
-    public function test_uploadFileTwice2(): void
+    public function test_uploadFile_twice2(): void
     {
-        $this->uploadFileTwice([false, true]);
+        $this->uploadFile_twice([false, true]);
     }
 
+    public function test_uploadFile_twice3(): void
+    {
+        $this->uploadFile_twice([true, true]);
+    }
 
-    public function uploadFileTwice($thumbnailPresence): void
+    public function uploadFile_twice($thumbnailPresence): void
     {
         $tfolder = env('THUMBNAILS_FOLDER');
-        $folder = env('IMAGES_FOLDER');
         $user = User::factory()->create();
         $publicStorage = Storage::fake('public');
         $image = UploadedFile::fake()->image('image.jpg', 3840, 2000);
-        $name = $image->hashName();
-        $url = $folder . "/$name";
-        $urlFull = env('APP_URL') . Storage::url($url);
+        $fileData = $this->getFileData('image', $image);
+        $folder = $fileData['folder'];
+        $url = $fileData['url'];
+        $urlFull = $fileData['urlFull'];
 
         $response = $this->actingAs($user)->post('/admin-panel/editorjs/upload-file', [
             'image' => $image,
             'thumbnail' => $thumbnailPresence[0],
         ]);
-        if ([false, true] == $thumbnailPresence) {
-            $file1 = File::first();
-            $file1->thumbnail = true;
-            $file1->save();
-        }
         $response = $this->actingAs($user)->post('/admin-panel/editorjs/upload-file', [
             'image' => $image,
             'thumbnail' => $thumbnailPresence[1],
@@ -184,11 +213,15 @@ class EditorjsTest extends TestCase
                 ],
                 'success' => 1,
             ]);
-        $publicStorage->assertExists($folder . '/' . $image->hashName());
+        $publicStorage->assertExists($folder . '/' . $fileData['name']);
         $this->assertEquals(1920, $width);
         $this->assertEquals(1000, $height);
         $this->assertEquals(1, count($publicStorage->files($folder)));
-        $this->assertEquals(0, count($publicStorage->files($tfolder)));
+        if ([false, false] == $thumbnailPresence) {
+            $this->assertEquals(0, count($publicStorage->files($tfolder)));
+        } else {
+            $this->assertEquals(1, count($publicStorage->files($tfolder)));
+        }
         $this->assertEquals(2, File::whereUrl($url)->get()->count());
     }
 

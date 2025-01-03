@@ -45,8 +45,8 @@ class ProductService
     public static function searchFiltersQuery(Request $request, $categoryChildrenIds = [], $withCategory = false)
     {
         $pf = self::getProductsFilters($request);
-        return Product::with(['productPhotos' => function (Builder $query) {
-            $query->orderBy('position');
+        return Product::with(['productImages' => function (Builder $query) {
+            $query->whereDisplayType('productPhotosGallery')->orderBy('position');
         }])->when($pf['searchValue'], function ($query, $searchValue) {
             return $query->whereFullText(['title', 'description_str'], $searchValue);
         })->when($pf['maxPrice'], function ($query, $maxPrice) {
@@ -69,11 +69,11 @@ class ProductService
     {
         $products = self::searchFiltersQuery($request, $categoryChildrenIds, $withCategory)->paginate($paginate);
         foreach ($products as &$product) {
-            if (0 === $product->productPhotos->count()) {
+            if (0 === $product->productImages->count()) {
                 continue;
             }
-            foreach ($product->productPhotos as &$photo) {
-                $photo->fullUrlSmall = Storage::url($photo->url_small);
+            foreach ($product->productImages as &$photo) {
+                $photo->fullUrlSmall = Storage::url($photo->url_thumbnail);
             }
             unset($photo);
         }

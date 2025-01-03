@@ -9,9 +9,9 @@ use App\Http\Requests\AddProductRequest;
 use App\Models\Attachment;
 use App\Models\File;
 use App\Models\Product;
-use App\Models\ProductPhoto;
 use App\Services\CategoryService;
 use App\Services\EditorJSService;
+use App\Services\FileService;
 use App\Services\ProductService;
 use Illuminate\Support\Facades\Storage;
 use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
@@ -146,44 +146,28 @@ class AdminPanelProductsController extends Controller
         foreach ($filesArr as $image) {
             $position += 1;
             if (isset($image->id)) {
-                $this->updateImage($image, $productId, $position);
+                $this->updateImage($image, $position);
                 continue;
             }
-            $file = $image->file;
-            $name = $file->hashName();
-            $publicStorage = Storage::disk('public');
-            $url = "products/$name";
-            $urlAbsolute = $publicStorage->path($url);
-            $urlSmall = "products/small/$name";
-            $urlSmallAbsolute = $publicStorage->path($urlSmall);
-            $publicStorage->put("products", $file);
-            $publicStorage->copy($url, $urlSmall);
-            Image::load($urlSmallAbsolute)
-                ->width(400)
-                ->height(400)
-                ->save();
-            ImageOptimizer::optimize($urlAbsolute);
-            ImageOptimizer::optimize($urlSmallAbsolute);
-            ProductPhoto::create([
-                'url' => $url,
-                'url_small' => $urlSmall,
-                'position' => $position,
-                'size' => $file->getSize(),
-                'product_id' => $productId,
-            ]);
+            FileService::saveFile(
+                $image->file,
+                displayType: 'productPhotosGallery',
+                fileType: 'image',
+                thumbnail: true,
+                position: $position,
+                maxWidth: 1920 * 3,
+                productId: $productId,
+            );
         }
     }
 
-    protected function updateImage($image, $productId, $position)
+    protected function updateImage($image, $position)
     {
-        $photo = ProductPhoto::where('id', $image->id)
-            ->where('product_id', $productId)->first();
+        $photo = File::whereId($image->id)->first();
         if ($image->removed) {
-            Storage::disk('public')->delete([
-                $photo->url_small,
-                $photo->url,
+            $photo->update([
+                'product_id' => null,
             ]);
-            $photo->forceDelete();
         } else {
             $photo->update([
                 'position' => $position,

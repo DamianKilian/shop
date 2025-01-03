@@ -13,8 +13,8 @@ return new class extends Migration
         Schema::create('files', function (Blueprint $table) {
             $table->id();
             $table->string('url')->index();
-            $table->string('hash')->index();
-            $table->boolean('thumbnail');
+            $table->string('url_thumbnail')->nullable()->index();
+            $table->integer('position')->nullable();
             $table->string('display_type')->nullable();
             $table->unsignedBigInteger('page_id')->nullable();
             $table->foreign('page_id')
@@ -36,4 +36,3 @@ return new class extends Migration
         Schema::dropIfExists('files');
     }
 };
-// !=

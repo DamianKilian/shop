@@ -8,7 +8,6 @@ use App\Models\File;
 use App\Models\Filter;
 use App\Models\FilterOption;
 use App\Models\Product;
-use App\Models\ProductPhoto;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
@@ -102,8 +101,9 @@ class ProductsTest extends TestCase
             'title' => 'title2',
             'category_id' => $category2->id,
         ]);
-        $productPhoto = ProductPhoto::factory()->create([
+        $productImage = File::factory()->create([
             'product_id' => $product->id,
+            'display_type' => 'productPhotosGallery',
         ]);
         $user = User::factory()->create();
 
@@ -114,7 +114,7 @@ class ProductsTest extends TestCase
         $this->assertTrue(2 === count($response['products']['data']));
         $this->assertTrue(1 === count($response2['products']['data']));
         $this->assertTrue('title' === $p['title']);
-        $this->assertTrue(Storage::url($productPhoto->url_small) === $p['product_photos'][0]['fullUrlSmall']);
+        $this->assertTrue(Storage::url($productImage->url_thumbnail) === $p['product_images'][0]['fullUrlSmall']);
     }
 
     public function test_addProduct(): void
@@ -122,9 +122,8 @@ class ProductsTest extends TestCase
         $category = Category::factory()->create();
         $user = User::factory()->create();
         Storage::fake('public');
-
-        $productPhoto = UploadedFile::fake()->image('product.jpg');
-        $productPhoto2 = UploadedFile::fake()->image('product2.jpg');
+        $productImage = UploadedFile::fake()->image('product.jpg');
+        $productImage2 = UploadedFile::fake()->image('product2.jpg');
         $this->actingAs($user)->postJson('/admin-panel/add-product', [
             'title' => 'title',
             'slug' => 'slug',
@@ -132,22 +131,19 @@ class ProductsTest extends TestCase
             'price' => 11,
             'quantity' => 22,
             'categoryId' => $category->id,
-            'files' => [$productPhoto, $productPhoto2],
+            'files' => [$productImage, $productImage2],
             'filesArr' => json_encode([['positionInInput' => 0], ['positionInInput' => 1]]),
         ]);
-
-        Storage::disk('public')->assertExists('products/' . $productPhoto->hashName());
-        Storage::disk('public')->assertExists('products/' . $productPhoto2->hashName());
-        Storage::disk('public')->assertExists('products/small/' . $productPhoto->hashName());
+        $files = File::all();
+        Storage::disk('public')->assertExists($files[0]->url);
+        Storage::disk('public')->assertExists($files[1]->url);
+        Storage::disk('public')->assertExists($files[0]->url_thumbnail);
         $this->assertDatabaseHas('products', [
             'title' => 'title',
         ]);
-        $this->assertDatabaseHas('product_photos', [
-            'url' => 'products/' . $productPhoto->hashName(),
-        ]);
     }
 
-    public function test_edit_addProduct(): void
+    public function test_addProduct_edit(): void
     {
         $category = Category::factory()->create();
         $product = Product::factory()->create([
@@ -157,25 +153,23 @@ class ProductsTest extends TestCase
             'quantity' => 22,
             'category_id' => $category->id,
         ]);
-        $productPhotoDb = ProductPhoto::factory()->create([
+        $fileDb = File::factory()->create([
             'url' => 'url',
-            'url_small' => 'url_small',
+            'url_thumbnail' => 'url_thumbnail',
             'position' => 0,
-            'size' => 22,
             'product_id' => $product->id,
         ]);
         Storage::fake('public');
         Storage::disk('public')->put('url2.jpg', 'content');
         Storage::disk('public')->put('small/url2.jpg', 'content');
-        $productPhotoDb2 = ProductPhoto::factory()->create([
+        $fileDb2 = File::factory()->create([
             'url' => 'url2.jpg',
-            'url_small' => 'small/url2.jpg',
+            'url_thumbnail' => 'small/url2.jpg',
             'position' => 1,
-            'size' => 22,
             'product_id' => $product->id,
         ]);
         $user = User::factory()->create();
-        $productPhoto = UploadedFile::fake()->image('product.jpg');
+        $file = UploadedFile::fake()->image('product.jpg');
 
         $this->actingAs($user)->postJson('/admin-panel/add-product', [
             'productId' => $product->id,
@@ -185,29 +179,20 @@ class ProductsTest extends TestCase
             'price' => 111,
             'quantity' => 222,
             'categoryId' => $category->id,
-            'files' => [$productPhoto],
+            'files' => [$file],
             'filesArr' => json_encode([
                 ['positionInInput' => 0],
-                ['id' => $productPhotoDb->id, 'removed' => false],
-                ['id' => $productPhotoDb2->id, 'removed' => true]
+                ['id' => $fileDb->id, 'removed' => false],
+                ['id' => $fileDb2->id, 'removed' => true]
             ]),
         ]);
-
-        Storage::disk('public')->assertExists('products/' . $productPhoto->hashName());
-        Storage::disk('public')->assertExists('products/small/' . $productPhoto->hashName());
-        Storage::disk('public')->assertMissing('url2.jpg');
-        Storage::disk('public')->assertMissing('small/url2.jpg');
+        $fileDbNew = File::whereNotIn('id', [$fileDb->id, $fileDb2->id])->first();
+        $this->assertTrue($fileDb->fresh()->product_id === $product->id);
+        $this->assertTrue($fileDb2->fresh()->product_id === null);
+        $this->assertTrue($fileDbNew->product_id === $product->id);
         $this->assertDatabaseHas('products', [
             'title' => 'titleEdited',
         ]);
-        $this->assertDatabaseHas('product_photos', [
-            'url' => 'products/' . $productPhoto->hashName(),
-        ]);
-        $this->assertDatabaseHas('product_photos', [
-            'id' => $productPhotoDb->id,
-            'position' => 1,
-        ]);
-        $this->assertModelMissing($productPhotoDb2);
     }
 
     public function test_deleteProducts(): void

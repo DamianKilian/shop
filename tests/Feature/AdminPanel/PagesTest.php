@@ -69,13 +69,16 @@ class PagesTest extends TestCase
         File::factory()->count(3)->create();
         File::factory()->create([
             'url' => $urlDbOld,
+            'display_type' => 'image',
             'page_id' => $page->id,
         ]);
         File::factory()->create([
             'url' => $urlDbNew,
+            'display_type' => 'image',
         ]);
         File::factory()->create([
             'url' => $urlDbRemoved,
+            'display_type' => 'image',
             'page_id' => $page->id,
         ]);
         $pageBodyArrayNew = array(
@@ -155,9 +158,11 @@ class PagesTest extends TestCase
         File::factory()->count(3)->create();
         File::factory()->create([
             'url' => $urlDb1,
+            'display_type' => 'image',
         ]);
         File::factory()->create([
             'url' => $urlDb2,
+            'display_type' => 'image',
         ]);
         $pageBodyArray = array(
             'time' => 1729269060460,

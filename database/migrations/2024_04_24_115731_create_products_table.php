@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Product;
 use App\Services\AppService;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -15,8 +16,10 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('description');
-            $table->text('description_str');
+            $table->text('description')->nullable();
+            $table->text('description_str')->nullable();
+            $table->text('description_prod')->nullable();
+            $table->boolean('active')->default(false);
             $table->decimal('price');
             $table->integer('quantity');
             $table->string('gtin')->nullable();
@@ -28,20 +31,6 @@ return new class extends Migration
             if (!AppService::isSqlite($this)) {
                 $table->fullText(['title', 'description_str']);
             }
-            $table->softDeletes();
-            $table->timestamps();
-        });
-        Schema::create('product_photos', function (Blueprint $table) {
-            $table->id();
-            $table->string('url');
-            $table->string('url_small');
-            $table->integer('position');
-            $table->unsignedBigInteger('size');
-            $table->unsignedBigInteger('product_id');
-            $table->foreign('product_id')
-                ->references('id')
-                ->on('products')
-                ->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

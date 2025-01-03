@@ -39,6 +39,8 @@ class ProductFactory extends Factory
             'slug' => $slug,
             'description' => $description,
             'description_str' => $descriptionStr . $wordsDescStr,
+            'description_prod' => $description,
+            'active' => true,
             'price' => fake()->randomFloat(2, 2, 2000),
             'quantity' => fake()->numberBetween(0, 1000),
             'created_at' => $datetime,

@@ -14,8 +14,8 @@
         <a href="{{ route('product', [$product->slug]) }}" class="product clearfix"
             target="{{ sett('PRODUCT_OPEN_TARGET') }}">
             <div class="img-container">
-                @if ($product->productPhotos->get(0))
-                    <img src="{{ asset('storage/' . $product->productPhotos->get(0)->url_small) }}"
+                @if ($product->productImages->get(0))
+                    <img src="{{ asset('storage/' . $product->productImages->get(0)->url_small) }}"
                         alt="{{ $product->title }}">
                 @else
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">

@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\File;
 use App\Models\Filter;
 use App\Models\FilterOption;
 use App\Models\Product;
-use App\Models\ProductPhoto;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -63,9 +63,9 @@ class DatabaseSeeder extends Seeder
         Product::factory(rand(0, 49))->create([
             'category_id' => $category->id,
         ])->each(function ($p) use ($that) {
-            ProductPhoto::factory(rand(0, 2))->create([
-                'product_id' => $p->id,
-            ]);
+            // File::factory(rand(0, 2))->create([
+            //     'product_id' => $p->id,
+            // ]);
             $count = $that->currFilterOptions->count();
             $optionsNum = (int) ($count / rand(1, 9));
             if (0 < $optionsNum) {

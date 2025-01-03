@@ -18,9 +18,9 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function productPhotos()
+    public function productImages()
     {
-        return $this->hasMany(ProductPhoto::class);
+        return $this->hasMany(File::class);
     }
 
     public function filterOptions()
