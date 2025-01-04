@@ -4,6 +4,7 @@ namespace Tests\Feature\AdminPanel;
 
 use App\Models\Attachment;
 use App\Models\File;
+use App\Models\Page;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
@@ -18,12 +19,12 @@ class EditorjsTest extends TestCase
 
     protected function getFileData($fileType, $file, $maxWidth = 1920)
     {
-        $hash = hash_file('sha256', $file);
+        $hash = hash_file(env('HASH_FILE_ALGO'), $file);
         $folder = FileService::getStorageFolder($fileType);
         if ($extension = $file->guessExtension()) {
             $extension = '.' . $extension;
         }
-        $name = $hash . '_' . FileService::finalWidth($file, $fileType, $maxWidth) . $extension;
+        $name = FileService::hyphenedName($file) . '-' . $hash . '_' . FileService::finalWidth($file, $fileType, $maxWidth) . $extension;
         $url = "$folder/$name";
         return [
             'name' => $name,
@@ -110,15 +111,6 @@ class EditorjsTest extends TestCase
 
     public function uploadFile($thumbnail = false, $displayType = 'image'): void
     {
-        // $tfolder = env('THUMBNAILS_FOLDER');
-        // $folder = env('IMAGES_FOLDER');
-        // $user = User::factory()->create();
-        // $publicStorage = Storage::fake('public');
-        // $image = UploadedFile::fake()->image('image.jpg', 3840, 2000);
-        // $name = $image->hashName();
-        // $url = $folder . "/$name";
-        // $urlFull = env('APP_URL') . Storage::url($url);
-
         $user = User::factory()->create();
         $publicStorage = Storage::fake('public');
         $image = UploadedFile::fake()->image('image.jpg', 3840, 2000);
@@ -253,5 +245,77 @@ class EditorjsTest extends TestCase
         $this->assertDatabaseHas('files', [
             'url' => $url,
         ]);
+    }
+
+    public function test_img_alt_tag_imageExternal(): void
+    {
+        $title = 'title';
+        $caption = 'caption';
+        $body_prod = '{"time":1736007596087,"blocks":[{"id":"kJ3A55ZNBS","type":"imageExternal","data":{"file":{"url":"https://img.stablecog.com/insecure/256w/aHR0cHM6Ly9iLnN0YWJsZWNvZy5jb20vOGMzZTY3YjctYWY5ZC00NDljLTg2ZTItZGMyNTc0NjFhNDJiLmpwZWc.webp"},"caption":"'
+            . $caption . '","withBorder":false,"withBackground":false,"stretched":false}},{"id":"9J4hxsUtTm","type":"imageExternal","data":{"file":{"url":"https://img.stablecog.com/insecure/256w/aHR0cHM6Ly9iLnN0YWJsZWNvZy5jb20vOGMzZTY3YjctYWY5ZC00NDljLTg2ZTItZGMyNTc0NjFhNDJiLmpwZWc.webp"},"caption":"","withBorder":false,"withBackground":false,"stretched":false}}],"version":"2.30.6"}';
+        Page::factory()->create([
+            'title' => $title,
+            'slug' => $title,
+            'body_prod' => $body_prod,
+            'active' => 1,
+        ]);
+
+        $response = $this->get('/' . $title);
+
+        $response->assertSeeInOrder(['alt="caption"', ('alt="' . $title . '"')], false);
+    }
+
+    public function test_img_alt_tag_image(): void
+    {
+        $title = 'title';
+        $caption = 'caption';
+        $body_prod = '{"time":1736008667803,"blocks":[{"id":"avpPQl23xE","type":"image","data":{"caption":"'
+            . $caption . '","withBorder":false,"withBackground":false,"stretched":false,"file":{"url":"http://localhost:8080/storage/images/dog-4561706f_225.jpg","urlDb":"images/dog-4561706f_225.jpg","size":7059}}},{"id":"n5-FT0dNJB","type":"image","data":{"caption":"","withBorder":false,"withBackground":false,"stretched":false,"file":{"url":"http://localhost:8080/storage/images/dog-4561706f_225.jpg","urlDb":"images/dog-4561706f_225.jpg","size":7059}}}],"version":"2.30.6"}';
+        Page::factory()->create([
+            'title' => $title,
+            'slug' => $title,
+            'body_prod' => $body_prod,
+            'active' => 1,
+        ]);
+
+        $response = $this->get('/' . $title);
+
+        $response->assertSeeInOrder(['alt="caption"', ('alt="' . $title . '"')], false);
+    }
+
+    public function test_img_alt_tag_gallery_standard(): void
+    {
+        $title = 'title';
+        $caption = 'caption';
+        $body_prod = '{"time":1736009854274,"blocks":[{"id":"uBv5pX0-0S","type":"gallery","data":{"items":[{"url":"http://localhost:8080/storage/images/dog-4561706f_225.jpg","caption":"'
+            . $caption . '"},{"url":"http://localhost:8080/storage/images/dog-4561706f_225.jpg","caption":""}],"config":"standard","countItemEachRow":"1"}}],"version":"2.30.6"}';
+        Page::factory()->create([
+            'title' => $title,
+            'slug' => $title,
+            'body_prod' => $body_prod,
+            'active' => 1,
+        ]);
+
+        $response = $this->get('/' . $title);
+
+        $response->assertSeeInOrder(['alt="caption"', ('alt="' . $title . '"')], false);
+    }
+
+    public function test_img_alt_tag_gallery_carousel(): void
+    {
+        $title = 'title';
+        $caption = 'caption';
+        $body_prod = '{"time":1736010019007,"blocks":[{"id":"uBv5pX0-0S","type":"gallery","data":{"items":[{"url":"http://localhost:8080/storage/images/dog-4561706f_225.jpg","caption":"'
+            . $caption . '"},{"url":"http://localhost:8080/storage/images/dog-4561706f_225.jpg","caption":""}],"config":"carousel","countItemEachRow":"1"}}],"version":"2.30.6"}';
+        Page::factory()->create([
+            'title' => $title,
+            'slug' => $title,
+            'body_prod' => $body_prod,
+            'active' => 1,
+        ]);
+
+        $response = $this->get('/' . $title);
+
+        $response->assertSeeInOrder(['alt="caption"', ('alt="' . $title . '"')], false);
     }
 }

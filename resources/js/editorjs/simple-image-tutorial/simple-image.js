@@ -77,6 +77,9 @@ export default class SimpleImage {
    * @param {ImageToolConfig} config — custom config that we provide to our tool's user
    */
   constructor({ data, api, config }) {
+    if (!data.file) {
+      data.file = {};
+    }
     this.api = api;
     this.config = config || {};
     this.data = {

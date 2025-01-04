@@ -131,7 +131,7 @@ class HomeController extends Controller
             abort(404);
         }
         if ($page->body_prod) {
-            $page->bodyHtml = $editorJS->toHtml($page->body_prod);
+            $page->bodyHtml = $editorJS->toHtml($page->body_prod, $page->title);
         }
         return view('home', [
             'page' => $page,
@@ -146,7 +146,7 @@ class HomeController extends Controller
     {
         $product = Product::where('slug', $slug)->first();
         if ($product->description) {
-            $product->bodyHtml = $editorJS->toHtml($product->description);
+            $product->bodyHtml = $editorJS->toHtml($product->description, $product->title);
         }
         return view('product', [
             'product' => $product,

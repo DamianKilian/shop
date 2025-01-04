@@ -7,16 +7,19 @@ use App\Models\File;
 
 class EditorJSService
 {
+    protected static $title = '';
+    
     protected function addClass(&$el, $class)
     {
         $el->setAttribute('class', $el->getAttribute('class') . ' ' . $class);
     }
 
-    public function toHtml($json)
+    public function toHtml($json, $title = '')
     {
         if(!$json){
             return '';
         }
+        self::$title = $title;
         $json = json_decode($json);
         $blocks = $json->blocks;
         $doc = new \DOMDocument();
@@ -129,7 +132,7 @@ class EditorJSService
                     $this->addClass($imgDiv, 'bg-light p-2 text-center');
                 }
                 $img->setAttribute('src', $block->data->file->url);
-                $img->setAttribute('alt', $block->data->caption);
+                $img->setAttribute('alt', $block->data->caption ?: self::$title);
                 $figcaption = $doc->createElement('figcaption');
                 $caption = $doc->createTextNode($block->data->caption);
                 $figcaption->appendChild($caption);
@@ -262,6 +265,7 @@ class EditorJSService
                 $a->setAttribute('target', '_blank');
                 $a->setAttribute('data-caption', $item->caption);
                 $img = $doc->createElement('img');
+                $img->setAttribute('alt', $item->caption ?: self::$title);
                 $urlExplode = explode('/', $item->url);
                 $img->setAttribute('src', '/storage/' . env('THUMBNAILS_FOLDER') . '/' . end($urlExplode));
                 $a->appendChild($img);
@@ -292,6 +296,7 @@ class EditorJSService
                 $carouselItem = $doc->createElement('div');
                 $carouselItem->setAttribute('class', 'carousel-item' . (0 === $key ? " active" : ''));
                 $img = $doc->createElement('img');
+                $img->setAttribute('alt', $item->caption ?: self::$title);
                 $img->setAttribute('class', 'd-block w-100');
                 $img->setAttribute('src', $item->url);
                 $carouselItem->appendChild($img);

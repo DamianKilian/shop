@@ -48,14 +48,20 @@ class FileService
         return $width;
     }
 
+    public static function hyphenedName($file)
+    {
+        $name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        return preg_replace('/\\s+/', "-", trim(preg_replace('/[^A-Za-z0-9]/', " ", $name)));
+    }
+
     public static function saveFile($file, $displayType, $fileType, $thumbnail, $position = null, $maxWidth = 1920, $thumbnailMaxSize = null, $productId = null)
     {
-        $hash = hash_file('sha256', $file);
+        $hash = hash_file(env('HASH_FILE_ALGO'), $file);
         $folder = self::getStorageFolder($fileType);
         if ($extension = $file->guessExtension()) {
             $extension = '.' . $extension;
         }
-        $name = $hash . '_' . self::finalWidth($file, $fileType, $maxWidth) . $extension;
+        $name = self::hyphenedName($file) . '-' . $hash . '_' . self::finalWidth($file, $fileType, $maxWidth) . $extension;
         $url = "$folder/$name";
         $urlThumbnail = null;
         $fileInDb = self::findFileInDb($url, $fileType);
