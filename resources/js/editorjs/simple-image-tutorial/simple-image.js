@@ -81,7 +81,7 @@ export default class SimpleImage {
     this.config = config || {};
     this.data = {
       file: {
-        url: data.url || '',
+        url: data.file.url || '',
       },
       caption: data.caption || '',
       withBorder: data.withBorder !== undefined ? data.withBorder : false,
