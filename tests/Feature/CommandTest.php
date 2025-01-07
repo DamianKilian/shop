@@ -57,113 +57,202 @@ class CommandTest extends TestCase
         $this->assertDatabaseCount('suggestions', 5);
     }
 
-    public function test_prune_files(): void
-    {
-        $this->prune_files(File::factory(), 'prune:files', 'files');
-    }
-
     public function test_prune_attachments(): void
     {
-        $this->prune_files(Attachment::factory(), 'prune:attachments', 'attachments');
-    }
-
-    public function prune_files($factory, $command, $table): void
-    {
         $publicStorage = Storage::fake('public');
-        // 5 pageFiles
-        $publicStorage->put('test/img1.jpg', 'content');
-        if ('files' === $table) {
-            $publicStorage->put(env('THUMBNAILS_FOLDER') . '/img1.jpg', 'content');
+        $filesNum = 5;
+        $i = 1;
+        while ($i <= $filesNum) {
+            $publicStorage->put("folder/img$i.jpg", 'content');
+            $i++;
         }
-        $factory->create([
-            'url' => 'test/img1.jpg',
+        $removedFiles = [];
+        // case1
+        $f1 = Attachment::factory()->create([
+            'page_id' => null,
+            'product_id' => null,
+            'url' => 'folder/img1.jpg', //remove
+            'created_at' => now()->subMonths(2),
         ]);
-        $publicStorage->put('test/img2.jpg', 'content');
-        $factory->create([
-            'url' => 'test/img2.jpg',
-            'created_at' => now()->subDay(),
+        $removedFiles[] = 1;
+        $f2 = Attachment::factory()->create([
+            'page_id' => null,
+            'product_id' => null,
+            'url' => 'folder/img2.jpg', //remove
+            'created_at' => now()->subMonths(2),
         ]);
-        $publicStorage->put('test/img3.jpg', 'content');
-        $factory->create([
-            'url' => 'test/img3.jpg',
-            'created_at' => now()->subDays(5),
+        $removedFiles[] = 2;
+        // case2
+        $f3 = Attachment::factory()->create([
+            'page_id' => null,
+            'product_id' => null,
+            'url' => 'folder/img3.jpg', //do not remove
+            'created_at' => now()->subMonths(2),
         ]);
-        $publicStorage->put('test/img4.jpg', 'content');
-        if ('files' === $table) {
-            $publicStorage->put(env('THUMBNAILS_FOLDER') . '/img4.jpg', 'content');
-        }
-        $factory->create([
-            'url' => 'test/img4.jpg',
-            'created_at' => now()->subWeeks(5),
+        $page = Page::factory()->create();
+        $f4 = Attachment::factory()->create([
+            'page_id' => $page->id,
+            'product_id' => null,
+            'url' => 'folder/img3.jpg',
         ]);
-        $publicStorage->put('test/img5.jpg', 'content');
-        $factory->create([
-            'url' => 'test/img5.jpg',
-            'created_at' => now()->subMonths(5),
+        // case3
+        $f5 = Attachment::factory()->create([
+            'page_id' => null,
+            'product_id' => null,
+            'url' => 'folder/img4.jpg', //do not remove
+            'created_at' => now()->subMonths(2),
         ]);
-        // files with id
         $category = Category::factory()->create();
         $product = Product::factory()->create([
             'category_id' => $category->id
         ]);
-        $page = Page::factory()->create();
-        $publicStorage->put('test/img6.jpg', 'content');
-        $factory->create([
-            'url' => 'test/img6.jpg',
-            'page_id' => $page->id,
+        $f6 = Attachment::factory()->create([
+            'page_id' => null,
+            'product_id' => $product->id,
+            'url' => 'folder/img4.jpg',
+        ]);
+        // case5
+        $f7 = Attachment::factory()->create([
+            'page_id' => null,
+            'product_id' => null,
+            'url' => 'folder/img5.jpg', //do not remove
             'created_at' => now()->subDay(),
         ]);
-        $publicStorage->put('test/img7.jpg', 'content');
-        $factory->create([
-            'url' => 'test/img7.jpg',
-            'page_id' => $page->id,
-            'created_at' => now()->subMonths(5),
-        ]);
-        // files used in another models
-        $publicStorage->put('test/img8.jpg', 'content');
-        $factory->create([
-            'url' => 'test/img8.jpg',
-            'created_at' => now()->subMonths(5),
-        ]);
-        $factory->create([
-            'url' => 'test/img8.jpg',
-            'created_at' => now()->subMonths(5),
-            'page_id' => $page->id,
-        ]);
-        $publicStorage->put('test/img9.jpg', 'content');
-        if ('files' === $table) {
-            $publicStorage->put(env('THUMBNAILS_FOLDER') . '/img9.jpg', 'content');
+
+        $this->artisan('prune:attachments')->assertExitCode(0);
+        $this->assertEquals(Attachment::all()->pluck('id')->toArray(), [$f4->id, $f6->id, $f7->id,]);
+        $i = 1;
+        while ($i <= $filesNum) {
+            if (false === array_search($i, $removedFiles)) {
+                $publicStorage->assertExists("folder/img$i.jpg");
+            } else {
+                $publicStorage->assertMissing("folder/img$i.jpg");
+            }
+            $i++;
         }
-        $factory->create([
-            'url' => 'test/img9.jpg',
-            'created_at' => now()->subMonths(5),
+    }
+
+    public function test_prune_files(): void
+    {
+        $publicStorage = Storage::fake('public');
+        $filesNum = 7;
+        $thumbnailsNum = 6;
+        $i = 1;
+        while ($i <= $filesNum) {
+            $publicStorage->put("folder/img$i.jpg", 'content');
+            $i++;
+        }
+        $t = 1;
+        while ($t <= $thumbnailsNum) {
+            $publicStorage->put("thumbnail-folder/thumbnail$t.jpg", 'content');
+            $t++;
+        }
+        $removedFiles = [];
+        $removedThumbnails = [];
+        // case1
+        $f1 = File::factory()->create([
+            'page_id' => null,
+            'product_id' => null,
+            'url' => 'folder/img1.jpg', //remove
+            'url_thumbnail' => 'thumbnail-folder/thumbnail1.jpg', //remove
+            'created_at' => now()->subMonths(2),
         ]);
-        $factory->create([
-            'url' => 'test/img9.jpg',
-            'created_at' => now()->subMonths(5),
+        $removedFiles[] = 1;
+        $removedThumbnails[] = 1;
+        $f2 = File::factory()->create([
+            'page_id' => null,
+            'product_id' => null,
+            'url' => 'folder/img2.jpg', //remove
+            'created_at' => now()->subMonths(2),
+        ]);
+        $removedFiles[] = 2;
+        // case2
+        $f3 = File::factory()->create([
+            'page_id' => null,
+            'product_id' => null,
+            'url' => 'folder/img3.jpg', //do not remove
+            'url_thumbnail' => 'thumbnail-folder/thumbnail2.jpg', //do not remove
+            'created_at' => now()->subMonths(2),
+        ]);
+        $page = Page::factory()->create();
+        $f4 = File::factory()->create([
+            'page_id' => $page->id,
+            'product_id' => null,
+            'url' => 'folder/img3.jpg',
+        ]);
+        $page2 = Page::factory()->create();
+        $f5 = File::factory()->create([
+            'page_id' => $page2->id,
+            'product_id' => null,
+            'url' => 'folder/img3.jpg',
+            'url_thumbnail' => 'thumbnail-folder/thumbnail2.jpg',
+        ]);
+        // case3
+        $f6 = File::factory()->create([
+            'page_id' => null,
+            'product_id' => null,
+            'url' => 'folder/img4.jpg', //remove
+            'url_thumbnail' => 'thumbnail-folder/thumbnail3.jpg', //do not remove
+            'created_at' => now()->subMonths(2),
+        ]);
+        $removedFiles[] = 4;
+        $category = Category::factory()->create();
+        $product = Product::factory()->create([
+            'category_id' => $category->id
+        ]);
+        $f7 = File::factory()->create([
+            'page_id' => null,
             'product_id' => $product->id,
+            'url' => 'folder/img5.jpg',
+            'url_thumbnail' => 'thumbnail-folder/thumbnail3.jpg',
+        ]);
+        // case4
+        $f8 = File::factory()->create([
+            'page_id' => null,
+            'product_id' => null,
+            'url' => 'folder/img6.jpg', //do not remove
+            'url_thumbnail' => 'thumbnail-folder/thumbnail4.jpg', //remove
+            'created_at' => now()->subMonths(2),
+        ]);
+        $removedThumbnails[] = 4;
+        $category2 = Category::factory()->create();
+        $product2 = Product::factory()->create([
+            'category_id' => $category2->id
+        ]);
+        $f9 = File::factory()->create([
+            'page_id' => null,
+            'product_id' => $product2->id,
+            'url' => 'folder/img6.jpg',
+            'url_thumbnail' => 'thumbnail-folder/thumbnail5.jpg',
+        ]);
+        // case5
+        $f10 = File::factory()->create([
+            'page_id' => null,
+            'product_id' => null,
+            'url' => 'folder/img7.jpg', //do not remove
+            'url_thumbnail' => 'thumbnail-folder/thumbnail6.jpg', //do not remove
+            'created_at' => now()->subDay(),
         ]);
 
-        $this->artisan($command)->assertExitCode(0);
-        $this->assertDatabaseCount($table, 7);
-        $publicStorage->assertExists('test/img1.jpg');
-        $publicStorage->assertExists('test/img2.jpg');
-        $publicStorage->assertExists('test/img3.jpg');
-        $publicStorage->assertExists('test/img6.jpg');
-        $publicStorage->assertExists('test/img7.jpg');
-        $publicStorage->assertMissing('test/img4.jpg');
-        $publicStorage->assertMissing('test/img5.jpg');
-        // files used in another models
-        $publicStorage->assertExists('test/img8.jpg');
-        $publicStorage->assertExists('test/img9.jpg');
-        if ('files' === $table) {
-            $publicStorage->assertExists(env('THUMBNAILS_FOLDER') . '/img1.jpg');
+        $this->artisan('prune:files')->assertExitCode(0);
+        $this->assertEquals(File::all()->pluck('id')->toArray(), [$f4->id, $f5->id, $f7->id, $f9->id, $f10->id,]);
+        $i = 1;
+        while ($i <= $filesNum) {
+            if (false === array_search($i, $removedFiles)) {
+                $publicStorage->assertExists("folder/img$i.jpg");
+            } else {
+                $publicStorage->assertMissing("folder/img$i.jpg");
+            }
+            $i++;
         }
-        if ('files' === $table) {
-            $publicStorage->assertMissing(env('THUMBNAILS_FOLDER') . '/img4.jpg');
-        }
-        if ('files' === $table) {
-            $publicStorage->assertExists(env('THUMBNAILS_FOLDER') . '/img9.jpg');
+        $t = 1;
+        while ($t <= $thumbnailsNum) {
+            if (false === array_search($t, $removedThumbnails)) {
+                $publicStorage->assertExists("thumbnail-folder/thumbnail$t.jpg");
+            } else {
+                $publicStorage->assertMissing("thumbnail-folder/thumbnail$t.jpg");
+            }
+            $t++;
         }
     }
 }

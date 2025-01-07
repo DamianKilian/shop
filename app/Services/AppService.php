@@ -36,25 +36,29 @@ class AppService
             ->where('product_id', null)
             ->where('created_at', '<=', now()->subMonth())
             ->get();
-        $usedModels = DB::table($table)
-            ->whereIn('url', $models->pluck('url'))
+        self::deleteFiles($models, 'url', $table);
+        if ('files' === $table) {
+            self::deleteFiles($models, 'url_thumbnail', $table);
+        }
+        DB::table($table)->whereIn('id', $models->pluck('id'))->delete();
+    }
+
+    protected static function deleteFiles($models, $urlColumn, $table)
+    {
+        $modelsInUse = DB::table($table)
+            ->whereIn($urlColumn, $models->pluck($urlColumn))
             ->where(function (Builder $query) {
                 $query->whereNot('page_id', null)
                     ->orWhereNot('product_id', null);
             })
             ->get();
-        $usedModelUrls = $usedModels->pluck('url')->toArray();
+        $modelsInUseUrls = $modelsInUse->pluck($urlColumn)->toArray();
         $publicStorage = Storage::disk('public');
         foreach ($models as $model) {
-            if (false !== array_search($model->url, $usedModelUrls)) {
+            if (false !== array_search($model->{$urlColumn}, $modelsInUseUrls)) {
                 continue;
             }
-            $publicStorage->delete($model->url);
-            if ('files' === $table) {
-                $urlExplode = explode('/', $model->url);
-                $publicStorage->delete(env('THUMBNAILS_FOLDER') . '/' . end($urlExplode));
-            }
+            $publicStorage->delete($model->{$urlColumn});
         }
-        DB::table($table)->whereIn('id', $models->pluck('id'))->delete();
     }
 }

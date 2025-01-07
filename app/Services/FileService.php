@@ -61,7 +61,8 @@ class FileService
         if ($extension = $file->guessExtension()) {
             $extension = '.' . $extension;
         }
-        $name = self::hyphenedName($file) . '-' . $hash . '_' . self::finalWidth($file, $fileType, $maxWidth) . $extension;
+        $hyphenedName = self::hyphenedName($file);
+        $name = $hyphenedName . '-' . $hash . '_' . self::finalWidth($file, $fileType, $maxWidth) . $extension;
         $url = "$folder/$name";
         $urlThumbnail = null;
         $fileInDb = self::findFileInDb($url, $fileType);
@@ -78,7 +79,7 @@ class FileService
         }
         if ('image' === $fileType) {
             $thumbnailMaxSize = $thumbnailMaxSize ?: sett('THUMBNAIL_MAX_SIZE');
-            $tname = $hash . '_' . $thumbnailMaxSize . $extension;
+            $tname = $hyphenedName . '-' . $hash . '_' . $thumbnailMaxSize . $extension;
             $tfolder = env('THUMBNAILS_FOLDER');
             $turl = "$tfolder/$tname";
             $urlThumbnail = $thumbnail ? $turl : null;
