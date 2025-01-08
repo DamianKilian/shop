@@ -74,7 +74,7 @@ class AdminPanelPagesController extends Controller
 
     public function getPages()
     {
-        $pages = Page::where('slug', '!=', env('PREVIEW_SLUG'))->orWhere('slug', null)->get(['id', 'title', 'active']);
+        $pages = Page::where('slug', '!=', env('PREVIEW_SLUG'))->orWhere('slug', null)->get(['id', 'title', 'active', 'slug']);
         return response()->json([
             'pages' => $pages,
         ]);

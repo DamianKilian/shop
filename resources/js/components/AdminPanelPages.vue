@@ -36,7 +36,7 @@
                         </button>
                         <button
                             class="btn btn-success btn-sm ms-1"
-                            :disabled='page.applyChangesClicked'
+                            :disabled="page.applyChangesClicked"
                             @click="applyChanges(page)"
                         >
                             <template v-if="page.applyChangesClicked">
@@ -57,7 +57,7 @@
                                 'btn-outline-warning': page.active,
                                 'btn-warning': !page.active,
                             }"
-                            :disabled='page.toggleActiveClicked'
+                            :disabled="page.toggleActiveClicked"
                             @click="toggleActive(page)"
                         >
                             <template v-if="page.toggleActiveClicked">
@@ -89,6 +89,14 @@
                         >
                             {{ __('Delete') }}
                         </button>
+                        <a
+                            :href="'/' + (page.slug || '')"
+                            class="btn btn-light btn-sm float-end"
+                            target="_blank"
+                        >
+                            {{ __('Show') }}
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
                     </td>
                 </tr>
             </tbody>
