@@ -78,7 +78,7 @@
             <div class="card">
                 <div @click='product.selected = !product.selected' class="card-img border-bottom">
                     <input class="m-1 form-check-input position-absolute" type="checkbox" v-model="product.selected">
-                    <img v-if='product.product.product_photos[0]' :src="product.product.product_photos[0].fullUrlSmall"
+                    <img v-if='product.product.product_images[0]' :src="product.product.product_images[0].fullUrlSmall"
                         class="card-img-top">
                     <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
                         <rect width="400" height="400" fill="#cccccc"></rect>
@@ -201,6 +201,7 @@ export default {
                     selected: false,
                 });
             });
+           console.debug(products);//mmmyyy
         },
         getSelectedCategory: function () {
             var selectedCategory = null;

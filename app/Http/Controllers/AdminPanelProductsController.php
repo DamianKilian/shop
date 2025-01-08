@@ -194,7 +194,6 @@ class AdminPanelProductsController extends Controller
         $products = ProductService::searchFilters($request, $categoryChildrenIds, true, 20, ['limit' => 30]);
         $productsArr  = $products->toArray();
         foreach ($productsArr['data'] as &$product) {
-            $product['description'] = null;
             $product['description_str'] = null;
         }
         unset($product);

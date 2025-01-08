@@ -367,7 +367,7 @@ export default {
             var photos = [];
             if (this.editProduct) {
                 _.forEach(
-                    this.editProduct.product.product_photos,
+                    this.editProduct.product.product_images,
                     function (photo) {
                         photos.push({
                             src: photo.fullUrlSmall,

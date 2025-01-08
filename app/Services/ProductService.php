@@ -45,24 +45,25 @@ class ProductService
     public static function searchFiltersQuery(Request $request, $categoryChildrenIds = [], $withCategory = false)
     {
         $pf = self::getProductsFilters($request);
-        return Product::with(['productImages' => function (Builder $query) {
-            $query->whereDisplayType('productPhotosGallery')->orderBy('position');
-        }])->when($pf['searchValue'], function ($query, $searchValue) {
-            return $query->whereFullText(['title', 'description_str'], $searchValue);
-        })->when($pf['maxPrice'], function ($query, $maxPrice) {
-            return $query->where('price', '<=', $maxPrice);
-        })->when($pf['minPrice'], function ($query, $minPrice) {
-            return $query->where('price', '>=', $minPrice);
-        })->when($pf['filterOptions'], function ($query, $filterOptions) {
-            $filterOptions = array_map('intval', explode("|", $filterOptions));
-            return $query->whereHas('filterOptions', function (Builder $query) use ($filterOptions) {
-                $query->whereIn('filter_options.id', $filterOptions);
-            });
-        })->when($categoryChildrenIds, function ($query, $categoryChildrenIds) {
-            return $query->whereIn('category_id', $categoryChildrenIds);
-        })->when($withCategory, function ($query) {
-            return $query->with('category');
-        })->orderByDesc('id');
+        return Product::select(['id', 'title', 'description_str', 'active', 'price', 'quantity', 'slug', 'category_id'])
+            ->with(['productImages' => function (Builder $query) {
+                $query->whereDisplayType('productPhotosGallery')->orderBy('position');
+            }])->when($pf['searchValue'], function ($query, $searchValue) {
+                return $query->whereFullText(['title', 'description_str'], $searchValue);
+            })->when($pf['maxPrice'], function ($query, $maxPrice) {
+                return $query->where('price', '<=', $maxPrice);
+            })->when($pf['minPrice'], function ($query, $minPrice) {
+                return $query->where('price', '>=', $minPrice);
+            })->when($pf['filterOptions'], function ($query, $filterOptions) {
+                $filterOptions = array_map('intval', explode("|", $filterOptions));
+                return $query->whereHas('filterOptions', function (Builder $query) use ($filterOptions) {
+                    $query->whereIn('filter_options.id', $filterOptions);
+                });
+            })->when($categoryChildrenIds, function ($query, $categoryChildrenIds) {
+                return $query->whereIn('category_id', $categoryChildrenIds);
+            })->when($withCategory, function ($query) {
+                return $query->with('category');
+            })->orderByDesc('id');
     }
 
     public static function searchFilters(Request $request, $categoryChildrenIds = [], $withCategory = false, $paginate = 20, $withDesc = true)
