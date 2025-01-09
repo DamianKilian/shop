@@ -12,6 +12,7 @@ use App\Services\CategoryService;
 use App\Services\EditorJSService;
 use App\Services\ProductService;
 use App\Services\SearchService;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -144,7 +145,9 @@ class HomeController extends Controller
 
     public function product(Request $request, EditorJSService $editorJS, $slug)
     {
-        $product = Product::where('slug', $slug)->first();
+        $product = Product::where('slug', $slug)->with(['productImages' => function (Builder $query) {
+            $query->whereDisplayType('productPhotosGallery')->orderBy('position');
+        }])->first();
         if ($product->description) {
             $product->bodyHtml = $editorJS->toHtml($product->description, $product->title);
         }

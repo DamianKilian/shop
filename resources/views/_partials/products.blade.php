@@ -15,7 +15,7 @@
             target="{{ sett('PRODUCT_OPEN_TARGET') }}">
             <div class="img-container">
                 @if ($product->productImages->get(0))
-                    <img src="{{ asset('storage/' . $product->productImages->get(0)->url_small) }}"
+                    <img src="{{ asset('storage/' . $product->productImages->get(0)->url_thumbnail) }}"
                         alt="{{ $product->title }}">
                 @else
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">

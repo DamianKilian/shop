@@ -25,7 +25,7 @@ class FileService
     {
         $t = 'image' === $fileType ? 'files' : 'attachments';
         return DB::table($t)
-            ->select(['url'])
+            ->select(['url', 'data'])
             ->whereUrl($url)
             ->first();
     }
@@ -71,11 +71,14 @@ class FileService
             $publicStorage->putFileAs($folder, $file, $name);
             if ('image' === $fileType) {
                 $urlAbsolute = $publicStorage->path($url);
-                Image::load($urlAbsolute)
+                $image = Image::load($urlAbsolute)
                     ->fit(Fit::Max, $maxWidth)
                     ->save();
                 ImageOptimizer::optimize($urlAbsolute);
+                $data = json_encode(['width' => $image->getWidth(), 'height' => $image->getHeight()]);
             }
+        } else {
+            $data = $fileInDb->data;
         }
         if ('image' === $fileType) {
             $thumbnailMaxSize = $thumbnailMaxSize ?: sett('THUMBNAIL_MAX_SIZE');
@@ -94,7 +97,7 @@ class FileService
                     ImageOptimizer::optimize($turlAbsolute);
                 }
             }
-            File::create(['url' => $url, 'position' => $position, 'url_thumbnail' => $urlThumbnail, 'display_type' => $displayType, 'product_id' => $productId]);
+            File::create(['url' => $url, 'data' => $data, 'position' => $position, 'url_thumbnail' => $urlThumbnail, 'display_type' => $displayType, 'product_id' => $productId]);
         } elseif ('attachment' === $fileType) {
             Attachment::create(['url' => $url, 'hash' => $hash, 'product_id' => $productId]);
         }

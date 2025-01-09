@@ -39,3 +39,4 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 import './app/lightbox';
 import './app/carousel';
+import './app/photoswipe';

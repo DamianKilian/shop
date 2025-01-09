@@ -155,7 +155,7 @@ class AdminPanelProductsController extends Controller
                 fileType: 'image',
                 thumbnail: true,
                 position: $position,
-                maxWidth: 1920 * 3,
+                maxWidth: 3000,
                 productId: $productId,
             );
         }

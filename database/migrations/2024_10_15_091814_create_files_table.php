@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('url_thumbnail')->nullable()->index();
             $table->integer('position')->nullable();
             $table->string('display_type')->nullable();
+            $table->string('data')->nullable();
             $table->unsignedBigInteger('page_id')->nullable();
             $table->foreign('page_id')
                 ->references('id')
