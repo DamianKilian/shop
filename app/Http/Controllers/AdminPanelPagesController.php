@@ -37,15 +37,14 @@ class AdminPanelPagesController extends Controller
 
     protected function createPage(Request $request)
     {
-        $pageId = $request->pageId;
         if ('true' === $request->preview) {
             $page = Page::whereSlug(env('PREVIEW_SLUG'))->first();
-            $pageId = $page->id;
             $page->update([
                 'title' => $request->title,
                 'body_prod' => $request->body,
             ]);
         } else {
+            $pageId = $request->pageId;
             $vals = [
                 'title' => $request->title,
                 'slug' => $request->slug,
@@ -57,10 +56,10 @@ class AdminPanelPagesController extends Controller
             } else {
                 $page = Page::create($vals);
             }
+            EditorJSService::resetPageImages($page, 'page', update: !!$pageId);
+            EditorJSService::resetPageGalleryImages($page, 'page', update: !!$pageId);
+            EditorJSService::resetAttachments($page, 'page', update: !!$pageId);
         }
-        EditorJSService::resetPageImages($page, 'page', update: !!$pageId);
-        EditorJSService::resetPageGalleryImages($page, 'page', update: !!$pageId);
-        EditorJSService::resetAttachments($page, 'page', update: !!$pageId);
         return $page;
     }
 
