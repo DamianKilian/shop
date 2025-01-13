@@ -52,7 +52,17 @@
             <button class="btn float-end me-1 mt-1 mt-sm-0 btn-outline-dark" @click="showCategories = !showCategories">
                 <i class="fa-solid fa-plus"></i> {{ __('Add filter options to products') }}
             </button>
-            <button class="btn btn-danger float-end me-1 mt-1 mt-sm-0" @click="deleteProducts()">
+            <button class="btn btn-danger float-end me-1 mt-1 mt-sm-0"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteModal"
+                @click="
+                    setSelectedProductData();
+                    deleteModal.title = `${__(
+                        'Do you want to delete'
+                    )}: &quot;${selectedProductData.titles}&quot;`;
+                    deleteModal.productId = selectedProductData.ids;
+                "
+             >
                 <i class="fa-solid fa-trash"></i> {{ __('Remove') }}
             </button>
         </div>
@@ -76,6 +86,89 @@
         <div v-for="(product, index) in products" :key="product.id"
             :class='{ "bg-primary bg-opacity-75": product.selected }' class="product pt-1 pb-1">
             <div class="card">
+            <div class="btn-group product-actions">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-auto-close="outside" data-bs-toggle="dropdown">
+                    <i class="fa-solid fa-ellipsis"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a
+                            :href="'/product/' + (product.product.slug || '')"
+                            class="btn btn-light"
+                            target="_blank"
+                        >
+                            {{ __('Show') }}
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <button @click.stop='editProduct = product' data-bs-toggle="modal" data-bs-target="#addProduct"
+                            class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i> <span>{{ __('Edit') }}</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            class="btn btn-success"
+                            :disabled="product.applyChangesClicked"
+                            @click="applyChanges(product)"
+                        >
+                            <template v-if="product.applyChangesClicked">
+                                <span
+                                    class="spinner-border spinner-border-sm"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
+                                Loading...
+                            </template>
+                            <template v-else>
+                                {{ __('Apply changes') }}
+                            </template>
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            class="btn"
+                            :class="{
+                                'btn-outline-warning': product.product.active,
+                                'btn-warning': !product.product.active,
+                            }"
+                            :disabled="product.toggleActiveClicked"
+                            @click="toggleActive(product)"
+                        >
+                            <template v-if="product.toggleActiveClicked">
+                                <span
+                                    class="spinner-border spinner-border-sm"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
+                                Loading...
+                            </template>
+                            <template v-else>
+                                {{
+                                    product.product.active
+                                        ? __('Disactivate')
+                                        : __('Activate')
+                                }}
+                            </template>
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            class="btn btn-danger"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteModal"
+                            @click="
+                                deleteModal.title = `${__(
+                                    'Do you want to delete'
+                                )}: &quot;${product.product.title}&quot;`;
+                                deleteModal.productId = product.product.id;
+                            "
+                        >
+                            {{ __('Delete') }}
+                        </button>
+                    </li>
+                </ul>
+            </div>
                 <div @click='product.selected = !product.selected' class="card-img border-bottom">
                     <input class="m-1 form-check-input position-absolute" type="checkbox" v-model="product.selected">
                     <img v-if='product.product.product_images[0]' :src="product.product.product_images[0].fullUrlSmall"
@@ -85,9 +178,6 @@
                         <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="monospace"
                             font-size="26px" fill="#333333">{{ __('No image') }}</text>
                     </svg>
-                    <button @click.stop='editProduct = product' data-bs-toggle="modal" data-bs-target="#addProduct"
-                        class="btn btn-warning btn-sm edit-product"><i class="fa-solid fa-pen-to-square"></i> <span>{{
-                            __('Edit') }}</span></button>
                 </div>
                 <div class="card-body">
                     <h5 class="card-title fw-bolder">{{ product.product.title }}</h5>
@@ -101,18 +191,25 @@
     </div>
     <div v-else class="alert alert-light mt-3" role="alert">{{ __('No products') }}</div>
     <AdminPanelProductsPagination :pagination='pagination' :getItems='getProducts' v-if='products.length' />
+    <DeleteModal
+        ref="deleteModal"
+        :deleteModal="deleteModal"
+        @delete="deleteProducts(deleteModal.productId)"
+    />
 </template>
 
 <script>
+import DeleteModal from './DeleteModal.vue';
 import AdminPanelProductsList from './AdminPanelProductsList.vue'
 import AdminPanelAddProduct from './AdminPanelAddProduct.vue'
 import AdminPanelProductsPagination from './AdminPanelProductsPagination.vue'
 import Search from './Search.vue';
 import SearchFilters from './SearchFilters.vue';
 import { goToCategory, arrangeCategories, setBreadcrumb } from './commonFunctions.js'
+import _ from 'lodash';
 
 export default {
-    components: { AdminPanelProductsList, AdminPanelAddProduct, AdminPanelProductsPagination, Search, SearchFilters },
+    components: { AdminPanelProductsList, AdminPanelAddProduct, AdminPanelProductsPagination, Search, SearchFilters, DeleteModal },
     props: ['categoriesProp',
         'adminPanelFetchUrlUrl',
         'adminPanelUploadFileUrl',
@@ -123,7 +220,9 @@ export default {
         'adminPanelAddOptionsToSelectedProductsUrl',
         'adminPanelGetProductDescUrl',
         'adminPanelDeleteProductsUrl',
-        'categoryOptionsProp'
+        'categoryOptionsProp',
+        'adminPanelToggleActiveProductUrl',
+        'adminPanelApplyChangesProductUrl',
     ],
     data() {
         return {
@@ -137,6 +236,14 @@ export default {
             categories: {},
             showCategories: false,
             globalError: '',
+            deleteModal: {
+                title: '',
+                productId: null,
+            },
+            selectedProductData: {
+                titles: [],
+                ids: [],
+            },
         }
     },
     computed: {
@@ -151,18 +258,40 @@ export default {
         },
     },
     methods: {
+        toggleActive: function (product) {
+            var active = !product.product.active;
+            product.toggleActiveClicked = true;
+            axios
+                .post(this.adminPanelToggleActiveProductUrl, {
+                    productId: product.product.id,
+                    active: active,
+                })
+                .then(function (response) {
+                    product.product.active = active;
+                    product.toggleActiveClicked = false;
+                });
+        },
+        applyChanges: function (product) {
+            product.applyChangesClicked = true;
+            axios
+                .post(this.adminPanelApplyChangesProductUrl, { productId: product.product.id })
+                .then(function (response) {
+                    product.applyChangesClicked = false;
+                });
+        },
         selectProduct: function (e, product) {
             product.selected = !product.selected;
         },
         setGlobalError: function (errorMessage) {
             this.globalError = errorMessage;
         },
-        deleteProducts: function () {
+        deleteProducts: function (productIds) {
             var that = this;
             axios
-                .post(this.adminPanelDeleteProductsUrl, { products: this.getSelectedProducts() })
+                .post(this.adminPanelDeleteProductsUrl, { productIds: productIds })
                 .then(function (response) {
                     that.getProducts();
+                    that.$refs.deleteModal.$refs.deleteCloseModal.click();
                 })
                 .catch(function (error) {
                     that.globalError = error.message;
@@ -177,6 +306,19 @@ export default {
                 }
             });
             return selectedProducts;
+        },
+        setSelectedProductData: function () {
+            var selectedProductIds = [];
+            var selectedProductTitles = [];
+            _.forEach(this.products, function (product, key) {
+                if (product.selected) {
+                    selectedProductIds.push(product.product.id);
+                    selectedProductTitles.push(product.product.title);
+                    return;
+                }
+            });
+            this.selectedProductData.ids = selectedProductIds;
+            this.selectedProductData.titles = selectedProductTitles;
         },
         getProducts: function (url = this.adminPanelGetProductsUrl, searchValue = this.searchValueSubmitted) {
             this.products = [];
@@ -199,9 +341,10 @@ export default {
                 that.products.push({
                     product: product,
                     selected: false,
+                    applyChangesClicked: false,
+                    toggleActiveClicked: false,
                 });
             });
-           console.debug(products);//mmmyyy
         },
         getSelectedCategory: function () {
             var selectedCategory = null;

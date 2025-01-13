@@ -2,7 +2,7 @@
     .product {
         height: 400px;
         overflow: hidden;
-        &.filter{
+        &.filter {
             height: 250px;
         }
         &:hover {
@@ -40,6 +40,29 @@
         right: 0;
         span {
             display: none;
+        }
+    }
+    .product-actions {
+        .btn {
+            border-radius: 0;
+            margin-bottom: 1px;
+            opacity: 0.5;
+            width: 100%;
+            text-align: left;
+            &:hover {
+                opacity: 1;
+            }
+        }
+        z-index: 100;
+        position: absolute;
+        right: 0;
+        &:hover {
+            opacity: 1;
+        }
+        .dropdown-toggle {
+            &::after {
+                display: none;
+            }
         }
     }
 }

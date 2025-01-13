@@ -145,11 +145,18 @@ class HomeController extends Controller
 
     public function product(Request $request, EditorJSService $editorJS, $slug)
     {
-        $product = Product::where('slug', $slug)->with(['productImages' => function (Builder $query) {
-            $query->whereDisplayType('productPhotosGallery')->orderBy('position');
-        }])->first();
-        if ($product->description) {
-            $product->bodyHtml = $editorJS->toHtml($product->description, $product->title);
+        if ($slug === env('PREVIEW_SLUG') && !Auth::check()) {
+            return redirect()->guest('login');
+        }
+        $product = Product::where('slug', $slug)->whereActive(true)
+            ->with(['productImages' => function (Builder $query) {
+                $query->whereDisplayType('productPhotosGallery')->orderBy('position');
+            }])->first();
+        if (!$product) {
+            abort(404);
+        }
+        if ($product->description_prod) {
+            $product->bodyHtml = $editorJS->toHtml($product->description_prod, $product->title);
         }
         return view('product', [
             'product' => $product,

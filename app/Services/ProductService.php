@@ -42,10 +42,11 @@ class ProductService
         });
     }
 
-    public static function searchFiltersQuery(Request $request, $categoryChildrenIds = [], $withCategory = false)
+    public static function searchFiltersQuery(Request $request, $categoryChildrenIds = [], $withCategory = false, $onlyActive = true)
     {
         $pf = self::getProductsFilters($request);
         return Product::select(['id', 'title', 'description_str', 'active', 'price', 'quantity', 'slug', 'category_id'])
+            ->where('slug', '!=', env('PREVIEW_SLUG'))
             ->with(['productImages' => function (Builder $query) {
                 $query->whereDisplayType('productPhotosGallery')->orderBy('position');
             }])->when($pf['searchValue'], function ($query, $searchValue) {
@@ -63,12 +64,14 @@ class ProductService
                 return $query->whereIn('category_id', $categoryChildrenIds);
             })->when($withCategory, function ($query) {
                 return $query->with('category');
+            })->when($onlyActive, function ($query) {
+                return $query->whereActive(true);
             })->orderByDesc('id');
     }
 
-    public static function searchFilters(Request $request, $categoryChildrenIds = [], $withCategory = false, $paginate = 20, $withDesc = true)
+    public static function searchFilters(Request $request, $categoryChildrenIds = [], $withCategory = false, $paginate = 20, $withDesc = true, $onlyActive = true)
     {
-        $products = self::searchFiltersQuery($request, $categoryChildrenIds, $withCategory)->paginate($paginate);
+        $products = self::searchFiltersQuery($request, $categoryChildrenIds, $withCategory, $onlyActive)->paginate($paginate);
         foreach ($products as &$product) {
             if (0 === $product->productImages->count()) {
                 continue;

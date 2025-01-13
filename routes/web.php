@@ -21,6 +21,8 @@ Route::prefix('admin-panel')->group(function () {
     Route::post('/get-product-filter-options', [App\Http\Controllers\AdminPanelProductsController::class, 'getProductFilterOptions'])->name('admin-panel-get-product-filter-options');
     Route::post('/get-product-desc', [App\Http\Controllers\AdminPanelProductsController::class, 'getProductDesc'])->name('admin-panel-get-product-desc');
     Route::post('/add-options-to-selected-products', [App\Http\Controllers\AdminPanelProductsController::class, 'addOptionsToSelectedProducts'])->name('admin-panel-add-options-to-selected-products');
+    Route::post('/toggle-active-product', [App\Http\Controllers\AdminPanelProductsController::class, 'toggleActiveProduct'])->name('admin-panel-toggle-active-product');
+    Route::post('/apply-changes-product', [App\Http\Controllers\AdminPanelProductsController::class, 'applyChangesProduct'])->name('admin-panel-apply-changes-product');
 
     Route::get('/categories', [App\Http\Controllers\AdminPanelCategoriesController::class, 'categories'])->name('admin-panel-categories');
     Route::post('/save-categories', [App\Http\Controllers\AdminPanelCategoriesController::class, 'saveCategories'])->name('admin-panel-save-categories');

@@ -217,9 +217,9 @@ class ProductsTest extends TestCase
         $user = User::factory()->create();
 
         $this->actingAs($user)->postJson('/admin-panel/delete-products', [
-            'products' => [
-                ['id' => $product->id,],
-                ['id' => $product2->id,],
+            'productIds' => [
+                $product->id,
+                $product2->id,
             ]
         ]);
 
@@ -492,10 +492,10 @@ class ProductsTest extends TestCase
         }
 
         $response = $this->actingAs($user)->postJson('/admin-panel/delete-products', [
-            'products' => [
-                ['id' => $product->id,],
-                ['id' => $product2->id,],
-                ['id' => $product3->id,],
+            'productIds' => [
+                $product->id,
+                $product2->id,
+                $product3->id,
             ]
         ]);
 
@@ -652,10 +652,10 @@ class ProductsTest extends TestCase
         }
 
         $response = $this->actingAs($user)->postJson('/admin-panel/delete-products', [
-            'products' => [
-                ['id' => $product->id,],
-                ['id' => $product2->id,],
-                ['id' => $product3->id,],
+            'productIds' => [
+                $product->id,
+                $product2->id,
+                $product3->id,
             ]
         ]);
 

@@ -13,15 +13,26 @@ use App\Services\CategoryService;
 use App\Services\EditorJSService;
 use App\Services\FileService;
 use App\Services\ProductService;
-use Illuminate\Support\Facades\Storage;
-use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
-use Spatie\Image\Image;
 
 class AdminPanelProductsController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    public function applyChangesProduct(Request $request)
+    {
+        $product = Product::whereId($request->productId)->first();
+        $product->description_prod = $product->description;
+        $product->save();
+    }
+
+    public function toggleActiveProduct(Request $request)
+    {
+        $product = Product::whereId($request->productId)->first();
+        $product->active = $request->active;
+        $product->save();
     }
 
     public function addOptionsToSelectedProducts(Request $request)
@@ -46,9 +57,7 @@ class AdminPanelProductsController extends Controller
 
     public function deleteProducts(Request $request)
     {
-        foreach ($request->products as $product) {
-            $productIds[] = $product['id'];
-        }
+        $productIds = $request->productIds;
         File::whereIn('product_id', $productIds)
             ->update(['product_id' => null]);
         Attachment::whereIn('product_id', $productIds)
@@ -92,40 +101,47 @@ class AdminPanelProductsController extends Controller
         $productId = $product ? $product->id : null;
         return response()->json([
             'productId' => $productId,
+            'previewUrl' => $request->preview ? route('product', ['slug' => env('PREVIEW_SLUG')]) : '',
         ]);
     }
 
     protected function createProduct($request)
     {
-        if ($request->productId) {
-            $product = Product::find($request->productId);
-            $product->update([
-                'title' => $request->title,
-                'slug' => $request->slug,
-                'description' => $request->description,
-                'description_str' => ProductService::getProductDescStr($request->description),
-                'price' => str_replace(',', '.', $request->price),
-                'quantity' => $request->quantity,
-                'category_id' => $request->categoryId,
-            ]);
+        $props = [
+            'title' => $request->title,
+            'slug' => $request->slug,
+            'description' => $request->description,
+            'description_str' => ProductService::getProductDescStr($request->description),
+            'price' => str_replace(',', '.', $request->price),
+            'quantity' => $request->quantity,
+            'category_id' => $request->categoryId,
+        ];
+        if ('true' === $request->preview) {
+            $props['description_prod'] = $request->description;
+            $props['slug'] = env('PREVIEW_SLUG');
+            $product = Product::whereSlug(env('PREVIEW_SLUG'))->first();
+            if ($product) {
+                $product->productImages()->delete();
+                $product->update($props);
+            } else {
+                $product = Product::create($props);
+            }
         } else {
-            $product = Product::create([
-                'title' => $request->title,
-                'slug' => $request->slug,
-                'description' => $request->description,
-                'description_str' => ProductService::getProductDescStr($request->description),
-                'price' => str_replace(',', '.', $request->price),
-                'quantity' => $request->quantity,
-                'category_id' => $request->categoryId,
-            ]);
+            $productId = $request->productId;
+            if ($productId) {
+                $product = Product::find($productId);
+                $product->update($props);
+            } else {
+                $product = Product::create($props);
+            }
+            EditorJSService::resetPageImages($product, 'product', update: !!$productId);
+            EditorJSService::resetPageGalleryImages($product, 'product', update: !!$productId);
+            EditorJSService::resetAttachments($product, 'product', update: !!$productId);
         }
         if ("[]" !== $request->filesArr) {
             $this->addImages($request, $product->id);
         }
         $product->filterOptions()->sync($request->filterOptions);
-        EditorJSService::resetPageImages($product, 'product', update: !!$request->productId);
-        EditorJSService::resetPageGalleryImages($product, 'product', update: !!$request->productId);
-        EditorJSService::resetAttachments($product, 'product', update: !!$request->productId);
         return $product;
     }
 
@@ -191,7 +207,7 @@ class AdminPanelProductsController extends Controller
         if ($request->category) {
             $categoryChildrenIds = CategoryService::getCategoryChildrenIds([$request->category['id']]);
         }
-        $products = ProductService::searchFilters($request, $categoryChildrenIds, true, 20, ['limit' => 30]);
+        $products = ProductService::searchFilters($request, $categoryChildrenIds, true, 20, ['limit' => 30], onlyActive: false);
         $productsArr  = $products->toArray();
         foreach ($productsArr['data'] as &$product) {
             $product['description_str'] = null;

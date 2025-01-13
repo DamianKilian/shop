@@ -236,6 +236,24 @@
                             <i class="fa-solid fa-plus"></i>
                             {{ submitBtnText }}
                         </button>
+                        <div class="btn-group">
+                            <button
+                                type="button"
+                                class="btn btn-outline-primary"
+                                @click="addProduct($event, true)"
+                            >
+                                {{ __('Refresh') }}
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-outline-primary"
+                                @click="previewProduct"
+                                :disabled="!previewProductUrl"
+                            >
+                                <i class="fa-solid fa-eye"></i>
+                                {{ __('Preview') }}
+                            </button>
+                        </div>
                         <div
                             v-if="globalError"
                             class="text-bg-danger float-end mt-1"
@@ -299,6 +317,7 @@ export default {
     ],
     data() {
         return {
+            previewProductUrl: '',
             selectedCategoryId: null,
             title: '',
             slug: '',
@@ -344,6 +363,9 @@ export default {
         },
     },
     methods: {
+        previewProduct: function () {
+            window.open(this.previewProductUrl, '_blank').focus();
+        },
         setSlug: function (slug) {
             this.slug = slug;
         },
@@ -399,11 +421,12 @@ export default {
                     that.editor.blocks.render(JSON.parse(response.data.desc));
                 });
         },
-        addProduct: function (e) {
+        addProduct: function (e, preview = false) {
             var that = this;
             this.addingProduct = true;
             e.preventDefault();
             let formData = new FormData(this.$refs.addProduct);
+            formData.append('preview', preview);
             formData.append('filesArr', JSON.stringify(this.filesArr));
             if (this.editProduct) {
                 formData.append('productId', this.editProduct.product.id);
@@ -420,11 +443,15 @@ export default {
                     axios
                         .post(this.adminPanelAddProductUrl, formData)
                         .then(function (response) {
-                            that.globalSuccess = `"${
-                                that.$refs.title.value
-                            }" ${__('saved!')}`;
-                            that.getProducts();
-                            that.$refs.closeModal.click();
+                            if (preview) {
+                                that.previewProductUrl = response.data.previewUrl;
+                            } else {
+                                that.globalSuccess = `"${
+                                    that.$refs.title.value
+                                }" ${__('saved!')}`;
+                                that.getProducts();
+                                that.$refs.closeModal.click();
+                            }
                         })
                         .catch(function (error) {
                             if (

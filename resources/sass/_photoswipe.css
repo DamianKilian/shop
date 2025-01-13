@@ -423,4 +423,5 @@ div.pswp__img--placeholder,
 
 #galleryImages img {
     max-width: 165px;
+    margin-bottom: 5px;
 }

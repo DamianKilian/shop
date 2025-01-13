@@ -78,7 +78,9 @@ class FileService
                 $data = json_encode(['width' => $image->getWidth(), 'height' => $image->getHeight()]);
             }
         } else {
-            $data = $fileInDb->data;
+            if ('image' === $fileType) {
+                $data = $fileInDb->data;
+            }
         }
         if ('image' === $fileType) {
             $thumbnailMaxSize = $thumbnailMaxSize ?: sett('THUMBNAIL_MAX_SIZE');

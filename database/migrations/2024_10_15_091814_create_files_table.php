@@ -20,11 +20,11 @@ return new class extends Migration
             $table->unsignedBigInteger('page_id')->nullable();
             $table->foreign('page_id')
                 ->references('id')
-                ->on('pages');
+                ->on('pages')->cascadeOnDelete();
             $table->unsignedBigInteger('product_id')->nullable();
             $table->foreign('product_id')
                 ->references('id')
-                ->on('products');
+                ->on('products')->cascadeOnDelete();
             $table->timestamps();
         });
         if (!AppService::isSqlite($this)) {
