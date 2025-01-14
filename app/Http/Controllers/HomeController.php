@@ -124,7 +124,8 @@ class HomeController extends Controller
                 $product->categories = CategoryService::getParentCategories($product->category_id, $categories);
             }
         }
-        if ($slug === env('PREVIEW_SLUG') && !Auth::check()) {
+        $isPreview = $slug === env('PREVIEW_SLUG');
+        if ($isPreview && !Auth::check()) {
             return redirect()->guest('login');
         }
         $page = Page::whereSlug($slug)->whereActive(true)->first();
@@ -139,7 +140,7 @@ class HomeController extends Controller
             'maxProductsPrice' => ProductService::getMaxProductsPrice(),
             'categories' => $categories,
             'products' => $products,
-            'footerHtml' => AppService::getFooterHtml($editorJS),
+            'footerHtml' => AppService::getFooterHtml($editorJS, $isPreview),
         ]);
     }
 

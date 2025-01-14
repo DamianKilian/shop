@@ -6,13 +6,31 @@
             class="border color bg-white padding-form-control"
             @click="success = ''"
         ></div>
-        <div v-if="success" class="text-bg-success float-end mt-1">
+        <div class="btn-group mt-1 float-end">
+            <button
+                type="button"
+                class="btn btn-outline-primary"
+                @click="saveFooter($event, 'html_preview')"
+            >
+                {{ __('Refresh') }}
+            </button>
+            <button
+                type="button"
+                class="btn btn-outline-primary"
+                @click="previewPage"
+                :disabled="!previewPageUrl"
+            >
+                <i class="fa-solid fa-eye"></i>
+                {{ __('Preview') }}
+            </button>
+        </div>
+        <div v-if="success" class="text-bg-success float-end mt-1 me-1">
             {{ __(success) }}
         </div>
         <button
             v-else
-            @click="saveFooter"
-            class="btn btn-primary mt-1 float-end"
+            @click="saveFooter($event)"
+            class="btn btn-primary float-end mt-1 me-1"
         >
             {{ __('Save') }}
         </button>
@@ -29,10 +47,14 @@ export default {
         return {
             editor: null,
             success: '',
+            previewPageUrl: '',
         };
     },
     methods: {
-        saveFooter: function () {
+        previewPage: function () {
+            window.open(this.previewPageUrl, '_blank').focus();
+        },
+        saveFooter: function (e, dataKey = 'html') {
             var that = this;
             this.editor
                 .save()
@@ -43,10 +65,12 @@ export default {
                     }
                     axios
                         .post(this.adminPanelSaveFooterUrl, {
+                            dataKey: dataKey,
                             footerHtml: footerHtml,
                         })
                         .then(function (response) {
                             that.success = __('Saved!');
+                            that.previewPageUrl = response.data.previewUrl;
                         })
                         .catch(function (error) {});
                 })

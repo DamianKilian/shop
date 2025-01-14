@@ -19,24 +19,28 @@ class AdminPanelFooterController extends Controller
 
     public function saveFooter(Request $request)
     {
-        $html = Footer::whereDataKey('html')->first();
+        $dataKey = $request->dataKey;
+        $html = Footer::whereDataKey($dataKey)->first();
         if ($html) {
             $html->update([
                 'value' => $request->footerHtml,
             ]);
         } else {
             $html = Footer::create([
-                'data_key' => 'html',
+                'data_key' => $dataKey,
                 'value' => $request->footerHtml,
             ]);
         }
+        return response()->json([
+            'previewUrl' => 'html_preview' === $dataKey ? route('home', ['slug' => env('PREVIEW_SLUG')]) : '',
+        ]);
     }
 
     public function getFooter(Request $request)
     {
         $html = Footer::whereDataKey('html')->first();
         return response()->json([
-            'footerHtml' => $html->value,
+            'footerHtml' => $html ? $html->value : '',
         ]);
     }
 }

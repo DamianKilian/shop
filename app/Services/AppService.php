@@ -10,14 +10,23 @@ use Illuminate\Support\Facades\Storage;
 
 class AppService
 {
-    public static function getFooterHtml(EditorJSService $editorJS)
+
+    protected static function footerToHtml($dataKey, $editorJS)
     {
+        $html = Footer::whereDataKey($dataKey)->first();
+        if (!$html) {
+            return '';
+        }
+        return $editorJS->toHtml($html->value);
+    }
+
+    public static function getFooterHtml(EditorJSService $editorJS, $isPreview = false)
+    {
+        if ($isPreview) {
+            return self::footerToHtml('html_preview', $editorJS);
+        }
         return cache()->remember('footerHtml', 60, function () use ($editorJS) {
-            $html = Footer::whereDataKey('html')->first();
-            if (!$html) {
-                return '';
-            }
-            return $editorJS->toHtml($html->value);
+            return self::footerToHtml('html', $editorJS);
         });
     }
 
