@@ -66,6 +66,15 @@ class ProductService
                 return $query->with('category');
             })->when($onlyActive, function ($query) {
                 return $query->whereActive(true);
+            })->when($request->sortValue, function ($query, $sortValue) {
+                switch ($sortValue) {
+                    case 'price_desc':
+                        return $query->orderBy('price', 'desc');
+                        break;
+                    case 'price_asc':
+                        return $query->orderBy('price', 'asc');
+                        break;
+                }
             })->orderByDesc('id');
     }
 

@@ -24,6 +24,7 @@ export default {
                 minPrice: null,
                 maxPrice: null,
                 filterOptions: '',
+                sortValue: '',
                 categoryChildrenIds: '',
             },
             checkedOptionsGlobal: [],
@@ -92,6 +93,9 @@ export default {
                 return;
             }
             return this.getProductsView({ searchValue: searchValue });
+        },
+        sortProducts: function (e) {
+            return this.getProductsView({ sortValue: e.target.value });
         },
         getProductsView: function (
             queryStrParams = {},
@@ -246,6 +250,8 @@ export default {
             this.queryStrParams.page = this.currentPage;
             this.queryStrParams.searchValue =
                 searchParams.get('searchValue') || '';
+            this.queryStrParams.sortValue =
+                searchParams.get('sortValue') || '';
             this.queryStrParams.minPrice =
                 parseInt(searchParams.get('minPrice')) || 0;
             this.queryStrParams.maxPrice =

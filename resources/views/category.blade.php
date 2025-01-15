@@ -5,6 +5,9 @@
         <h1>{{ $category->name }}</h1>
         <div class="products-view-container position-relative">
             <loading-overlay v-if='getingProductsView'></loading-overlay>
+            <div id="products-top-panel">
+                @include('_partials.sorting')
+            </div>
             <div id="products-view" ref="productsView">
                 @include('_partials.products')
             </div>
