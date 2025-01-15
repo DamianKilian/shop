@@ -69,6 +69,7 @@ class FooterTest extends TestCase
         $footerHtml = '{"time":1734943438785,"blocks":[{"id":"Ez3nl30PG2","type":"raw","data":{"html":"' . $html . '"}}],"version":"2.30.6"}';
 
         $response = $this->actingAs($user)->postJson('/admin-panel/save-footer', [
+            'dataKey' => 'html',
             'footerHtml' => $footerHtml
         ]);
 
@@ -87,6 +88,7 @@ class FooterTest extends TestCase
         $newFooterHtml = '{"time":1734943438785,"blocks":[{"id":"Ez3nl30PG2","type":"raw","data":{"html":"' . $html . '"}}],"version":"2.30.6"}';
 
         $response = $this->actingAs($user)->postJson('/admin-panel/save-footer', [
+            'dataKey' => 'html',
             'footerHtml' => $newFooterHtml
         ]);
 
