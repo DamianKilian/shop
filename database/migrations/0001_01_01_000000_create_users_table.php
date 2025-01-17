@@ -1,7 +1,10 @@
 <?php
 
+use App\Models\Permission;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -35,6 +38,32 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+        Schema::create('permissions', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique();
+        });
+
+        Schema::create('permission_user', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id')->unsigned();
+            $table->unsignedBigInteger('permission_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users')
+                ->onDelete('cascade');
+            $table->foreign('permission_id')->references('id')->on('permissions')
+                ->onDelete('cascade');
+        });
+
+        $adminPermission = Permission::create([
+            'name' => 'admin',
+        ]);
+
+        $user = User::create([
+            'name' => 'admin',
+            'email' => 'admin@admin.com',
+            'password' => Hash::make('admin'),
+        ]);
+
+        $user->permissions()->attach($adminPermission);
     }
 
     /**

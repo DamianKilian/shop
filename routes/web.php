@@ -13,7 +13,7 @@ Route::get('{slug?}', [App\Http\Controllers\HomeController::class, 'index'])->na
 Route::get('/category/{slug}', [App\Http\Controllers\HomeController::class, 'category'])->name('category');
 Route::get('/product/{slug}', [App\Http\Controllers\HomeController::class, 'product'])->name('product');
 
-Route::prefix('admin-panel')->group(function () {
+Route::prefix('admin-panel')->middleware('can:admin')->group(function () {
     Route::get('/products', [App\Http\Controllers\AdminPanelProductsController::class, 'products'])->name('admin-panel-products');
     Route::post('/delete-products', [App\Http\Controllers\AdminPanelProductsController::class, 'deleteProducts'])->name('admin-panel-delete-products');
     Route::post('/get-products', [App\Http\Controllers\AdminPanelProductsController::class, 'getProducts'])->name('admin-panel-get-products');
@@ -54,4 +54,4 @@ Route::prefix('admin-panel')->group(function () {
     Route::post('/editorjs/fetch-url', [App\Http\Controllers\AdminPanelEditorjsController::class, 'fetchUrl'])->name('admin-panel-fetch-url')->withoutMiddleware([VerifyCsrfToken::class]);
 });
 
-Route::get('/test/ttt', [App\Http\Controllers\TestController::class, 'ttt']);
+// Route::get('/test/ttt', [App\Http\Controllers\TestController::class, 'ttt']);

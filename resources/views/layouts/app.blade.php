@@ -77,8 +77,10 @@
                                 <li><a class="dropdown-item" href="{{ route('register') }}">{{ __('Register') }}</a></li>
                             @endif
                         @else
-                            <a class="dropdown-item"
-                                href="{{ route('admin-panel-products') }}">{{ __('Admin panel') }}</a>
+                            @can('admin')
+                                <a class="dropdown-item"
+                                    href="{{ route('admin-panel-products') }}">{{ __('Admin panel') }}</a>
+                            @endcan
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                 onclick="event.preventDefault();
                          document.getElementById('logout-form').submit();">

@@ -20,14 +20,14 @@ return new class extends Migration
         });
 
         Page::create([
-            'title' => __('Home Page'),
+            'title' => 'Home Page',
             'slug' => null,
             'body' => '{"time":1731146119711,"blocks":[{"id":"xmvRdvrELy","type":"paragraph","data":{"text":"Home page<br>"}}],"version":"2.30.6"}',
             'active' => true,
         ]);
 
         Page::create([
-            'title' => __('Preview page'),
+            'title' => 'Preview page',
             'slug' => env('PREVIEW_SLUG'),
             'body' => '{"time":1731146119711,"blocks":[{"id":"xmvRdvrELy","type":"paragraph","data":{"text":"Preview page<br>"}}],"version":"2.30.6"}',
             'active' => true,
