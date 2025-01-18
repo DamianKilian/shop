@@ -33,6 +33,11 @@ class RegisterTest extends TestCase
         return route('home');
     }
 
+    protected function getAllUsersExceptAdmin()
+    {
+        return User::where('name', '!=', 'admin')->get();
+    }
+
     public function testUserCanViewARegistrationForm()
     {
         $response = $this->get($this->registerGetRoute());
@@ -62,7 +67,7 @@ class RegisterTest extends TestCase
         ]);
 
         $response->assertRedirect($this->successfulRegistrationRoute());
-        $this->assertCount(1, $users = User::all());
+        $this->assertCount(1, $users = $this->getAllUsersExceptAdmin());
         $this->assertAuthenticatedAs($user = $users->first());
         $this->assertEquals('John Doe', $user->name);
         $this->assertEquals('john@example.com', $user->email);
@@ -81,7 +86,7 @@ class RegisterTest extends TestCase
             'password_confirmation' => 'i-love-laravel',
         ]);
 
-        $users = User::all();
+        $users = $this->getAllUsersExceptAdmin();
 
         $this->assertCount(0, $users);
         $response->assertRedirect($this->registerGetRoute());
@@ -100,7 +105,7 @@ class RegisterTest extends TestCase
             'password_confirmation' => 'i-love-laravel',
         ]);
 
-        $users = User::all();
+        $users = $this->getAllUsersExceptAdmin();
 
         $this->assertCount(0, $users);
         $response->assertRedirect($this->registerGetRoute());
@@ -119,7 +124,7 @@ class RegisterTest extends TestCase
             'password_confirmation' => 'i-love-laravel',
         ]);
 
-        $users = User::all();
+        $users = $this->getAllUsersExceptAdmin();
 
         $this->assertCount(0, $users);
         $response->assertRedirect($this->registerGetRoute());
@@ -139,7 +144,7 @@ class RegisterTest extends TestCase
             'password_confirmation' => '',
         ]);
 
-        $users = User::all();
+        $users = $this->getAllUsersExceptAdmin();
 
         $this->assertCount(0, $users);
         $response->assertRedirect($this->registerGetRoute());
@@ -159,7 +164,7 @@ class RegisterTest extends TestCase
             'password_confirmation' => '',
         ]);
 
-        $users = User::all();
+        $users = $this->getAllUsersExceptAdmin();
 
         $this->assertCount(0, $users);
         $response->assertRedirect($this->registerGetRoute());
@@ -179,7 +184,7 @@ class RegisterTest extends TestCase
             'password_confirmation' => 'i-love-symfony',
         ]);
 
-        $users = User::all();
+        $users = $this->getAllUsersExceptAdmin();
 
         $this->assertCount(0, $users);
         $response->assertRedirect($this->registerGetRoute());
