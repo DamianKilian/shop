@@ -3,7 +3,6 @@
 namespace Tests\Feature\AdminPanel;
 
 use App\Models\Footer;
-use App\Models\User;
 use App\Services\AppService;
 use App\Services\EditorJSService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,9 +16,7 @@ class FooterTest extends TestCase
 
     public function test_footer(): void
     {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->get('/admin-panel/footer');
+        $response = $this->actingAs(parent::getAdmin())->get('/admin-panel/footer');
 
         $response->assertStatus(200);
     }
@@ -49,10 +46,9 @@ class FooterTest extends TestCase
 
     public function test_getFooter(): void
     {
-        $user = User::factory()->create();
         $footer = $this->createDbFooterHtml(html: '<p>some html</p>');
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/get-footer', []);
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/get-footer', []);
 
         $response
             ->assertStatus(200)
@@ -63,12 +59,11 @@ class FooterTest extends TestCase
 
     public function test_saveFooter(): void
     {
-        $user = User::factory()->create();
         Footer::where('data_key', 'html')->delete();
         $html = '<p>some html</p>';
         $footerHtml = '{"time":1734943438785,"blocks":[{"id":"Ez3nl30PG2","type":"raw","data":{"html":"' . $html . '"}}],"version":"2.30.6"}';
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/save-footer', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/save-footer', [
             'dataKey' => 'html',
             'footerHtml' => $footerHtml
         ]);
@@ -82,12 +77,11 @@ class FooterTest extends TestCase
 
     public function test_saveFooter_edit(): void
     {
-        $user = User::factory()->create();
         $this->createDbFooterHtml(html: '<p>some html</p>');
         $html = '<p>some html2</p>';
         $newFooterHtml = '{"time":1734943438785,"blocks":[{"id":"Ez3nl30PG2","type":"raw","data":{"html":"' . $html . '"}}],"version":"2.30.6"}';
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/save-footer', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/save-footer', [
             'dataKey' => 'html',
             'footerHtml' => $newFooterHtml
         ]);

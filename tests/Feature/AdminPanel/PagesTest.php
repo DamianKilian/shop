@@ -6,7 +6,6 @@ use App\Models\Attachment;
 use App\Models\Page;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
 use App\Models\File;
 
 class PagesTest extends TestCase
@@ -15,7 +14,6 @@ class PagesTest extends TestCase
 
     public function test_addPage_edit(): void
     {
-        $user = User::factory()->create();
         $urlDbOld = 'pages/urlDbOld.jpg';
         $urlDbNew = 'pages/urlDbNew.jpg';
         $urlDbRemoved = 'pages/urlDbRemoved.jpg';
@@ -126,7 +124,7 @@ class PagesTest extends TestCase
         );
         $pageBodyNew = json_encode($pageBodyArrayNew, JSON_UNESCAPED_SLASHES);
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/add-page', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/add-page', [
             'pageId' => $page->id,
             'title' => 'titleNew',
             'slug' => 'slugNew',
@@ -152,7 +150,6 @@ class PagesTest extends TestCase
 
     public function test_addPage(): void
     {
-        $user = User::factory()->create();
         $urlDb1 = 'pages/urlDb1.jpg';
         $urlDb2 = 'pages/urlDb2.jpg';
         File::factory()->count(3)->create();
@@ -209,7 +206,7 @@ class PagesTest extends TestCase
         );
         $pageBody = json_encode($pageBodyArray, JSON_UNESCAPED_SLASHES);
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/add-page', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/add-page', [
             'title' => 'title',
             'slug' => 'slug',
             'body' => $pageBody,
@@ -230,7 +227,6 @@ class PagesTest extends TestCase
 
     public function test_addPage_preview(): void
     {
-        $user = User::factory()->create();
         $pageBodyArray = array(
             'time' => 1729269060460,
             'blocks' => array(0 => array(
@@ -246,7 +242,7 @@ class PagesTest extends TestCase
         );
         $pageBody = json_encode($pageBodyArray, JSON_UNESCAPED_SLASHES);
 
-        $response = $this->actingAs($user)->post('/admin-panel/add-page', [
+        $response = $this->actingAs(parent::getAdmin())->post('/admin-panel/add-page', [
             'title' => 'title',
             'preview' => 'true',
             'body' => $pageBody,
@@ -264,7 +260,6 @@ class PagesTest extends TestCase
 
     public function test_deletePage(): void
     {
-        $user = User::factory()->create();
         $page = Page::factory()->create();
         File::factory()->count(3)->create();
         File::factory()->create([
@@ -280,7 +275,7 @@ class PagesTest extends TestCase
         Attachment::factory()->create([
             'page_id' => $page->id,
         ]);
-        $response = $this->actingAs($user)->postJson('/admin-panel/delete-page', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/delete-page', [
             'pageId' => $page->id,
         ]);
 
@@ -293,7 +288,6 @@ class PagesTest extends TestCase
 
     public function test_getPages(): void
     {
-        $user = User::factory()->create();
         $page = Page::factory()->count(2)->create();
         $pageNotActive = Page::factory()->create([
             'active' => false,
@@ -302,7 +296,7 @@ class PagesTest extends TestCase
             'active' => true,
         ]);
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/get-pages');
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/get-pages');
 
         $response->assertStatus(200);
         $this->assertEquals(5, count($response['pages']));
@@ -310,13 +304,13 @@ class PagesTest extends TestCase
 
     public function test_toggleActive(): void
     {
-        $user = User::factory()->create();
+        
         Page::factory()->count(2)->create();
         $page = Page::factory()->create([
             'active' => false,
         ]);
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/toggle-active', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/toggle-active', [
             'pageId' => $page->id,
             'active' => true,
         ]);
@@ -325,7 +319,7 @@ class PagesTest extends TestCase
         $response->assertStatus(200);
         $this->assertTrue(1 === $page->active);
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/toggle-active', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/toggle-active', [
             'pageId' => $page->id,
             'active' => false,
         ]);
@@ -336,14 +330,14 @@ class PagesTest extends TestCase
 
     public function test_applyChanges(): void
     {
-        $user = User::factory()->create();
+        
         Page::factory()->count(2)->create();
         $page = Page::factory()->create([
             'body' => 'body',
             'body_prod' => 'body_prod',
         ]);
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/apply-changes', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/apply-changes', [
             'pageId' => $page->id,
         ]);
         $page = Page::whereId($page->id)->first();

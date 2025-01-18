@@ -4,7 +4,6 @@ namespace Tests\Feature\AdminPanel;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
 use App\Models\Category;
 
 class CategoriesTest extends TestCase
@@ -16,9 +15,8 @@ class CategoriesTest extends TestCase
         $category = Category::factory()->create([
             'name' => 'Example testing category name',
         ]);
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->get('/admin-panel/categories');
+        
+        $response = $this->actingAs(parent::getAdmin())->get('/admin-panel/categories');
 
         $response->assertStatus(200);
         $response->assertViewHas('categories', function ($collection) use ($category) {
@@ -29,8 +27,7 @@ class CategoriesTest extends TestCase
 
     public function test_categories_are_displaying_empty_table(): void
     {
-        $user = User::factory()->create();
-        $response = $this->actingAs($user)->get('/admin-panel/categories');
+        $response = $this->actingAs(parent::getAdmin())->get('/admin-panel/categories');
 
         $response->assertStatus(200);
     }
@@ -45,7 +42,6 @@ class CategoriesTest extends TestCase
 
     public function test_saveCategories(): void
     {
-        $user = User::factory()->create();
         $now = date('Y-m-d H:i:s');
         $categoriesInitial = [
             "main-menu" => [
@@ -137,7 +133,7 @@ class CategoriesTest extends TestCase
             ],
             "new_6287336174597907" => []
         ];
-        $response = $this->actingAs($user)->postJson('/admin-panel/save-categories', ['categories' => $categoriesToSave]);
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/save-categories', ['categories' => $categoriesToSave]);
         $categoriesExpectedTree = [
             "p2" => [
                 "p2ch1" => [
@@ -194,8 +190,7 @@ class CategoriesTest extends TestCase
 
     public function test_saveCategories_all_new(): void
     {
-        $user = User::factory()->create();
-        $response = $this->actingAs($user)->postJson('/admin-panel/save-categories', ['categories' => [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/save-categories', ['categories' => [
             "main-menu" => [
                 ["name" => "p1", "slug" => "slug1", "id" => "new_7831638039189243", "new" => true,],
                 ["name" => "p2", "slug" => "slug2", "id" => "new_03850895405535737", "new" => true,],
@@ -238,7 +233,6 @@ class CategoriesTest extends TestCase
 
     public function test_saveCategories_validation_errors(): void
     {
-        $user = User::factory()->create();
         $categoriesInitial = [
             "main-menu" => [
                 ["id" => 1, "name" => "p1", "slug" => "slug1"],
@@ -270,7 +264,7 @@ class CategoriesTest extends TestCase
             ],
         ];
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/save-categories', ['categories' => $categoriesToSave]);
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/save-categories', ['categories' => $categoriesToSave]);
         $failedValidation = $response->getData()->failedValidation;
 
         $this->assertTrue($failedValidation->{'categories.1.1'} && $failedValidation->{'categories.1.2'});

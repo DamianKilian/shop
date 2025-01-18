@@ -10,7 +10,6 @@ use App\Models\FilterOption;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -26,9 +25,8 @@ class ProductsTest extends TestCase
         $product = Product::factory()->create([
             'category_id' => $category->id,
         ]);
-        $user = User::factory()->create();
 
-        $response = $this->actingAs($user)
+        $response = $this->actingAs(parent::getAdmin())
             ->postJson('/admin-panel/get-product-desc', [
                 'productId' => $product->id,
             ]);
@@ -61,9 +59,8 @@ class ProductsTest extends TestCase
         ]);
         $category->filters()->save($filter);
         $product->filterOptions()->save($filterOption);
-        $user = User::factory()->create();
 
-        $response = $this->actingAs($user)
+        $response = $this->actingAs(parent::getAdmin())
             ->postJson('/admin-panel/get-product-filter-options', [
                 'categoryId' => $category->id,
                 'productId' => $product->id,
@@ -79,9 +76,8 @@ class ProductsTest extends TestCase
             'parent_id' => null,
             'name' => 'Example testing category name',
         ]);
-        $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get('/admin-panel/products');
+        $response = $this->actingAs(parent::getAdmin())->get('/admin-panel/products');
 
         $response->assertStatus(200);
         $response->assertViewHas('categories', function ($collection) use ($category) {
@@ -105,10 +101,9 @@ class ProductsTest extends TestCase
             'product_id' => $product->id,
             'display_type' => 'productPhotosGallery',
         ]);
-        $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/get-products', ['category' => null]);
-        $response2 = $this->actingAs($user)->postJson('/admin-panel/get-products', ['category' => ['id' => $category->id, 'name' => 'cname']]);
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/get-products', ['category' => null]);
+        $response2 = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/get-products', ['category' => ['id' => $category->id, 'name' => 'cname']]);
         $p = $response['products']['data'][1];
 
         $this->assertTrue(2 === count($response['products']['data']));
@@ -120,11 +115,10 @@ class ProductsTest extends TestCase
     public function test_addProduct(): void
     {
         $category = Category::factory()->create();
-        $user = User::factory()->create();
         Storage::fake('public');
         $productImage = UploadedFile::fake()->image('product.jpg');
         $productImage2 = UploadedFile::fake()->image('product2.jpg');
-        $this->actingAs($user)->postJson('/admin-panel/add-product', [
+        $this->actingAs(parent::getAdmin())->postJson('/admin-panel/add-product', [
             'title' => 'title',
             'slug' => 'slug',
             'description' => '{"time":1730888110020,"blocks":[{"id":"2phiNPo1Wx","type":"paragraph","data":{"text":"description"}}],"version":"2.30.6"}',
@@ -168,10 +162,9 @@ class ProductsTest extends TestCase
             'position' => 1,
             'product_id' => $product->id,
         ]);
-        $user = User::factory()->create();
         $file = UploadedFile::fake()->image('product.jpg');
 
-        $this->actingAs($user)->postJson('/admin-panel/add-product', [
+        $this->actingAs(parent::getAdmin())->postJson('/admin-panel/add-product', [
             'productId' => $product->id,
             'title' => 'titleEdited',
             'slug' => 'slug',
@@ -214,9 +207,7 @@ class ProductsTest extends TestCase
             'product_id' => $product2->id,
         ]);
 
-        $user = User::factory()->create();
-
-        $this->actingAs($user)->postJson('/admin-panel/delete-products', [
+        $this->actingAs(parent::getAdmin())->postJson('/admin-panel/delete-products', [
             'productIds' => [
                 $product->id,
                 $product2->id,
@@ -330,7 +321,6 @@ class ProductsTest extends TestCase
 
     protected function addProduct_images($displayType = 'image')
     {
-        $user = User::factory()->create();
         $urlDb1 = 'products/urlDb1.jpg';
         $urlDb2 = 'products/urlDb2.jpg';
         File::factory()->count(3)->create([
@@ -352,7 +342,7 @@ class ProductsTest extends TestCase
         $description = json_encode($descriptionArray, JSON_UNESCAPED_SLASHES);
         $category = Category::factory()->create();
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/add-product', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/add-product', [
             'title' => 'title',
             'slug' => 'slug',
             'description' => $description,
@@ -380,7 +370,6 @@ class ProductsTest extends TestCase
 
     protected function edit_addProduct_images($displayType = 'image')
     {
-        $user = User::factory()->create();
         $urlDbOld = 'products/urlDbOld.jpg';
         $urlDbNew = 'products/urlDbNew.jpg';
         $urlDbRemoved = 'products/urlDbRemoved.jpg';
@@ -422,7 +411,7 @@ class ProductsTest extends TestCase
         $descriptionArrayNew = $this->getDescArr([$urlDbOld, $urlDbNew], $displayType);
         $descriptionNew = json_encode($descriptionArrayNew, JSON_UNESCAPED_SLASHES);
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/add-product', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/add-product', [
             'productId' => $product->id,
             'title' => 'titleEdited',
             'slug' => 'slug',
@@ -453,7 +442,6 @@ class ProductsTest extends TestCase
 
     protected function deleteProducts_images($displayType = 'image')
     {
-        $user = User::factory()->create();
         $urlDb = ['products/urlDb1.jpg', 'products/urlDb2.jpg', 'products/urlDb3.jpg', 'products/urlDb4.jpg'];
         for ($x = 1; $x <= 2; $x++) {
             $descriptionArray[$x] = $this->getDescArr([$urlDb[$x], $urlDb[$x + 1]], $displayType);
@@ -491,7 +479,7 @@ class ProductsTest extends TestCase
             }
         }
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/delete-products', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/delete-products', [
             'productIds' => [
                 $product->id,
                 $product2->id,
@@ -506,7 +494,6 @@ class ProductsTest extends TestCase
 
     public function test_addProduct_attachments()
     {
-        $user = User::factory()->create();
         $urlDb1 = 'attachments/urlDb1.jpg';
         $urlDb2 = 'attachments/urlDb2.jpg';
         Attachment::factory()->count(3)->create();
@@ -523,7 +510,7 @@ class ProductsTest extends TestCase
         $description = json_encode($descriptionArray, JSON_UNESCAPED_SLASHES);
         $category = Category::factory()->create();
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/add-product', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/add-product', [
             'title' => 'title',
             'slug' => 'slug',
             'description' => $description,
@@ -551,7 +538,6 @@ class ProductsTest extends TestCase
 
     public function test_edit_addProduct_attachments()
     {
-        $user = User::factory()->create();
         $urlDbOld = 'attachments/urlDbOld.jpg';
         $urlDbNew = 'attachments/urlDbNew.jpg';
         $urlDbRemoved = 'attachments/urlDbRemoved.jpg';
@@ -586,7 +572,7 @@ class ProductsTest extends TestCase
         $descriptionArrayNew = $this->getDescArr([$urlDbOld, $urlDbNew]);
         $descriptionNew = json_encode($descriptionArrayNew, JSON_UNESCAPED_SLASHES);
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/add-product', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/add-product', [
             'productId' => $product->id,
             'title' => 'titleEdited',
             'slug' => 'slug',
@@ -617,7 +603,6 @@ class ProductsTest extends TestCase
 
     public function test_deleteProducts_attachments()
     {
-        $user = User::factory()->create();
         $urlDb = ['attachments/urlDb1.jpg', 'attachments/urlDb2.jpg', 'attachments/urlDb3.jpg', 'attachments/urlDb4.jpg'];
         for ($x = 1; $x <= 2; $x++) {
             $descriptionArray[$x] = $this->getDescArr([$urlDb[$x], $urlDb[$x + 1]]);
@@ -651,7 +636,7 @@ class ProductsTest extends TestCase
             }
         }
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/delete-products', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/delete-products', [
             'productIds' => [
                 $product->id,
                 $product2->id,

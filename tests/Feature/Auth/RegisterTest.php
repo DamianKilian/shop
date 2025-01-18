@@ -33,11 +33,6 @@ class RegisterTest extends TestCase
         return route('home');
     }
 
-    protected function getAllUsersExceptAdmin()
-    {
-        return User::where('name', '!=', 'admin')->get();
-    }
-
     public function testUserCanViewARegistrationForm()
     {
         $response = $this->get($this->registerGetRoute());

@@ -5,7 +5,6 @@ namespace Tests\Feature\AdminPanel;
 use App\Models\Setting;
 use App\Models\SettingCategory;
 use App\Models\SettingValue;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -17,16 +16,13 @@ class SettingsTest extends TestCase
 
     public function test_settings(): void
     {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->get('/admin-panel/settings');
+        $response = $this->actingAs(parent::getAdmin())->get('/admin-panel/settings');
 
         $response->assertStatus(200);
     }
 
     public function test_getSettings(): void
     {
-        $user = User::factory()->create();
         SettingCategory::truncate();
         Setting::truncate();
         SettingValue::truncate();
@@ -59,7 +55,7 @@ class SettingsTest extends TestCase
             'setting_category_id' => $settingCategory2->id,
         ]);
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/get-settings', []);
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/get-settings', []);
 
         $response->assertStatus(200);
         assertTrue('settingCategoryName' === $response['settingCategories'][1]['name']);
@@ -69,7 +65,6 @@ class SettingsTest extends TestCase
 
     public function test_restoreSettings(): void
     {
-        $user = User::factory()->create();
         SettingCategory::truncate();
         Setting::truncate();
         SettingValue::truncate();
@@ -90,7 +85,7 @@ class SettingsTest extends TestCase
             'setting_category_id' => $settingCategory->id,
         ]);
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/restore-settings', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/restore-settings', [
             'settings' => [
                 ['id' => $setting->id,],
                 ['id' => $setting2->id,],
@@ -110,7 +105,6 @@ class SettingsTest extends TestCase
 
     public function test_saveSetting(): void
     {
-        $user = User::factory()->create();
         SettingCategory::truncate();
         Setting::truncate();
         SettingValue::truncate();
@@ -125,7 +119,7 @@ class SettingsTest extends TestCase
             'setting_category_id' => $settingCategory->id,
         ]);
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/save-setting', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/save-setting', [
             'settingId' => $setting->id,
             'value' => 'newValue',
         ]);

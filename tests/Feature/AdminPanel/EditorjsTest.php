@@ -7,7 +7,6 @@ use App\Models\File;
 use App\Models\Page;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
 use App\Services\FileService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -36,7 +35,6 @@ class EditorjsTest extends TestCase
 
     public function test_uploadAttachment(): void
     {
-        $user = User::factory()->create();
         $publicStorage = Storage::fake('public');
         $size = 1024;
         $attachment = UploadedFile::fake()->create('test.txt', $size / 1024, 'text/plain');
@@ -45,7 +43,7 @@ class EditorjsTest extends TestCase
         $url = $fileData['url'];
         $urlFull = $fileData['urlFull'];
 
-        $response = $this->actingAs($user)->post('/admin-panel/editorjs/upload-attachment', [
+        $response = $this->actingAs(parent::getAdmin())->post('/admin-panel/editorjs/upload-attachment', [
             'file' => $attachment,
         ]);
 
@@ -68,7 +66,6 @@ class EditorjsTest extends TestCase
 
     public function test_uploadAttachment_twice(): void
     {
-        $user = User::factory()->create();
         $publicStorage = Storage::fake('public');
         $size = 1024;
         $attachment = UploadedFile::fake()->create('test.txt', $size / 1024, 'text/plain');
@@ -77,10 +74,10 @@ class EditorjsTest extends TestCase
         $url = $fileData['url'];
         $urlFull = $fileData['urlFull'];
 
-        $response = $this->actingAs($user)->post('/admin-panel/editorjs/upload-attachment', [
+        $response = $this->actingAs(parent::getAdmin())->post('/admin-panel/editorjs/upload-attachment', [
             'file' => $attachment,
         ]);
-        $response2 = $this->actingAs($user)->post('/admin-panel/editorjs/upload-attachment', [
+        $response2 = $this->actingAs(parent::getAdmin())->post('/admin-panel/editorjs/upload-attachment', [
             'file' => $attachment,
         ]);
 
@@ -111,7 +108,6 @@ class EditorjsTest extends TestCase
 
     public function uploadFile($thumbnail = false, $displayType = 'image'): void
     {
-        $user = User::factory()->create();
         $publicStorage = Storage::fake('public');
         $image = UploadedFile::fake()->image('image.jpg', 3840, 2000);
         $fileData = $this->getFileData('image', $image);
@@ -119,7 +115,7 @@ class EditorjsTest extends TestCase
         $url = $fileData['url'];
         $urlFull = $fileData['urlFull'];
 
-        $response = $this->actingAs($user)->post('/admin-panel/editorjs/upload-file', [
+        $response = $this->actingAs(parent::getAdmin())->post('/admin-panel/editorjs/upload-file', [
             'image' => $image,
             'thumbnail' => $thumbnail,
             'displayType' => $displayType,
@@ -177,7 +173,6 @@ class EditorjsTest extends TestCase
     public function uploadFile_twice($thumbnailPresence): void
     {
         $tfolder = env('THUMBNAILS_FOLDER');
-        $user = User::factory()->create();
         $publicStorage = Storage::fake('public');
         $image = UploadedFile::fake()->image('image.jpg', 3840, 2000);
         $fileData = $this->getFileData('image', $image);
@@ -185,11 +180,11 @@ class EditorjsTest extends TestCase
         $url = $fileData['url'];
         $urlFull = $fileData['urlFull'];
 
-        $response = $this->actingAs($user)->post('/admin-panel/editorjs/upload-file', [
+        $response = $this->actingAs(parent::getAdmin())->post('/admin-panel/editorjs/upload-file', [
             'image' => $image,
             'thumbnail' => $thumbnailPresence[0],
         ]);
-        $response = $this->actingAs($user)->post('/admin-panel/editorjs/upload-file', [
+        $response = $this->actingAs(parent::getAdmin())->post('/admin-panel/editorjs/upload-file', [
             'image' => $image,
             'thumbnail' => $thumbnailPresence[1],
         ]);
@@ -220,12 +215,11 @@ class EditorjsTest extends TestCase
     public function test_fetchUrl(): void
     {
         $folder = env('IMAGES_FOLDER');
-        $user = User::factory()->create();
         $publicStorage = Storage::fake('public');
         $tempStorage = Storage::fake('temp');
         $url = 'https://fastly.picsum.photos/id/879/200/300.jpg?hmac=07llkorYxtpw0EwxaeqFKPC5woveWVLykQVnIOyiwd8';
 
-        $response = $this->actingAs($user)->post('/admin-panel/editorjs/fetch-url', [
+        $response = $this->actingAs(parent::getAdmin())->post('/admin-panel/editorjs/fetch-url', [
             'url' => $url,
         ]);
         $url = $publicStorage->files($folder)[0];

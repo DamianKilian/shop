@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
 
 use function PHPUnit\Framework\assertTrue;
 
@@ -16,7 +15,6 @@ class ProductsActionBtnsTest extends TestCase
 
     public function test_toggleActiveProduct(): void
     {
-        $user = User::factory()->create();
         $category = Category::factory()->create();
         Product::factory()->count(2)->create([
             'category_id' => $category->id,
@@ -26,7 +24,7 @@ class ProductsActionBtnsTest extends TestCase
             'active' => false,
         ]);
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/toggle-active-product', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/toggle-active-product', [
             'productId' => $product->id,
             'active' => true,
         ]);
@@ -35,7 +33,7 @@ class ProductsActionBtnsTest extends TestCase
         $response->assertStatus(200);
         $this->assertTrue(1 === $product->active);
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/toggle-active-product', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/toggle-active-product', [
             'productId' => $product->id,
             'active' => false,
         ]);
@@ -46,7 +44,6 @@ class ProductsActionBtnsTest extends TestCase
 
     public function test_applyChangesProduct(): void
     {
-        $user = User::factory()->create();
         $category = Category::factory()->create();
         Product::factory()->count(2)->create([
             'category_id' => $category->id,
@@ -57,7 +54,7 @@ class ProductsActionBtnsTest extends TestCase
             'description_prod' => 'description_prod',
         ]);
 
-        $response = $this->actingAs($user)->postJson('/admin-panel/apply-changes-product', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/apply-changes-product', [
             'productId' => $product->id,
         ]);
         $product = Product::whereId($product->id)->first();
@@ -68,7 +65,6 @@ class ProductsActionBtnsTest extends TestCase
 
     public function test_addProduct_preview(): void
     {
-        $user = User::factory()->create();
         $descriptionArray = array(
             'time' => 1729269060460,
             'blocks' => array(0 => array(
@@ -85,7 +81,7 @@ class ProductsActionBtnsTest extends TestCase
         $description = json_encode($descriptionArray, JSON_UNESCAPED_SLASHES);
         $category = Category::factory()->create();
 
-        $response = $this->actingAs($user)->post('/admin-panel/add-product', [
+        $response = $this->actingAs(parent::getAdmin())->post('/admin-panel/add-product', [
             'title' => 'title',
             'slug' => 'slug',
             'price' => 11,
