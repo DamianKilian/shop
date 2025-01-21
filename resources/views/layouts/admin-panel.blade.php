@@ -105,6 +105,7 @@
                     <a class="nav-link _pages" href="{{ route('admin-panel-pages') }}">{{ __('Pages') }}</a>
                     <a class="nav-link _settings" href="{{ route('admin-panel-settings') }}">{{ __('Settings') }}</a>
                     <a class="nav-link _footer" href="{{ route('admin-panel-footer') }}">{{ __('Footer') }}</a>
+                    <a class="nav-link _users" href="{{ route('admin-panel-users') }}">{{ __('Users') }}</a>
                 </nav>
             </div>
             <div id="content">

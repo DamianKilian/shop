@@ -42,7 +42,8 @@ import AdminPanelSettings from './components/AdminPanelSettings.vue'
 app.component('admin-panel-settings', AdminPanelSettings);
 import AdminPanelFooter from './components/AdminPanelFooter.vue'
 app.component('admin-panel-footer', AdminPanelFooter);
-
+import AdminPanelUsers from './components/AdminPanelUsers.vue';
+app.component('admin-panel-users', AdminPanelUsers);
 
 /**
  * The following block of code may be used to automatically register your
