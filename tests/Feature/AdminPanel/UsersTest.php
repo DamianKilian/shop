@@ -87,4 +87,28 @@ class UsersTest extends TestCase
 
         assertTrue('0' === $response->getContent());
     }
+
+    public function test_searchUsers(): void
+    {
+        User::factory()->count(3)->create();
+        $user = User::factory()->create([
+            'name' => 'testName',
+        ]);
+        $user2 = User::factory()->create([
+            'email' => 'testEmail',
+        ]);
+
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/search-users', [
+            'searchUsersVal' => 'test',
+        ]);
+
+        $response->assertStatus(200);
+        foreach ($response['users'] as $value) {
+            if ($user->id === $value['id']) {
+                assertTrue($user->name === $value['name']);
+            } else {
+                assertTrue($user2->email === $value['email']);
+            }
+        }
+    }
 }

@@ -18,11 +18,14 @@ class AdminPanelUsersController extends Controller
         return view('adminPanel.users', []);
     }
 
-    protected function getAllUsers()
+    protected function getAllUsers($searchUsersVal = '')
     {
         $adminPermission = Permission::whereName('admin')->first();
         $admins = $adminPermission->users()->orderBy('id', 'asc')->get();
-        $users = User::whereNotIn('id', $admins->pluck('id'))->get(['id', 'name', 'email',]);
+        $users = User::whereNotIn('id', $admins->pluck('id'))->when($searchUsersVal, function ($query, $searchUsersVal) {
+            $query->where('name', 'LIKE', "%$searchUsersVal%")
+                ->orWhere('email', 'LIKE', "%$searchUsersVal%");
+        })->get(['id', 'name', 'email',]);
         return [
             'admins' => $admins,
             'users' => $users,
@@ -49,5 +52,11 @@ class AdminPanelUsersController extends Controller
         }
         $user->save();
         return 1;
+    }
+
+    public function searchUsers(Request $request)
+    {
+        $users = $this->getAllUsers($request->searchUsersVal)['users'];
+        return response()->json(['users' => $users,]);
     }
 }

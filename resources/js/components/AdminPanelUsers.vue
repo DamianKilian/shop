@@ -2,7 +2,24 @@
     <div id="admin-panel-users">
         <div v-for="(usersGroup, index) in allUsers" class="usersGroup">
             <h4>{{ index }}</h4>
-
+            <div v-if="index === 'users'" id="users-search">
+                <div class="input-group">
+                    <input
+                        v-model="searchUsersVal"
+                        class="form-control"
+                        type="search"
+                        placeholder="Search ..."
+                        aria-label="Search"
+                    />
+                    <button
+                        @click="searchUsers"
+                        class="btn btn-outline-secondary"
+                        type="button"
+                    >
+                        Search
+                    </button>
+                </div>
+            </div>
             <table class="table table-sm table-bordered table-hover fs-5">
                 <colgroup>
                     <col style="width: 40px" />
@@ -57,13 +74,34 @@
 
 <script>
 export default {
-    props: ['userId', 'adminPanelGetUsersUrl', 'adminPanelSetAdminUrl'],
+    props: [
+        'userId',
+        'adminPanelGetUsersUrl',
+        'adminPanelSetAdminUrl',
+        'adminPanelSearchUsersUrl',
+    ],
     data() {
         return {
-            allUsers: {},
+            searchUsersVal: '',
+            allUsers: {
+                users: [],
+                admins: [],
+            },
         };
     },
     methods: {
+        searchUsers: function () {
+            this.users = [];
+            var that = this;
+            axios
+                .post(this.adminPanelSearchUsersUrl, {
+                    searchUsersVal: this.searchUsersVal,
+                })
+                .then(function (response) {
+                    that.allUsers.users = response.data.users;
+                    that.arrangeUsers();
+                });
+        },
         setAdmin: function (user) {
             var admin = !user.admin;
             user.setAminClicked = true;
@@ -78,7 +116,6 @@ export default {
                 });
         },
         getUsers: function () {
-            this.users = [];
             var that = this;
             axios
                 .post(this.adminPanelGetUsersUrl, {})
