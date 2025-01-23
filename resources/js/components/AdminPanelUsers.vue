@@ -12,7 +12,7 @@
                         aria-label="Search"
                     />
                     <button
-                        @click="searchUsers"
+                        @click="searchUsers(adminPanelSearchUsersUrl)"
                         class="btn btn-outline-secondary"
                         type="button"
                     >
@@ -69,11 +69,19 @@
                 </tbody>
             </table>
         </div>
+        <AdminPanelProductsPagination
+            :pagination="pagination"
+            :getItems="searchUsers"
+            v-if="allUsers.users.length"
+        />
     </div>
 </template>
 
 <script>
+import AdminPanelProductsPagination from './AdminPanelProductsPagination.vue';
+
 export default {
+    components: { AdminPanelProductsPagination },
     props: [
         'userId',
         'adminPanelGetUsersUrl',
@@ -83,22 +91,24 @@ export default {
     data() {
         return {
             searchUsersVal: '',
+            pagination: [],
             allUsers: {
-                users: [],
                 admins: [],
+                users: [],
             },
         };
     },
     methods: {
-        searchUsers: function () {
+        searchUsers: function (url) {
             this.users = [];
             var that = this;
             axios
-                .post(this.adminPanelSearchUsersUrl, {
+                .post(url, {
                     searchUsersVal: this.searchUsersVal,
                 })
                 .then(function (response) {
-                    that.allUsers.users = response.data.users;
+                    that.allUsers.users = response.data.users.data;
+                    that.pagination = response.data.users;
                     that.arrangeUsers();
                 });
         },
@@ -120,7 +130,9 @@ export default {
             axios
                 .post(this.adminPanelGetUsersUrl, {})
                 .then(function (response) {
-                    that.allUsers = response.data.allUsers;
+                    that.allUsers.admins = response.data.allUsers.admins;
+                    that.allUsers.users = response.data.allUsers.users.data;
+                    that.pagination = response.data.allUsers.users;
                     that.arrangeUsers();
                 });
         },

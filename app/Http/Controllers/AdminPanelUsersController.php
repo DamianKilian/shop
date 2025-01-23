@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Permission;
 use App\Models\User;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Http\Request;
 
 class AdminPanelUsersController extends Controller
@@ -22,10 +23,13 @@ class AdminPanelUsersController extends Controller
     {
         $adminPermission = Permission::whereName('admin')->first();
         $admins = $adminPermission->users()->orderBy('id', 'asc')->get();
-        $users = User::whereNotIn('id', $admins->pluck('id'))->when($searchUsersVal, function ($query, $searchUsersVal) {
-            $query->where('name', 'LIKE', "%$searchUsersVal%")
-                ->orWhere('email', 'LIKE', "%$searchUsersVal%");
-        })->get(['id', 'name', 'email',]);
+        $users = User::whereNotIn('id', $admins->pluck('id'))->when($searchUsersVal, function (Builder $query, $searchUsersVal) {
+            $query->where(function (Builder $query2) use ($searchUsersVal) {
+                $query2->where('name', 'LIKE', "%$searchUsersVal%")
+                    ->orWhere('email', 'LIKE', "%$searchUsersVal%");
+            });
+        })->select(['id', 'name', 'email',])->paginate(20);
+        $users->withPath(route('admin-panel-search-users', [], false));
         return [
             'admins' => $admins,
             'users' => $users,
