@@ -16,10 +16,18 @@ class AuthzServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define('admin', function (User $user) {
-            $usersCount = Permission::whereName('admin')->withCount(['users' => function (Builder $query) use ($user) {
-                $query->whereId($user->id);
-            }])->first()->users_count;
-            return 0 !== $usersCount;
+            return $this->hasPermission('admin', $user);
         });
+        Gate::define('usersManagement', function (User $user) {
+            return $this->hasPermission('usersManagement', $user);
+        });
+    }
+
+    protected function hasPermission($name, $user)
+    {
+        $usersCount = Permission::whereName($name)->withCount(['users' => function (Builder $query) use ($user) {
+            $query->whereId($user->id);
+        }])->first()->users_count;
+        return 0 !== $usersCount;
     }
 }

@@ -53,9 +53,7 @@ return new class extends Migration
                 ->onDelete('cascade');
         });
 
-        $adminPermission = Permission::create([
-            'name' => 'admin',
-        ]);
+        $permissions = $this->createPermissions();
 
         $user = User::create([
             'name' => 'admin',
@@ -63,7 +61,21 @@ return new class extends Migration
             'password' => Hash::make('admin'),
         ]);
 
-        $user->permissions()->attach($adminPermission);
+        $user->permissions()->attach([$permissions['admin']->id, $permissions['usersManagement']->id,]);
+    }
+
+    protected function createPermissions()
+    {
+        $permissions = [
+            'admin' => null,
+            'usersManagement' => null,
+        ];
+        foreach ($permissions as $key => $value) {
+            $permissions[$key] = Permission::create([
+                'name' => $key,
+            ]);
+        }
+        return $permissions;
     }
 
     /**

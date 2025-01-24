@@ -53,10 +53,13 @@ Route::prefix('admin-panel')->middleware('can:admin')->group(function () {
     Route::post('/editorjs/upload-file', [App\Http\Controllers\AdminPanelEditorjsController::class, 'uploadFile'])->name('admin-panel-upload-file')->withoutMiddleware([VerifyCsrfToken::class]);
     Route::post('/editorjs/fetch-url', [App\Http\Controllers\AdminPanelEditorjsController::class, 'fetchUrl'])->name('admin-panel-fetch-url')->withoutMiddleware([VerifyCsrfToken::class]);
 
-    Route::get('/users', [App\Http\Controllers\AdminPanelUsersController::class, 'users'])->name('admin-panel-users');
-    Route::post('/get-users', [App\Http\Controllers\AdminPanelUsersController::class, 'getUsers'])->name('admin-panel-get-users');
-    Route::post('/set-admin', [App\Http\Controllers\AdminPanelUsersController::class, 'setAdmin'])->name('admin-panel-set-admin');
-    Route::post('/search-users', [App\Http\Controllers\AdminPanelUsersController::class, 'searchUsers'])->name('admin-panel-search-users');
+    Route::middleware('can:usersManagement')->group(function () {
+        Route::get('/users', [App\Http\Controllers\AdminPanelUsersController::class, 'users'])->name('admin-panel-users');
+        Route::post('/get-users', [App\Http\Controllers\AdminPanelUsersController::class, 'getUsers'])->name('admin-panel-get-users');
+        Route::post('/set-admin', [App\Http\Controllers\AdminPanelUsersController::class, 'setAdmin'])->name('admin-panel-set-admin');
+        Route::post('/search-users', [App\Http\Controllers\AdminPanelUsersController::class, 'searchUsers'])->name('admin-panel-search-users');
+    });
+
 });
 
 // Route::get('/test/ttt', [App\Http\Controllers\TestController::class, 'ttt']);

@@ -34,7 +34,7 @@ class UsersTest extends TestCase
 
         $response->assertStatus(200);
         assertEquals(3, count($response['allUsers']['admins']));
-        assertEquals(3, count($response['allUsers']['users']));
+        assertEquals(3, count($response['allUsers']['users']['data']));
     }
 
     public function test_setAdmin(): void
@@ -76,9 +76,10 @@ class UsersTest extends TestCase
     public function test_setAdmin_acting_on_current_user(): void
     {
         User::factory()->count(3)->create();
+        $usersManagementPermission = Permission::whereName('usersManagement')->first();
         $adminPermission = Permission::whereName('admin')->first();
         $admin = User::factory()->create();
-        $admin->permissions()->attach($adminPermission);
+        $admin->permissions()->attach([$usersManagementPermission->id, $adminPermission->id]);
 
         $response = $this->actingAs($admin)->postJson('/admin-panel/set-admin', [
             'userId' => $admin->id,
@@ -103,7 +104,7 @@ class UsersTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        foreach ($response['users'] as $value) {
+        foreach ($response['users']['data'] as $value) {
             if ($user->id === $value['id']) {
                 assertTrue($user->name === $value['name']);
             } else {
