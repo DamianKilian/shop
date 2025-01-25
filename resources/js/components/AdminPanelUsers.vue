@@ -38,32 +38,64 @@
                         <td>{{ user.name }}</td>
                         <td>{{ user.email }}</td>
                         <td>
-                            <button
-                                v-if="userId != user.id"
-                                class="btn btn-sm ms-1"
-                                :class="{
-                                    'btn-outline-warning': user.admin,
-                                    'btn-warning': !user.admin,
-                                }"
-                                :disabled="user.setAdminClicked"
-                                @click="setAdmin(user)"
-                            >
-                                <template v-if="user.setAdminClicked">
-                                    <span
-                                        class="spinner-border spinner-border-sm"
-                                        role="status"
-                                        aria-hidden="true"
-                                    ></span>
-                                    Loading...
-                                </template>
-                                <template v-else>
-                                    {{
-                                        user.admin
-                                            ? __('Unset as Admin')
-                                            : __('Set as Admin')
-                                    }}
-                                </template>
-                            </button>
+                            <div v-if="userId != user.id" class="btn-group">
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-secondary dropdown-toggle ms-1"
+                                    data-bs-toggle="dropdown"
+                                >
+                                    {{ __('Permissions') }}
+                                </button>
+                                <div
+                                    class="dropdown-menu dropdown-menu-end ps-2"
+                                >
+                                    <div
+                                        v-for="p in permissions"
+                                        :key="p.id"
+                                        class="form-check"
+                                    >
+                                        <input
+                                            v-if="
+                                                !(
+                                                    userId == user.id &&
+                                                    'admin' == p.name
+                                                )
+                                            "
+                                            :checked="hasPermission(p, user)"
+                                            @change="
+                                                setPermission($event, p, user)
+                                            "
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            value=""
+                                            :id="p.name"
+                                        />
+                                        <label
+                                            class="form-check-label"
+                                            :for="p.name"
+                                        >
+                                            {{ p.name }}
+                                        </label>
+                                    </div>
+                                    <div
+                                        v-if="user.permissionClicked"
+                                        class="spinner-wrapper"
+                                    >
+                                        <div
+                                            class="d-flex justify-content-center"
+                                        >
+                                            <div
+                                                class="spinner-border"
+                                                role="status"
+                                            >
+                                                <span class="visually-hidden"
+                                                    >Loading...</span
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
@@ -83,9 +115,10 @@ import AdminPanelProductsPagination from './AdminPanelProductsPagination.vue';
 export default {
     components: { AdminPanelProductsPagination },
     props: [
+        'permissions',
         'userId',
+        'adminPanelSetPermissionUrl',
         'adminPanelGetUsersUrl',
-        'adminPanelSetAdminUrl',
         'adminPanelSearchUsersUrl',
     ],
     data() {
@@ -99,6 +132,31 @@ export default {
         };
     },
     methods: {
+        setPermission: function (e, permission, user) {
+            user.permissionClicked = true;
+            var that = this;
+            axios
+                .post(this.adminPanelSetPermissionUrl, {
+                    userId: user.id,
+                    permission: {
+                        id: permission.id,
+                        checked: e.target.checked,
+                    },
+                })
+                .then(function (response) {
+                    user.permissionClicked = false;
+                });
+        },
+        hasPermission: function (permission, user) {
+            var hasPermission = false;
+            _.forEach(user.permissions, function (upn) {
+                if (upn.id === permission.id) {
+                    hasPermission = true;
+                    return false;
+                }
+            });
+            return hasPermission;
+        },
         searchUsers: function (url) {
             this.users = [];
             var that = this;
@@ -110,19 +168,6 @@ export default {
                     that.allUsers.users = response.data.users.data;
                     that.pagination = response.data.users;
                     that.arrangeUsers();
-                });
-        },
-        setAdmin: function (user) {
-            var admin = !user.admin;
-            user.setAminClicked = true;
-            axios
-                .post(this.adminPanelSetAdminUrl, {
-                    userId: user.id,
-                    admin: admin,
-                })
-                .then(function (response) {
-                    user.admin = admin;
-                    user.setAminClicked = false;
                 });
         },
         getUsers: function () {
@@ -145,7 +190,7 @@ export default {
                     } else {
                         user.admin = false;
                     }
-                    user.setAdminClicked = false;
+                    user.permissionClicked = false;
                 });
             });
         },

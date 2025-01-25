@@ -16,14 +16,17 @@ class AdminPanelUsersController extends Controller
 
     public function users()
     {
-        return view('adminPanel.users', []);
+        $permissions = Permission::all();
+        return view('adminPanel.users', [
+            'permissions' => $permissions,
+        ]);
     }
 
     protected function getAllUsers($searchUsersVal = '')
     {
         $adminPermission = Permission::whereName('admin')->first();
-        $admins = $adminPermission->users()->orderBy('id', 'asc')->get();
-        $users = User::whereNotIn('id', $admins->pluck('id'))->when($searchUsersVal, function (Builder $query, $searchUsersVal) {
+        $admins = $adminPermission->users()->with('permissions')->orderBy('id', 'asc')->get();
+        $users = User::with('permissions')->whereNotIn('id', $admins->pluck('id'))->when($searchUsersVal, function (Builder $query, $searchUsersVal) {
             $query->where(function (Builder $query2) use ($searchUsersVal) {
                 $query2->where('name', 'LIKE', "%$searchUsersVal%")
                     ->orWhere('email', 'LIKE', "%$searchUsersVal%");
@@ -42,25 +45,24 @@ class AdminPanelUsersController extends Controller
         return response()->json(['allUsers' => $allUsers]);
     }
 
-    public function setAdmin(Request $request)
+    public function searchUsers(Request $request)
+    {
+        $users = $this->getAllUsers($request->searchUsersVal)['users'];
+        return response()->json(['users' => $users,]);
+    }
+
+    public function setPermission(Request $request)
     {
         if (auth()->user()->id === $request->userId) {
             return 0;
         }
         $user = User::whereId($request->userId)->first();
-        $adminPermission = Permission::whereName('admin')->first();
-        if ($request->admin) {
-            $user->permissions()->attach($adminPermission);
+        if ($request->permission['checked']) {
+            $user->permissions()->attach($request->permission['id']);
         } else {
-            $user->permissions()->detach($adminPermission);
+            $user->permissions()->detach($request->permission['id']);
         }
         $user->save();
         return 1;
-    }
-
-    public function searchUsers(Request $request)
-    {
-        $users = $this->getAllUsers($request->searchUsersVal)['users'];
-        return response()->json(['users' => $users,]);
     }
 }

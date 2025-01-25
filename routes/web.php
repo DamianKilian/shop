@@ -56,8 +56,8 @@ Route::prefix('admin-panel')->middleware('can:admin')->group(function () {
     Route::middleware('can:usersManagement')->group(function () {
         Route::get('/users', [App\Http\Controllers\AdminPanelUsersController::class, 'users'])->name('admin-panel-users');
         Route::post('/get-users', [App\Http\Controllers\AdminPanelUsersController::class, 'getUsers'])->name('admin-panel-get-users');
-        Route::post('/set-admin', [App\Http\Controllers\AdminPanelUsersController::class, 'setAdmin'])->name('admin-panel-set-admin');
         Route::post('/search-users', [App\Http\Controllers\AdminPanelUsersController::class, 'searchUsers'])->name('admin-panel-search-users');
+        Route::post('/set-permission', [App\Http\Controllers\AdminPanelUsersController::class, 'setPermission'])->name('admin-panel-set-permission');
     });
 
 });

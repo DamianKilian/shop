@@ -37,14 +37,18 @@ class UsersTest extends TestCase
         assertEquals(3, count($response['allUsers']['users']['data']));
     }
 
-    public function test_setAdmin(): void
+    public function test_setPermission(): void
     {
         User::factory()->count(3)->create();
         $user = User::factory()->create();
+        $adminPermission = Permission::whereName('admin')->first();
 
-        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/set-admin', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/set-permission', [
             'userId' => $user->id,
-            'admin' => true,
+            'permission' => [
+                'id' => $adminPermission->id,
+                'checked' => true,
+            ],
         ]);
         $count = User::withWhereHas('permissions', function ($query) {
             $query->whereName('admin');
@@ -54,16 +58,19 @@ class UsersTest extends TestCase
         assertEquals(1, $count);
     }
 
-    public function test_setAdmin_unset(): void
+    public function test_setPermission_unset(): void
     {
         User::factory()->count(3)->create();
         $adminPermission = Permission::whereName('admin')->first();
         $admin = User::factory()->create();
         $admin->permissions()->attach($adminPermission);
 
-        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/set-admin', [
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/set-permission', [
             'userId' => $admin->id,
-            'admin' => false,
+            'permission' => [
+                'id' => $adminPermission->id,
+                'checked' => false,
+            ],
         ]);
         $count = User::withWhereHas('permissions', function ($query) {
             $query->whereName('admin');
@@ -73,7 +80,7 @@ class UsersTest extends TestCase
         assertEquals(0, $count);
     }
 
-    public function test_setAdmin_acting_on_current_user(): void
+    public function test_setPermission_acting_on_current_user(): void
     {
         User::factory()->count(3)->create();
         $usersManagementPermission = Permission::whereName('usersManagement')->first();
@@ -81,9 +88,12 @@ class UsersTest extends TestCase
         $admin = User::factory()->create();
         $admin->permissions()->attach([$usersManagementPermission->id, $adminPermission->id]);
 
-        $response = $this->actingAs($admin)->postJson('/admin-panel/set-admin', [
+        $response = $this->actingAs($admin)->postJson('/admin-panel/set-permission', [
             'userId' => $admin->id,
-            'admin' => false,
+            'permission' => [
+                'id' => $adminPermission->id,
+                'checked' => false,
+            ],
         ]);
 
         assertTrue('0' === $response->getContent());

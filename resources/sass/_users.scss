@@ -6,3 +6,21 @@
         min-width: 200px;
     }
 }
+#admin-panel-users{
+    .spinner-wrapper{
+        position: absolute;
+        margin: auto;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        .justify-content-center{
+            width: 100%;
+            position: absolute;
+            top: 50%;
+            -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
+        }
+    }
+
+}
