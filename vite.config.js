@@ -4,6 +4,9 @@ import vue from '@vitejs/plugin-vue';
 import { glob } from 'glob';
 
 export default defineConfig({
+    server: {
+        host: '0.0.0.0',
+    },
     plugins: [
         laravel({
             input: [
