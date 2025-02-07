@@ -7,7 +7,7 @@ $topHeight: 60px;
 #nav {
     height: $topHeight;
     transition: opacity 0.5s;
-    .nav-dropdown {
+    .nav-btn {
         margin-right: 1%;
     }
     .dropdown-toggle {
@@ -26,7 +26,8 @@ $topHeight: 60px;
 }
 
 #main {
-    margin-top: calc($topHeight + 20px);
+    padding-top: 20px;
+    margin-top: calc($topHeight);
     min-height: calc(100vh - $topHeight);
 }
 
@@ -119,7 +120,6 @@ $topHeight: 60px;
     }
     #nav {
         .nav-dropdown {
-            min-width: 88px;
             max-width: 27%;
             overflow: hidden;
         }
@@ -130,7 +130,7 @@ $topHeight: 60px;
             height: $topHeight;
         }
         #main {
-            margin-top: calc($topHeight + 20px);
+            margin-top: calc($topHeight);
             min-height: calc(100vh - $topHeight);
         }
     }

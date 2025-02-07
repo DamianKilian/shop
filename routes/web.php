@@ -12,6 +12,7 @@ Auth::routes();
 Route::get('{slug?}', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/category/{slug}', [App\Http\Controllers\HomeController::class, 'category'])->name('category');
 Route::get('/product/{slug}', [App\Http\Controllers\HomeController::class, 'product'])->name('product');
+Route::get('/basket/index', [App\Http\Controllers\HomeController::class, 'basketIndex'])->name('basket-index');
 
 Route::prefix('admin-panel')->middleware('can:admin')->group(function () {
     Route::get('/products', [App\Http\Controllers\AdminPanelProductsController::class, 'products'])->name('admin-panel-products');

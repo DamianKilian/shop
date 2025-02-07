@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow" />
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -37,11 +38,11 @@
                 <div class="menu-btn d-sm-none order-1 p-2 align-self-center user-select-none flex-grow-1">
                     <span class="display-6"><i class="fa-solid fa-bars"></i></span>
                 </div>
-                <div class="order-1 order-sm-2 ms-auto align-self-center nav-dropdown">
+                <div class="order-1 order-sm-2 ms-auto align-self-center nav-dropdown nav-btn">
                     @php
                         $locales = [
-                            'pl' => 'Polski',
-                            'en' => 'English',
+                            'pl' => 'Pl',
+                            'en' => 'En',
                         ];
                     @endphp
                     <div class="dropdown">
@@ -61,9 +62,11 @@
                 <div class="order-1 order-sm-2 align-self-center nav-dropdown">
                     <button id="navbarDropdown" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
                         <i class="fa-regular fa-user"></i>
-                        @guest {{ __('Guest') }}
-                        @else
-                        {{ Auth::user()->name }} @endguest
+                        <span class="d-none d-sm-inline">
+                            @guest {{ __('Guest') }}
+                            @else
+                            {{ Auth::user()->name }} @endguest
+                        </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         @guest
@@ -90,7 +93,7 @@
             </nav>
         </div>
         <div id="main" class="clearfix">
-            <div id="menu" class="bg-light d-none d-sm-block">
+            <nav id="menu" class="bg-light d-none d-sm-block">
                 <div class="position-absolute d-sm-none" style="top: 0;right: 45px;">
                     <div class="menu-btn btn-close position-fixed" style="padding: 15px;" type="button"
                         aria-label="Close">
@@ -109,7 +112,7 @@
                         <a class="nav-link _users" href="{{ route('admin-panel-users') }}">{{ __('Users') }}</a>
                     @endcan
                 </nav>
-            </div>
+            </nav>
             <div id="content">
                 @yield('content')
             </div>

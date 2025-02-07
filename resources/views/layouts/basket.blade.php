@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow" />
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -15,10 +16,6 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Scripts -->
-    <script>
-        window.pageType = '';
-        window.maxProductsPrice = {{ $maxProductsPrice ?? 'null' }};
-    </script>
     @yield('scriptsHead')
     @php
         $locale = app()->getLocale();
@@ -30,7 +27,7 @@
     @yield('styles')
 </head>
 
-<body class="shop">
+<body class="">
     <div id="app" class="container-xxl">
         <div class="bg-light fixed-top ">
             <nav class="container-xxl d-flex flex-wrap flex-sm-nowrap" id="nav">
@@ -39,10 +36,10 @@
                         alt="{{ config('app.name', 'Laravel') }}">
                 </a>
                 <div
-                    class="menu-btn d-sm-none order-1 p-2 align-self-center user-select-none flex-grow-1 flex-sm-grow-0">
+                    class="menu-btn d-sm-none order-1 p-2 align-self-center user-select-none flex-grow-1">
                     <span class="display-6"><i class="fa-solid fa-bars"></i></span>
                 </div>
-                <div class="order-1 order-sm-2 align-self-center nav-btn">
+                <div class="order-1 order-sm-2 align-self-center ms-auto nav-btn">
                     <a class="btn btn-light ms-2" href="{{ route('basket-index') }}">
                         <i class="fa-solid fa-basket-shopping"></i>
                     </a>
@@ -99,60 +96,14 @@
                         @endguest
                     </div>
                 </div>
-                @php
-                    $categoryName = isset($category) ? $category->name : '';
-                    $searchUrl = $searchUrl ?? '';
-                @endphp
-                <search-app @search="searchProducts($event, '{{ $searchUrl }}')"
-                    category-name='{{ $categoryName }}'
-                    get-suggestions-url="{{ route('get-suggestions') }}"></search-app>
             </nav>
         </div>
         <div id="main" class="clearfix">
-            @if (isset($categories))
-                <nav id="menu" class="bg-light d-none d-sm-block">
-                    <div class="position-absolute d-sm-none" style="top: 0;right: 45px;">
-                        <div class="menu-btn btn-close position-fixed" style="padding: 15px;" type="button"
-                            aria-label="Close">
-                        </div>
-                    </div>
-                    @if (count($categories) > 0)
-                        <ul>
-                            @foreach ($categories as $category)
-                                @if (!$category->parent_id)
-                                    @include('_partials.menu-category')
-                                @endif
-                            @endforeach
-                        </ul>
-                        @include('_partials.filters')
-                    @else
-                        No categories
-                    @endif
-                </nav>
-            @endif
-            <div id="content">
-                <div class="mb-2">
-                    @php
-                        $filters = isset($filters) ? $filters : null;
-                    @endphp
-                    <search-filters-app @remove-search-value-submitted="searchProducts('')"
-                        @remove-max-price-submitted="applyFilters({maxPrice: maxProductsPriceCeil})"
-                        @remove-min-price-submitted="applyFilters({minPrice: 0})"
-                        @remove-filter-submitted="removeFilterSubmitted" :filters='@json($filters)'
-                        v-if='Object.keys(queryStrParamsInitialVals).length'
-                        :max-products-price-ceil='maxProductsPriceCeil'
-                        :search-value-submitted="queryStrParamsInitialVals.searchValue"
-                        :query-str-params-initial-vals="queryStrParamsInitialVals"></search-filters-app>
-                </div>
+            <div id="basket-content">
                 @yield('content')
             </div>
-            <pagination-widget :get-products-view='getProductsView' :current-page='currentPage'
-                :geting-products-view='getingProductsView' :last-page='lastPage'></pagination-widget>
         </div>
     </div>
-    <footer class="bg-secondary">
-        @include('_partials.footer')
-    </footer>
     <div id="menu-overlay" class="overlay d-none d-sm-none menu-btn"></div>
     <script type="module">
         toggleMenu();
@@ -166,17 +117,6 @@
             });
         }
         hideNavBarOnPageLoading();
-
-        function selectActiveLinks() {
-            if (!window.activeLinks) {
-                return;
-            }
-            var links = Array.from(document.querySelectorAll(window.activeLinks));
-            links.forEach(link => {
-                link.classList.add('active');
-            });
-        }
-        selectActiveLinks();
     </script>
     @yield('scripts')
 </body>

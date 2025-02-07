@@ -29,6 +29,11 @@ class HomeController extends Controller
         // $this->middleware('auth');
     }
 
+    public function basketIndex()
+    {
+        return view('basket.index', []);
+    }
+
     public function getSuggestions(Request $request)
     {
         $suggestions = Suggestion::whereFullText('suggestion', $request->searchValue)
