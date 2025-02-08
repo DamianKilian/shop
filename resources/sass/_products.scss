@@ -58,10 +58,12 @@
     #products {
         .product {
             .title-desc {
-                width: calc(92% - 140px);
+                width: calc(70% - 140px);
+                float: right;
             }
             .price {
-                width: calc(92% - 140px);
+                width: calc(38% - 140px);
+                float: right;
             }
         }
     }

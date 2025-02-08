@@ -45,6 +45,12 @@ app.component('admin-panel-footer', AdminPanelFooter);
 import AdminPanelUsers from './components/AdminPanelUsers.vue';
 app.component('admin-panel-users', AdminPanelUsers);
 
+//basket
+import AddToBasketBtn from './components/basket/AddToBasketBtn.vue';
+app.component('add-to-basket-btn', AddToBasketBtn);
+
+
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

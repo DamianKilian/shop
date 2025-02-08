@@ -32,7 +32,8 @@
                 </article>
             </div>
             <div class="p-2 price">
-                <div class="fs-1 number">{{ str_replace('.', ',', $product->price) }}&nbsp;zł</div>
+                <div class="fs-1 number">{!! price($product) !!}</div>
+                <add-to-basket-btn></add-to-basket-btn>
             </div>
         </a>
     @endforeach
