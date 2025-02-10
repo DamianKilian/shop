@@ -46,9 +46,8 @@ import AdminPanelUsers from './components/AdminPanelUsers.vue';
 app.component('admin-panel-users', AdminPanelUsers);
 
 //basket
-import AddToBasketBtn from './components/basket/AddToBasketBtn.vue';
-app.component('add-to-basket-btn', AddToBasketBtn);
-
+import NumBadge from './components/basket/NumBadge.vue';
+app.component('num-badge', NumBadge);
 
 
 /**

@@ -11,8 +11,7 @@
                 @endforeach
             </div>
         @endif
-        <a href="{{ route('product', [$product->slug]) }}" class="product clearfix"
-            target="{{ sett('PRODUCT_OPEN_TARGET') }}">
+        <div class="product clearfix" target="{{ sett('PRODUCT_OPEN_TARGET') }}">
             <div class="img-container">
                 @if ($product->productImages->get(0))
                     <img src="{{ asset('storage/' . $product->productImages->get(0)->url_thumbnail) }}"
@@ -27,15 +26,19 @@
             </div>
             <div class="title-desc">
                 <article>
-                    <h2>{{ $product->title }}</h2>
+                    <h2><a href="{{ route('product', [$product->slug]) }}">{{ $product->title }}</a></h2>
                     <p>{{ $product->descStr }}</p>
                 </article>
             </div>
             <div class="p-2 price">
                 <div class="fs-1 number">{!! price($product) !!}</div>
-                <add-to-basket-btn></add-to-basket-btn>
+                <button type="button" class="btn btn-primary m-auto d-block addToBasket"
+                    data-product-id="{{ $product->id }}">
+                    {{ __('Add to basket') }}
+                    <i class="fa-solid fa-basket-shopping"></i>
+                </button>
             </div>
-        </a>
+        </div>
     @endforeach
     @if (!$products->total())
         <div class="alert alert-primary text-center" role="alert">

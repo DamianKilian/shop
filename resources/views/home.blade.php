@@ -4,7 +4,7 @@
     <div id="products-app">
         <div class="products-view-container position-relative">
             <loading-overlay v-if='getingProductsView'></loading-overlay>
-            <div id="products-view" ref="productsView">
+            <div id="products-view" ref="productsView" v-on:click="addToBasket">
                 @if ($products)
                     @include('_partials.products')
                 @endif

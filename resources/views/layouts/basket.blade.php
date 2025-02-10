@@ -40,8 +40,9 @@
                     <span class="display-6"><i class="fa-solid fa-bars"></i></span>
                 </div>
                 <div class="order-1 order-sm-2 align-self-center ms-auto nav-btn">
-                    <a class="btn btn-light ms-2" href="{{ route('basket-index') }}">
+                    <a class="btn btn-light ms-2 position-relative" href="{{ route('basket-index') }}">
                         <i class="fa-solid fa-basket-shopping"></i>
+                        <num-badge :products-in-basket='productsInBasket'></num-badge>
                     </a>
                 </div>
                 <div class="order-1 order-sm-2 align-self-center nav-dropdown nav-btn">

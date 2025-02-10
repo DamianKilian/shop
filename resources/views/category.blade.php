@@ -8,7 +8,7 @@
             <div id="products-top-panel">
                 @include('_partials.sorting')
             </div>
-            <div id="products-view" ref="productsView">
+            <div id="products-view" ref="productsView" v-on:click="addToBasket">
                 @include('_partials.products')
             </div>
         </div>

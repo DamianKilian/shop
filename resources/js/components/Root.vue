@@ -3,9 +3,10 @@ import FilterDisplayApp from './FilterDisplayApp.vue';
 import SearchApp from './SearchApp.vue';
 import SearchFiltersApp from './SearchFiltersApp.vue';
 import historyNavigation from './historyNavigation';
+import basketRoot from './basket/basketRoot';
 
 export default {
-    mixins: [historyNavigation],
+    mixins: [historyNavigation, basketRoot],
     components: { FilterDisplayApp, SearchApp, SearchFiltersApp },
     data() {
         return {
