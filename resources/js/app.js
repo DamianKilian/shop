@@ -48,6 +48,8 @@ app.component('admin-panel-users', AdminPanelUsers);
 //basket
 import NumBadge from './components/basket/NumBadge.vue';
 app.component('num-badge', NumBadge);
+import basketIndex from './components/basket/Index.vue';
+app.component('basket-index', basketIndex);
 
 
 /**

@@ -11,7 +11,7 @@ export default {
                 return;
             }
             let productId = target.dataset.productId;
-            this.productsInBasket[productId] = productId;
+            this.productsInBasket[productId] = { num: 1 };
             localStorage.setItem("productsInBasket", JSON.stringify(this.productsInBasket));
         },
         getProductsFromLocalStorage: function () {

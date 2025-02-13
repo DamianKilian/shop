@@ -26,7 +26,7 @@
             </div>
             <div class="title-desc">
                 <article>
-                    <h2><a href="{{ route('product', [$product->slug]) }}">{{ $product->title }}</a></h2>
+                    <h2><a href="{{ route('product', [$product->slug]) }}" class="d-inline-block">{{ $product->title }}</a></h2>
                     <p>{{ $product->descStr }}</p>
                 </article>
             </div>
