@@ -10,7 +10,10 @@
             </div>
         </div>
     </div>
-    <div v-else id="productsInBasket">
+    <div
+        v-else-if="Object.keys(productsInBasketData).length"
+        id="productsInBasket"
+    >
         <table class="table table-sm table-striped table-hover fs-5">
             <thead>
                 <tr>
@@ -86,7 +89,9 @@ export default {
         },
     },
     mounted() {
-        this.getProductsInBasketData();
+        if (Object.keys(this.productsInBasket).length) {
+            this.getProductsInBasketData();
+        }
     },
 };
 </script>
