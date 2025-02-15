@@ -9,11 +9,6 @@
         float: right;
     }
     table {
-        th {
-            &:first-child {
-                text-align: center;
-            }
-        }
         .link {
             display: block;
             min-height: 75px;

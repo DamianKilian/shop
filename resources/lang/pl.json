@@ -1,4 +1,10 @@
 {
+    "Courier": "Kurier",
+    "Enable/disable inPost delivery method": "Włącz/wyłącz metodę dostarczania inPost",
+    "Price for courier delivery method": "Cena za dostawę kurierską",
+    "Enable/disable courier delivery method": "Włącz/wyłącz metodę dostawy kurierskiej",
+    "Price for inPost delivery method": "Cena za metodę dostawy inPost",
+    "Delivery methods settings": "Ustawienia metod dostawy",
     "Add to basket": "Dodaj do koszyka",
     "Set as Admin": "Ustaw jako admin",
     "Unset as Admin": "Usuń jako admin",

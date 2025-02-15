@@ -2,7 +2,7 @@
     padding: 1rem 0.75rem;
 }
 #app {
-    input:not([type='checkbox']) {
+    input:not([type='checkbox'], [type='radio']) {
         background-color: white;
     }
 }

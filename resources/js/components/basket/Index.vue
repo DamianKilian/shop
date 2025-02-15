@@ -17,8 +17,8 @@
         <table class="table table-sm table-striped table-hover fs-5">
             <thead>
                 <tr>
-                    <th scope="col"></th>
-                    <th scope="col" colspan="2">
+                    <th colspan="3">
+                        <span class="fs-2">{{ __('Products') }}</span>
                         <button class="btn btn-secondary clear-btn">
                             <i class="fa-regular fa-trash-can"></i> Clear
                         </button>
@@ -31,14 +31,15 @@
                     <td class="position-relative">
                         <div class="product-data">
                             <a
-                                class="link d-sm-flex align-items-center"
+                                class="link d-sm-flex align-items-center text-decoration-none"
                                 :href="productsInBasketData[id].url"
                             >
                                 <img
                                     :src="productsInBasketData[id].fullUrlSmall"
                                     class="product-img"
                                 />
-                                {{ productsInBasketData[id].title }}
+                                <span class='flex-grow-1'>{{ productsInBasketData[id].title }}</span>
+                                <span class='ms-3 text-dark'>{{ productsInBasketData[id].price }}zł</span>
                             </a>
                         </div>
                         <div class="product-num">
@@ -64,15 +65,44 @@
                 </tr>
             </tbody>
         </table>
+        <div id="deliveryMethods">
+            <h2><b>Delivery methods</b></h2>
+            <div class="list-group">
+                <label
+                    v-for="(method, key) in deliveryMethods"
+                    class="list-group-item list-group-item-action"
+                    :class="{ active: deliveryMethod === key }"
+                >
+                    <div class="d-flex w-100 justify-content-between">
+                        <span class="fs-3">
+                            <input
+                                class="form-check-input"
+                                type="radio"
+                                :name="key"
+                                :value="key"
+                                v-model="deliveryMethod"
+                            />
+                            {{ method.name }}
+                        </span>
+                        <span class="fs-3">{{ method.price }}</span>
+                    </div>
+                </label>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
 export default {
-    props: ['productsInBasket', 'getProductsInBasketDataUrl'],
+    props: [
+        'productsInBasket',
+        'getProductsInBasketDataUrl',
+        'deliveryMethods',
+    ],
     data() {
         return {
             productsInBasketData: {},
+            deliveryMethod: '',
         };
     },
     methods: {

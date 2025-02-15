@@ -17,6 +17,15 @@ class BasketTest extends TestCase
     {
         $response = $this->get("/basket/index");
 
+        $response->assertViewHas('deliveryMethods', function ($deliveryMethods) {
+            $deliveryMethodsArr = json_decode($deliveryMethods, true);
+            $inpost = [
+                'name' => 'InPost',
+                'price' => 0
+            ];
+            return $inpost == $deliveryMethodsArr['inpost'];
+        });
+        $response->assertSee('InPost');
         $response->assertSuccessful();
     }
 

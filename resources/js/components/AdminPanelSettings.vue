@@ -79,6 +79,22 @@
                                 "
                                 class="form-control"
                             />
+                            <input
+                                v-else-if="'checkbox' === setting.input_type"
+                                v-model="setting.value"
+                                :true-value="'1'"
+                                :false-value="'0'"
+                                @input="
+                                    settingChange(
+                                        setting,
+                                        settingCategoriesOrginal[indexC]
+                                            .settings[index],
+                                        'checkbox'
+                                    )
+                                "
+                                class="form-check-input"
+                                type="checkbox"
+                            />
                             <p v-else-if="'select' === setting.input_type">
                                 <select
                                     v-model="setting.value"
@@ -193,11 +209,13 @@ export default {
         };
     },
     methods: {
-        settingChange: function (setting, settingOrginal) {
+        settingChange: function (setting, settingOrginal, type = '') {
             setting.modified = settingOrginal.value !== setting.value;
+            if('checkbox' === type){
+                setting.modified = !setting.modified;
+            }
         },
         reset: function (indexC) {
-            console.debug(indexC); //mmmyyy
             var settingsOrginal =
                 this.settingCategoriesOrginal[indexC].settings;
             _.forEach(
