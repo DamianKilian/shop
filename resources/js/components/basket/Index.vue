@@ -10,83 +10,138 @@
             </div>
         </div>
     </div>
-    <div
-        v-else-if="Object.keys(productsInBasketData).length"
-        id="productsInBasket"
-    >
-        <table class="table table-sm table-striped table-hover fs-5">
-            <thead>
-                <tr>
-                    <th colspan="3">
-                        <span class="fs-2">{{ __('Products') }}</span>
-                        <button class="btn btn-secondary clear-btn">
-                            <i class="fa-regular fa-trash-can"></i> Clear
-                        </button>
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="table-group-divider">
-                <tr v-for="(product, id, index) in productsInBasket" :key="id">
-                    <td scope="row">{{ index + 1 }}</td>
-                    <td class="position-relative">
-                        <div class="product-data">
-                            <a
-                                class="link d-sm-flex align-items-center text-decoration-none"
-                                :href="productsInBasketData[id].url"
+    <div v-else-if="Object.keys(productsInBasketData).length" class="row">
+        <div id="productsInBasket" class="col-md-8">
+            <table class="table table-sm table-striped table-hover fs-5">
+                <thead>
+                    <tr>
+                        <th colspan="3">
+                            <span class="fs-2">{{ __('Products') }}</span>
+                            <button
+                                @click="$emit('removeFromBasketAll')"
+                                class="btn btn-secondary clear-btn"
                             >
-                                <img
-                                    :src="productsInBasketData[id].fullUrlSmall"
-                                    class="product-img"
-                                />
-                                <span class='flex-grow-1'>{{ productsInBasketData[id].title }}</span>
-                                <span class='ms-3 text-dark'>{{ productsInBasketData[id].price }}zł</span>
-                            </a>
-                        </div>
-                        <div class="product-num">
-                            <div class="flex-nowrap input-group input-group-sm">
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa-solid fa-minus"></i>
-                                </button>
-                                <input
-                                    v-model="product.num"
-                                    class="form-control"
-                                />
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
+                                <i class="fa-regular fa-trash-can"></i>
+                                Clear
+                            </button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                    <tr
+                        v-for="(product, id, index) in productsInBasket"
+                        :key="id"
+                    >
+                        <td scope="row">{{ index + 1 }}</td>
+                        <td class="position-relative">
+                            <div class="product-data">
+                                <a
+                                    class="link d-lg-flex align-items-center text-decoration-none"
+                                    :href="productsInBasketData[id].url"
+                                >
+                                    <img
+                                        :src="
+                                            productsInBasketData[id]
+                                                .fullUrlSmall
+                                        "
+                                        class="product-img"
+                                    />
+                                    <span class="flex-grow-1">{{
+                                        productsInBasketData[id].title
+                                    }}</span>
+                                    <span class="ms-3 text-dark"
+                                        >{{
+                                            productsInBasketData[id].price
+                                        }}zł</span
+                                    >
+                                </a>
                             </div>
+                            <div class="product-num">
+                                <div
+                                    class="flex-nowrap input-group input-group-sm"
+                                >
+                                    <button
+                                        @click="productNum(-1, id)"
+                                        class="btn btn-outline-secondary"
+                                    >
+                                        <i class="fa-solid fa-minus"></i>
+                                    </button>
+                                    <input
+                                        v-model="product.num"
+                                        class="form-control"
+                                    />
+                                    <button
+                                        @click="productNum(1, id)"
+                                        class="btn btn-outline-secondary"
+                                    >
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <button
+                                @click="removeFromBasket(id)"
+                                class="btn btn-secondary clear-btn"
+                            >
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="deliveryMethods">
+                <h2><b>Delivery methods</b></h2>
+                <div class="list-group">
+                    <label
+                        v-for="(method, key) in deliveryMethods"
+                        class="list-group-item list-group-item-action"
+                        :class="{ active: deliveryMethod === key }"
+                    >
+                        <div class="d-flex w-100 justify-content-between">
+                            <span class="fs-3">
+                                <input
+                                    @change="getBasketSummary"
+                                    class="form-check-input"
+                                    type="radio"
+                                    :name="key"
+                                    :value="key"
+                                    v-model="deliveryMethod"
+                                />
+                                {{ method.name }}
+                            </span>
+                            <span class="fs-3">{{ method.price }}</span>
                         </div>
-                    </td>
-                    <td>
-                        <button class="btn btn-secondary clear-btn">
-                            <i class="fa-regular fa-trash-can"></i>
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div id="deliveryMethods">
-            <h2><b>Delivery methods</b></h2>
-            <div class="list-group">
-                <label
-                    v-for="(method, key) in deliveryMethods"
-                    class="list-group-item list-group-item-action"
-                    :class="{ active: deliveryMethod === key }"
-                >
-                    <div class="d-flex w-100 justify-content-between">
-                        <span class="fs-3">
-                            <input
-                                class="form-check-input"
-                                type="radio"
-                                :name="key"
-                                :value="key"
-                                v-model="deliveryMethod"
-                            />
-                            {{ method.name }}
-                        </span>
-                        <span class="fs-3">{{ method.price }}</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 bg-light position-relative">
+            <loading-overlay v-if="loadingCalculations"></loading-overlay>
+            <div id="order-summary" class="sticky-md-top">
+                <h3>
+                    <b>{{ __('Summary') }}</b>
+                </h3>
+                <div>
+                    <div class="fs-4">
+                        {{ __('Products') }}
+                        <b class="float-end">{{ summary.productsPrice }}</b>
                     </div>
-                </label>
+                    <div class="fs-4">
+                        {{ __('Delivery') }}
+                        <span v-if="deliveryMethod"
+                            >({{
+                                deliveryMethods[deliveryMethod]['name']
+                            }})</span
+                        >
+                        <b class="float-end">{{ summary.deliveryPrice }}</b>
+                    </div>
+                    <hr />
+                    <div class="fs-4">
+                        {{ __('Total price') }}
+                        <b class="float-end">{{ summary.totalPrice }}</b>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -97,15 +152,38 @@ export default {
     props: [
         'productsInBasket',
         'getProductsInBasketDataUrl',
+        'getBasketSummaryUrl',
         'deliveryMethods',
+        'setProductsInLocalStorage',
     ],
     data() {
         return {
+            basketLastChange: null,
+            loadingCalculations: false,
             productsInBasketData: {},
             deliveryMethod: '',
+            summary: {
+                productsPrice: null,
+                deliveryPrice: null,
+                totalPrice: null,
+            },
         };
     },
     methods: {
+        productNum: function (num, id) {
+            this.productsInBasket[id]['num'] += num;
+            if (!this.productsInBasket[id]['num']) {
+                this.removeFromBasket(id);
+                return;
+            }
+            this.setProductsInLocalStorage();
+            this.getBasketSummary();
+        },
+        removeFromBasket: function (id) {
+            delete this.productsInBasket[id];
+            this.setProductsInLocalStorage();
+            this.getBasketSummary();
+        },
         getProductsInBasketData: function () {
             var that = this;
             axios
@@ -117,10 +195,31 @@ export default {
                         response.data.productsInBasketData;
                 });
         },
+        getBasketSummary: _.debounce(function () {
+            this.basketLastChange = Date.now();
+            this.loadingCalculations = true;
+            var that = this;
+            axios
+                .post(this.getBasketSummaryUrl, {
+                    basketLastChange: this.basketLastChange,
+                    productsInBasket: this.productsInBasket,
+                    deliveryMethod: this.deliveryMethod,
+                })
+                .then(function (response) {
+                    if (
+                        response.data.basketLastChange !== that.basketLastChange
+                    ) {
+                        return;
+                    }
+                    that.summary = response.data.summary;
+                    that.loadingCalculations = false;
+                });
+        }, 500),
     },
     mounted() {
         if (Object.keys(this.productsInBasket).length) {
             this.getProductsInBasketData();
+            this.getBasketSummary();
         }
     },
 };

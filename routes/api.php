@@ -15,4 +15,5 @@ Route::post('/get-products-view-all-categories', [HomeController::class, 'getPro
 Route::post('/get-product-nums', [HomeController::class, 'getProductNums'])->name('get-product-nums');
 Route::prefix('basket')->group(function () {
     Route::post('/get-products-in-basket-data', [BasketController::class, 'getProductsInBasketData'])->name('get-products-in-basket-data');
+    Route::post('/get-basket-summary', [BasketController::class, 'getBasketSummary'])->name('get-basket-summary');
 });

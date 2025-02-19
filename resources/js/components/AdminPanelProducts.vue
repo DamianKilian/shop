@@ -146,7 +146,7 @@
                             <template v-else>
                                 {{
                                     product.product.active
-                                        ? __('Disactivate')
+                                        ? __('Deactivate')
                                         : __('Activate')
                                 }}
                             </template>

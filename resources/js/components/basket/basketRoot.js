@@ -1,10 +1,15 @@
 export default {
     data() {
         return {
+            basketReady: false,
             productsInBasket: {},
         };
     },
     methods: {
+        removeFromBasketAll: function () {
+            this.productsInBasket = {};
+            this.setProductsInLocalStorage();
+        },
         addToBasket: function (e) {
             let target = e.target;
             if (!target.classList.contains('addToBasket')) {
@@ -12,6 +17,9 @@ export default {
             }
             let productId = target.dataset.productId;
             this.productsInBasket[productId] = { num: 1 };
+            this.setProductsInLocalStorage();
+        },
+        setProductsInLocalStorage: function () {
             localStorage.setItem("productsInBasket", JSON.stringify(this.productsInBasket));
         },
         getProductsFromLocalStorage: function () {
@@ -23,5 +31,6 @@ export default {
     },
     mounted() {
         this.getProductsFromLocalStorage();
+        this.basketReady = true;
     },
 };

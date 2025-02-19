@@ -71,7 +71,7 @@
                             <template v-else>
                                 {{
                                     page.active
-                                        ? __('Disactivate')
+                                        ? __('Deactivate')
                                         : __('Activate')
                                 }}
                             </template>

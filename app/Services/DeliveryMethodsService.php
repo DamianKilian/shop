@@ -31,4 +31,13 @@ class DeliveryMethodsService
         }
         $this->deliveryMethods = $deliveryMethods;
     }
+
+    public function getDeliveryPrice($deliveryMethod)
+    {
+        $deliveryPrice = null;
+        if (isset($this->deliveryMethods[$deliveryMethod])) {
+            $deliveryPrice = $this->deliveryMethods[$deliveryMethod]['price'];
+        }
+        return $deliveryPrice;
+    }
 }

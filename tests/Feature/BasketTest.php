@@ -13,6 +13,42 @@ class BasketTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_getBasketSummary(): void
+    {
+        $category = Category::factory()->create([
+            'slug' => 'milk',
+        ]);
+        $p1 = Product::factory()->create([
+            'price' => 10.10,
+            'category_id' => $category->id,
+        ]);
+        $p2  = Product::factory()->create([
+            'price' => 100.20,
+            'category_id' => $category->id,
+        ]);
+        $p3  = Product::factory()->create([
+            'price' => 1000.30,
+            'category_id' => $category->id,
+        ]);
+        $expected = [
+            "productsPrice" => "1 231,00",
+            "deliveryPrice" => "0,00",
+            "totalPrice" => "1 231,00",
+        ];
+
+        $response = $this->post("/api/basket/get-basket-summary", [
+            'productsInBasket' => [
+                $p1->id => ['num' => 3],
+                $p2->id => ['num' => 2],
+                $p3->id => ['num' => 1],
+            ],
+            'deliveryMethod' => 'inpost',
+        ]);
+
+        $response->assertSuccessful();
+        $this->assertTrue($response['summary'] === $expected);
+    }
+
     public function test_basketIndex(): void
     {
         $response = $this->get("/basket/index");

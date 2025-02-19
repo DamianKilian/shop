@@ -1,4 +1,8 @@
 {
+    "Clear": "Wyczyść",
+    "Total price": "Cena łączna",
+    "Delivery": "Dostawa",
+    "Summary": "Podsumowanie",
     "Courier": "Kurier",
     "Enable/disable inPost delivery method": "Włącz/wyłącz metodę dostarczania inPost",
     "Price for courier delivery method": "Cena za dostawę kurierską",
@@ -15,7 +19,7 @@
     "Show": "Pokaż",
     "Apply changes": "Zastosuj zmiany",
     "Activate": "Aktywuj",
-    "Disactivate": "Dezaktywuj",
+    "Deactivate": "Dezaktywuj",
     "Refresh": "Odśwież",
     "Preview": "Podgląd",
     "Footer HTML": "HTML stopki",
