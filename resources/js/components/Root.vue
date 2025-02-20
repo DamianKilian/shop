@@ -158,6 +158,7 @@ export default {
                     if (that.getProductNumsUrl && !pageChange) {
                         that.getProductNums();
                     }
+                    that.changeBtnIfAddedAll();
                 })
                 .catch(function (error) {
                     if (_.has(error, 'response.data.failedValidation')) {

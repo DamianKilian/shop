@@ -361,22 +361,11 @@ class EditorJSService
                 }
             }
         }
-
-
-// dump($c);//mmmyyy
-// dump($c2);//mmmyyy
-// dump($imageUrls);//mmmyyy
-// dump($displayType);//mmmyyy
-
-
         $files = File::where($c, null)
             ->where($c2, null)
             ->whereIn('url', $imageUrls)
             ->whereDisplayType($displayType)
             ->get();
-
-// dd(File::all());//mmmyyy
-
         foreach ($files as $file) {
             $key = array_search($file->url, $imageUrls);
             if (false === $key) {
