@@ -15,6 +15,10 @@ Route::get('/product/{slug}', [App\Http\Controllers\HomeController::class, 'prod
 Route::prefix('basket')->group(function () {
     Route::get('/index', [App\Http\Controllers\BasketController::class, 'basketIndex'])->name('basket-index');
 });
+Route::prefix('order')->group(function () {
+    Route::post('/store', [App\Http\Controllers\OrderController::class, 'orderStore'])->name('order-store');
+    Route::get('/payment/{order}', [App\Http\Controllers\OrderController::class, 'orderPayment'])->name('order-payment');
+});
 
 Route::prefix('admin-panel')->middleware('can:admin')->group(function () {
     Route::get('/products', [App\Http\Controllers\AdminPanelProductsController::class, 'products'])->name('admin-panel-products');

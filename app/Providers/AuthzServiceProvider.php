@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Order;
 use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -15,6 +16,9 @@ class AuthzServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Gate::define('orderPaymentAccess', function (User $user, Order $order) {
+            return $user->id === $order->user_id;
+        });
         Gate::define('admin', function (User $user) {
             return $this->hasPermission('admin', $user);
         });

@@ -101,7 +101,7 @@
                         <div class="d-flex w-100 justify-content-between">
                             <span class="fs-3">
                                 <input
-                                    @change="getBasketSummary"
+                                    @change="deliveryMethodChange"
                                     class="form-check-input"
                                     type="radio"
                                     :name="key"
@@ -142,6 +142,28 @@
                         <b class="float-end">{{ summary.totalPrice }}</b>
                     </div>
                 </div>
+                <form :action="orderStoreUrl" method="post">
+                    <input type="hidden" name="_token" :value="csrfToken" />
+                    <input
+                        type="hidden"
+                        name="productsInBasket"
+                        :value="JSON.stringify(productsInBasket)"
+                    />
+                    <input
+                        type="hidden"
+                        name="deliveryMethod"
+                        :value="deliveryMethod"
+                    />
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-lg w-100 mt-2"
+                    >
+                        {{ __('Place your order') }}
+                    </button>
+                    <div v-if="error" class="text-bg-danger p-1 m-1">
+                        {{ error }}
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -150,14 +172,18 @@
 <script>
 export default {
     props: [
+        'error',
         'productsInBasket',
         'getProductsInBasketDataUrl',
         'getBasketSummaryUrl',
+        'orderStoreUrl',
         'deliveryMethods',
         'setProductsInLocalStorage',
     ],
     data() {
         return {
+            csrfToken: document.querySelector("meta[name='csrf-token']")
+                .content,
             basketLastChange: null,
             loadingCalculations: false,
             productsInBasketData: {},
@@ -170,6 +196,26 @@ export default {
         };
     },
     methods: {
+        deliveryMethodChange: function () {
+            this.setDeliveryMethodInLocalStorage();
+            this.getBasketSummary();
+        },
+        setDeliveryMethodInLocalStorage: function () {
+            var deliveryMethodData = {
+                deliveryMethod: this.deliveryMethod,
+            };
+            localStorage.setItem(
+                'deliveryMethodData',
+                JSON.stringify(deliveryMethodData)
+            );
+        },
+        getDeliveryMethodFromLocalStorage: function () {
+            let deliveryMethodData = localStorage.getItem('deliveryMethodData');
+            if (deliveryMethodData) {
+                this.deliveryMethod =
+                    JSON.parse(deliveryMethodData).deliveryMethod;
+            }
+        },
         productNum: function (num, id) {
             this.productsInBasket[id]['num'] += num;
             if (!this.productsInBasket[id]['num']) {
@@ -218,6 +264,7 @@ export default {
     },
     mounted() {
         if (Object.keys(this.productsInBasket).length) {
+            this.getDeliveryMethodFromLocalStorage();
             this.getProductsInBasketData();
             this.getBasketSummary();
         }

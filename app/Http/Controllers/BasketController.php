@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use App\Services\BasketService;
 use App\Services\DeliveryMethodsService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class BasketController extends Controller
 {
@@ -25,16 +23,7 @@ class BasketController extends Controller
     public function getProductsInBasketData(Request $request)
     {
         $productsInBasketData = BasketService::getProductsInBasketData($request->productsInBasket);
-        foreach ($productsInBasketData as &$product) {
-            $product->url = route('product', [$product->slug]);
-            if ($product->productImages->isNotEmpty()) {
-                $photo = $product->productImages->first();
-                $product->fullUrlSmall = Storage::url($photo->url_thumbnail);
-            } else {
-                $product->fullUrlSmall = '';
-            }
-            $product->unsetRelation('productImages');
-        };
+        BasketService::productsInBasketDataForList($productsInBasketData);
         return response()->json([
             'productsInBasketData' => $productsInBasketData,
         ]);
@@ -45,7 +34,7 @@ class BasketController extends Controller
         $summary = BasketService::getBasketSummary($request->productsInBasket, $request->deliveryMethod, $deliveryMethodsService);
         return response()->json([
             'basketLastChange' => $request->basketLastChange,
-            'summary' => $summary,
+            'summary' => $summary['formatted'],
         ]);
     }
 }

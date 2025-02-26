@@ -50,7 +50,8 @@ import NumBadge from './components/basket/NumBadge.vue';
 app.component('num-badge', NumBadge);
 import basketIndex from './components/basket/Index.vue';
 app.component('basket-index', basketIndex);
-
+import basketPayment from './components/basket/Payment.vue';
+app.component('basket-payment', basketPayment);
 
 /**
  * The following block of code may be used to automatically register your
