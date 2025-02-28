@@ -38,7 +38,7 @@ class OrderController extends Controller
         return redirect()->route('order-payment', ['order' => $order->id]);
     }
 
-    public function orderPayment(Request $request, int $orderId, DeliveryMethodsService $deliveryMethodsService)
+    public function orderPayment(Request $request, DeliveryMethodsService $deliveryMethodsService, int $orderId)
     {
         if ($orderId !== session()->get('orderPaymentAccess')) {
             $order = Order::whereId($orderId)->with('products')->first();
@@ -62,7 +62,6 @@ class OrderController extends Controller
         return view('basket.payment', [
             'productsInBasketData' => $productsInBasketData->toJson(),
             'summary' => json_encode($summary['formatted']),
-            'productsInBasket' => $request->productsInBasket,
             'deliveryMethod' => $deliveryMethod,
         ]);
     }
