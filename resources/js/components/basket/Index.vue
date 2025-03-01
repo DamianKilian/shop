@@ -28,66 +28,68 @@
                     </tr>
                 </thead>
                 <tbody class="table-group-divider">
-                    <tr
+                    <template
                         v-for="(product, id, index) in productsInBasket"
                         :key="id"
                     >
-                        <td scope="row">{{ index + 1 }}</td>
-                        <td class="position-relative">
-                            <div class="product-data">
-                                <a
-                                    class="link d-lg-flex align-items-center text-decoration-none"
-                                    :href="productsInBasketData[id].url"
-                                >
-                                    <img
-                                        :src="
-                                            productsInBasketData[id]
-                                                .fullUrlSmall
-                                        "
-                                        class="product-img"
-                                    />
-                                    <span class="flex-grow-1">{{
-                                        productsInBasketData[id].title
-                                    }}</span>
-                                    <span class="ms-3 text-dark"
-                                        >{{
-                                            productsInBasketData[id].price
-                                        }}zł</span
+                        <tr v-if="productsInBasketData[id]">
+                            <td scope="row">{{ index + 1 }}</td>
+                            <td class="position-relative">
+                                <div class="product-data">
+                                    <a
+                                        class="link d-lg-flex align-items-center text-decoration-none"
+                                        :href="productsInBasketData[id].url"
                                     >
-                                </a>
-                            </div>
-                            <div class="product-num">
-                                <div
-                                    class="flex-nowrap input-group input-group-sm"
-                                >
-                                    <button
-                                        @click="productNum(-1, id)"
-                                        class="btn btn-outline-secondary"
-                                    >
-                                        <i class="fa-solid fa-minus"></i>
-                                    </button>
-                                    <input
-                                        v-model="product.num"
-                                        class="form-control"
-                                    />
-                                    <button
-                                        @click="productNum(1, id)"
-                                        class="btn btn-outline-secondary"
-                                    >
-                                        <i class="fa-solid fa-plus"></i>
-                                    </button>
+                                        <img
+                                            :src="
+                                                productsInBasketData[id]
+                                                    .fullUrlSmall
+                                            "
+                                            class="product-img"
+                                        />
+                                        <span class="flex-grow-1">{{
+                                            productsInBasketData[id].title
+                                        }}</span>
+                                        <span class="ms-3 text-dark"
+                                            >{{
+                                                productsInBasketData[id].price
+                                            }}zł</span
+                                        >
+                                    </a>
                                 </div>
-                            </div>
-                        </td>
-                        <td>
-                            <button
-                                @click="removeFromBasket(id)"
-                                class="btn btn-secondary clear-btn"
-                            >
-                                <i class="fa-regular fa-trash-can"></i>
-                            </button>
-                        </td>
-                    </tr>
+                                <div class="product-num">
+                                    <div
+                                        class="flex-nowrap input-group input-group-sm"
+                                    >
+                                        <button
+                                            @click="productNum(-1, id)"
+                                            class="btn btn-outline-secondary"
+                                        >
+                                            <i class="fa-solid fa-minus"></i>
+                                        </button>
+                                        <input
+                                            v-model="product.num"
+                                            class="form-control"
+                                        />
+                                        <button
+                                            @click="productNum(1, id)"
+                                            class="btn btn-outline-secondary"
+                                        >
+                                            <i class="fa-solid fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <button
+                                    @click="removeFromBasket(id)"
+                                    class="btn btn-secondary clear-btn"
+                                >
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </template>
                 </tbody>
             </table>
             <div id="deliveryMethods">
@@ -204,13 +206,14 @@ export default {
             var deliveryMethodData = {
                 deliveryMethod: this.deliveryMethod,
             };
-            localStorage.setItem(
+            sessionStorage.setItem(
                 'deliveryMethodData',
                 JSON.stringify(deliveryMethodData)
             );
         },
         getDeliveryMethodFromLocalStorage: function () {
-            let deliveryMethodData = localStorage.getItem('deliveryMethodData');
+            let deliveryMethodData =
+                sessionStorage.getItem('deliveryMethodData');
             if (deliveryMethodData) {
                 this.deliveryMethod =
                     JSON.parse(deliveryMethodData).deliveryMethod;

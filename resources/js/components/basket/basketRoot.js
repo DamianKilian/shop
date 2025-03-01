@@ -21,10 +21,10 @@ export default {
             this.changeBtnIfAdded(target);
         },
         setProductsInLocalStorage: function () {
-            localStorage.setItem("productsInBasket", JSON.stringify(this.productsInBasket));
+            sessionStorage.setItem("productsInBasket", JSON.stringify(this.productsInBasket));
         },
         getProductsFromLocalStorage: function () {
-            let productsInBasket = localStorage.getItem("productsInBasket");
+            let productsInBasket = sessionStorage.getItem("productsInBasket");
             if (productsInBasket) {
                 this.productsInBasket = JSON.parse(productsInBasket);
             }
