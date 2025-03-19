@@ -18,7 +18,7 @@ export default {
             getProductsViewUrl: window.getProductsViewUrl,
             getProductNumsUrl: window.getProductNumsUrl,
             productNums: {},
-            getingProductsView: false,
+            gettingProductsView: false,
             queryStrParams: {
                 page: null,
                 searchValue: '',
@@ -103,7 +103,7 @@ export default {
             pageChange = false,
             historyPushState = true
         ) {
-            this.getingProductsView = true;
+            this.gettingProductsView = true;
             if (!queryStrParams.page) {
                 queryStrParams.page = 1;
             }
@@ -113,7 +113,7 @@ export default {
             );
             var page = this.queryStrParams.page;
             if (0 >= page || page > this.lastPage) {
-                this.getingProductsView = false;
+                this.gettingProductsView = false;
                 return;
             }
             if (this.queryStrParams.categoryChildrenIds) {
@@ -168,7 +168,7 @@ export default {
                     console.log(error);
                 })
                 .then(() => {
-                    that.getingProductsView = false;
+                    that.gettingProductsView = false;
                     that.queryStrParamsInitialVals = _.clone(
                         this.queryStrParams
                     );

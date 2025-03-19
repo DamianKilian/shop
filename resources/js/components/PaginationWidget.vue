@@ -28,7 +28,7 @@
 
 <script>
 export default {
-    props: ['lastPage', 'currentPage', 'getProductsView', 'getingProductsView'],
+    props: ['lastPage', 'currentPage', 'getProductsView', 'gettingProductsView'],
     data() {
         return {
             page: null,
@@ -47,8 +47,7 @@ export default {
     },
     methods: {
         getProductsViewPw: function (queryStrParams) {
-            if (this.getingProductsView) {
-                console.log('getingProductsView');
+            if (this.gettingProductsView) {
                 return;
             }
             this.getProductsView(queryStrParams, true);
