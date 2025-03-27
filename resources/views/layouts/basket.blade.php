@@ -16,6 +16,7 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Scripts -->
+    @include('_partials.scripts-head')
     @yield('scriptsHead')
     @php
         $locale = app()->getLocale();

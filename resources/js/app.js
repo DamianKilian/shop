@@ -21,6 +21,17 @@ import { createApp } from 'vue';
 
 import Root from './components/Root.vue';
 const app = createApp(Root);
+if ('production' === window.appEnv) {
+  app.config.errorHandler = (err, vm, info) => {
+      var logData = {
+          framework: 'vue',
+          message: err.message,
+          info: info,
+          stack: err.stack,
+      };
+      window.logJs(logData);
+  };
+}
 app.config.globalProperties.__ = window.__;
 
 // import ExampleComponent from './components/ExampleComponent.vue';

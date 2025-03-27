@@ -15,6 +15,7 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Scripts -->
+    @include('_partials.scripts-head')
     <script>
         window.pageType = '';
         window.maxProductsPrice = {{ $maxProductsPrice ?? 'null' }};

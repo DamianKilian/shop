@@ -15,6 +15,9 @@
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
+    <!-- Scripts -->
+    @include('_partials.scripts-head')
+
     @php
         $locale = app()->getLocale();
     @endphp

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BasketController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LogController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/user', function (Request $request) {
@@ -17,3 +18,4 @@ Route::prefix('basket')->group(function () {
     Route::post('/get-products-in-basket-data', [BasketController::class, 'getProductsInBasketData'])->name('get-products-in-basket-data');
     Route::post('/get-basket-summary', [BasketController::class, 'getBasketSummary'])->name('get-basket-summary');
 });
+Route::post('/log-js', [LogController::class, 'logJs'])->name('log-js');
