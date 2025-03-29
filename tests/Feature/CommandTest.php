@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Mail\Logs;
 use App\Models\Attachment;
 use App\Models\Category;
 use App\Models\File;
@@ -9,12 +10,49 @@ use App\Models\Page;
 use App\Models\Product;
 use App\Models\Suggestion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Mail\Mailables\Attachment as MailablesAttachment;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
+use Illuminate\Support\Env;
 
 class CommandTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_logs_send(): void
+    {
+        Mail::fake();
+        file_put_contents(storage_path('logs/laravel-error.log'), "logs contents");
+        Env::getRepository()->set('LOG_SEND_EMAILS', 'example@example.com');
+
+        $this->artisan('logs:send')->assertExitCode(0);
+        Mail::assertSent(Logs::class, function (Logs $mail) {
+            return $mail->hasAttachment(
+                MailablesAttachment::fromPath(storage_path('logs/laravel-error.log'))
+            );
+        });
+    }
+
+    public function test_logs_send_empty_emails(): void
+    {
+        Mail::fake();
+        file_put_contents(storage_path('logs/laravel-error.log'), "logs contents");
+        Env::getRepository()->set('LOG_SEND_EMAILS', '');
+
+        $this->artisan('logs:send')->assertExitCode(0);
+        Mail::assertNotSent(Logs::class);
+    }
+
+    public function test_logs_send_empty_log_file(): void
+    {
+        Mail::fake();
+        file_put_contents(storage_path('logs/laravel-error.log'), "");
+        Env::getRepository()->set('LOG_SEND_EMAILS', 'example@example.com');
+
+        $this->artisan('logs:send')->assertExitCode(0);
+        Mail::assertNotSent(Logs::class);
+    }
 
     public function test_prune_temp(): void
     {

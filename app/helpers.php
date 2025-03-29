@@ -14,6 +14,6 @@ if (! function_exists('price')) {
     function price($product)
     {
         $pieces = explode('.', $product->price);
-        return $pieces[0] . ',<small style="font-size: 1.4rem;">' . $pieces[1] . 'zł' . '</small>';
+        return $pieces[0] . ',<small style="font-size: 1.4rem;">' . ($pieces[1] ?? '00') . 'zł' . '</small>';
     }
 }

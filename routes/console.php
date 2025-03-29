@@ -43,3 +43,8 @@ Artisan::command('prune:attachments', function () {
     AppService::pruneFiles('attachments');
     $this->comment('Unused pageAttachments removed');
 })->purpose('Remove unused pageAttachments')->daily();
+
+Artisan::command('logs:send', function () {
+    AppService::logsSend();
+    $this->comment('Logs have been sent to: "' . env('LOG_SEND_EMAILS') . '"');
+})->purpose('Send logs to email')->hourly();

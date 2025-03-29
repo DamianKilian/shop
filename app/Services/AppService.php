@@ -7,9 +7,22 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use App\Mail\Logs;
+use Illuminate\Support\Facades\Mail;
 
 class AppService
 {
+    public static function logsSend()
+    {
+        $email = env('LOG_SEND_EMAILS');
+        if (!$email) {
+            return;
+        }
+        if (!filesize(storage_path('logs/laravel-error.log'))) {
+            return;
+        }
+        Mail::to(explode(',', env('LOG_SEND_EMAILS')))->send(new Logs());
+    }
 
     protected static function footerToHtml($dataKey, $editorJS)
     {
