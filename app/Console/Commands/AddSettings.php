@@ -40,7 +40,7 @@ class AddSettings extends Command
         ]);
         $pageEditorSettings = SettingCategory::create([
             'name' => 'Page editor settings',
-            'order_priority' => 2000,
+            'order_priority' => 3000,
         ]);
 
         $productOpenTarget = Setting::create([
@@ -161,7 +161,7 @@ class AddSettings extends Command
     public function deliveryMethodsSett() {
         $deliveryMethodsSett = SettingCategory::create([
             'name' => 'Delivery methods settings',
-            'order_priority' => 3000,
+            'order_priority' => 2000,
         ]);
         Setting::create([
             'name' => 'INPOST_PRICE',
