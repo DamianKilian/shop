@@ -36,8 +36,7 @@
                     <img src="{{ asset('storage/logo.svg') }}" width="48" height="24"
                         alt="{{ config('app.name', 'Laravel') }}">
                 </a>
-                <div
-                    class="menu-btn d-sm-none order-1 p-2 align-self-center user-select-none flex-grow-1">
+                <div class="menu-btn d-sm-none order-1 p-2 align-self-center user-select-none flex-grow-1">
                     <span class="display-6"><i class="fa-solid fa-bars"></i></span>
                 </div>
                 <div class="order-1 order-sm-2 align-self-center ms-auto nav-btn">
@@ -65,39 +64,7 @@
                         @endforeach
                     </ul>
                 </div>
-                <div class="order-1 order-sm-2 align-self-center nav-dropdown">
-                    <button id="navbarDropdown" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fa-regular fa-user"></i>
-                        <span class="d-none d-sm-inline">
-                            @guest {{ __('Guest') }}
-                            @else
-                            {{ Auth::user()->name }} @endguest
-                        </span>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        @guest
-                            @if (Route::has('login'))
-                                <li><a class="dropdown-item" href="{{ route('login') }}">{{ __('Login') }}</a></li>
-                            @endif
-                            @if (Route::has('register'))
-                                <li><a class="dropdown-item" href="{{ route('register') }}">{{ __('Register') }}</a></li>
-                            @endif
-                        @else
-                            @can('admin')
-                                <a class="dropdown-item"
-                                    href="{{ route('admin-panel-products') }}">{{ __('Admin panel') }}</a>
-                            @endcan
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                                onclick="event.preventDefault();
-                         document.getElementById('logout-form').submit();">
-                                {{ __('Logout') }}
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
-                        @endguest
-                    </div>
-                </div>
+                @include('_partials.layouts.nav-dropdown')
             </nav>
         </div>
         <div id="main" class="clearfix">

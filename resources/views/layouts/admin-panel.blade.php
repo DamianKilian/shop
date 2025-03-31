@@ -60,37 +60,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="order-1 order-sm-2 align-self-center nav-dropdown">
-                    <button id="navbarDropdown" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fa-regular fa-user"></i>
-                        <span class="d-none d-sm-inline">
-                            @guest {{ __('Guest') }}
-                            @else
-                            {{ Auth::user()->name }} @endguest
-                        </span>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        @guest
-                            @if (Route::has('login'))
-                                <li><a class="dropdown-item" href="{{ route('login') }}">{{ __('Login') }}</a></li>
-                            @endif
-                            @if (Route::has('register'))
-                                <li><a class="dropdown-item" href="{{ route('register') }}">{{ __('Register') }}</a></li>
-                            @endif
-                        @else
-                            <a class="dropdown-item"
-                                href="{{ route('admin-panel-products') }}">{{ __('Admin panel') }}</a>
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                                onclick="event.preventDefault();
-                             document.getElementById('logout-form').submit();">
-                                {{ __('Logout') }}
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
-                        @endguest
-                    </div>
-                </div>
+                @include('_partials.layouts.nav-dropdown')
             </nav>
         </div>
         <div id="main" class="clearfix">
@@ -100,19 +70,23 @@
                         aria-label="Close">
                     </div>
                 </div>
-                <nav class="nav flex-column">
-                    <a class="nav-link _products" aria-current="page"
-                        href="{{ route('admin-panel-products') }}">{{ __('Products') }}</a>
-                    <a class="nav-link _categories"
-                        href="{{ route('admin-panel-categories') }}">{{ __('Categories') }}</a>
-                    <a class="nav-link _filters" href="{{ route('admin-panel-filters') }}">{{ __('Filters') }}</a>
-                    <a class="nav-link _pages" href="{{ route('admin-panel-pages') }}">{{ __('Pages') }}</a>
-                    <a class="nav-link _settings" href="{{ route('admin-panel-settings') }}">{{ __('Settings') }}</a>
-                    <a class="nav-link _footer" href="{{ route('admin-panel-footer') }}">{{ __('Footer') }}</a>
-                    @can('usersManagement')
-                        <a class="nav-link _users" href="{{ route('admin-panel-users') }}">{{ __('Users') }}</a>
+                @section('nav')
+                    @can('admin')
+                        <nav class="nav flex-column">
+                            <a class="nav-link _products" aria-current="page"
+                                href="{{ route('admin-panel-products') }}">{{ __('Products') }}</a>
+                            <a class="nav-link _categories"
+                                href="{{ route('admin-panel-categories') }}">{{ __('Categories') }}</a>
+                            <a class="nav-link _filters" href="{{ route('admin-panel-filters') }}">{{ __('Filters') }}</a>
+                            <a class="nav-link _pages" href="{{ route('admin-panel-pages') }}">{{ __('Pages') }}</a>
+                            <a class="nav-link _settings" href="{{ route('admin-panel-settings') }}">{{ __('Settings') }}</a>
+                            <a class="nav-link _footer" href="{{ route('admin-panel-footer') }}">{{ __('Footer') }}</a>
+                            @can('usersManagement')
+                                <a class="nav-link _users" href="{{ route('admin-panel-users') }}">{{ __('Users') }}</a>
+                            @endcan
+                        </nav>
                     @endcan
-                </nav>
+                @show
             </nav>
             <div id="content">
                 @yield('content')

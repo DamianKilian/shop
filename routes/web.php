@@ -19,6 +19,9 @@ Route::prefix('order')->group(function () {
     Route::post('/store', [App\Http\Controllers\OrderController::class, 'orderStore'])->name('order-store');
     Route::get('/payment/{order}', [App\Http\Controllers\OrderController::class, 'orderPayment'])->name('order-payment');
 });
+Route::prefix('account')->group(function () {
+    Route::get('/addresses', [App\Http\Controllers\AccountController::class, 'addresses'])->name('addresses');
+});
 
 Route::prefix('admin-panel')->middleware('can:admin')->group(function () {
     Route::get('/products', [App\Http\Controllers\AdminPanelProductsController::class, 'products'])->name('admin-panel-products');
