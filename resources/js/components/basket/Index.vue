@@ -206,14 +206,13 @@ export default {
             var deliveryMethodData = {
                 deliveryMethod: this.deliveryMethod,
             };
-            sessionStorage.setItem(
+            localStorage.setItem(
                 'deliveryMethodData',
                 JSON.stringify(deliveryMethodData)
             );
         },
         getDeliveryMethodFromLocalStorage: function () {
-            let deliveryMethodData =
-                sessionStorage.getItem('deliveryMethodData');
+            let deliveryMethodData = localStorage.getItem('deliveryMethodData');
             if (deliveryMethodData) {
                 this.deliveryMethod =
                     JSON.parse(deliveryMethodData).deliveryMethod;
