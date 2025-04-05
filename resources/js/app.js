@@ -59,10 +59,14 @@ app.component('admin-panel-users', AdminPanelUsers);
 //basket
 import NumBadge from './components/basket/NumBadge.vue';
 app.component('num-badge', NumBadge);
-import basketIndex from './components/basket/Index.vue';
-app.component('basket-index', basketIndex);
-import basketPayment from './components/basket/Payment.vue';
-app.component('basket-payment', basketPayment);
+import BasketIndex from './components/basket/Index.vue';
+app.component('basket-index', BasketIndex);
+import BasketPayment from './components/basket/Payment.vue';
+app.component('basket-payment', BasketPayment);
+
+//account
+import Addresses from './components/account/Addresses.vue';
+app.component('addresses', Addresses);
 
 /**
  * The following block of code may be used to automatically register your

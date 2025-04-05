@@ -1,0 +1,24 @@
+#products-container.addresses {
+    .product {
+        &:hover {
+            .card {
+                background-color: cornsilk;
+                .card-body {
+                    background-color: inherit;
+                }
+            }
+        }
+        .card {
+            width: 99%;
+        }
+    }
+}
+
+@include media-breakpoint-up(md) {
+    #products-container.addresses {
+        .product {
+            width: 50%;
+            max-width: none;
+        }
+    }
+}

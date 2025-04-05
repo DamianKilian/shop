@@ -8,3 +8,6 @@ up:
 
 yarn-dev:
 	docker-compose run -p 5173:5173 npm yarn dev
+
+fresh:
+	docker-compose run --rm artisan migrate:fresh --seed

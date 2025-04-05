@@ -36,7 +36,7 @@
             </div>
         </div>
     </div>
-    <div v-else class="alert alert-light mt-3 text-center" role="alert">{{ __('No Filters') }}</div>
+    <div v-else class="alert alert-light mt-3 text-center" role="alert">{{ __('No filters') }}</div>
     <AdminPanelProductsPagination :pagination='pagination' :getItems='getFilters' v-if='filters.length' />
 </template>
 
