@@ -57,7 +57,8 @@
                         </button>
                     </div>
                     <div class="card-body">
-                        <AddressDisplay
+                        <AddAddressFormContent
+                            :failedValidation="{}"
                             :address="address"
                             :areaCodes="areaCodes"
                             :readonly="true"
@@ -74,10 +75,10 @@
 
 <script>
 import AddAddress from './AddAddress.vue';
-import AddressDisplay from './AddressDisplay.vue';
+import AddAddressFormContent from './AddAddressFormContent.vue';
 
 export default {
-    components: { AddAddress, AddressDisplay },
+    components: { AddAddress, AddAddressFormContent },
     props: [
         'getAreaCodesUrl',
         'getAddressesUrl',
