@@ -6,14 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->string('email')->unique();
+            $table->string('email');
             $table->string('name');
             $table->string('surname');
             $table->string('nip');
@@ -35,11 +32,19 @@ return new class extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->unsignedBigInteger('default_address_id')->nullable();
+            $table->unsignedBigInteger('default_address_invoice_id')->nullable();
+            $table->foreign('default_address_id')
+                ->references('id')
+                ->on('addresses');
+            $table->foreign('default_address_invoice_id')
+                ->references('id')
+                ->on('addresses');
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('addresses');

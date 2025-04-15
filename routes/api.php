@@ -19,3 +19,6 @@ Route::prefix('basket')->group(function () {
     Route::post('/get-basket-summary', [BasketController::class, 'getBasketSummary'])->name('get-basket-summary');
 });
 Route::post('/log-js', [LogController::class, 'logJs'])->name('log-js');
+Route::prefix('account')->group(function () {
+    Route::post('/get-area-codes', [App\Http\Controllers\AccountController::class, 'getAreaCodes'])->name('get-area-codes')->withoutMiddleware(['auth']);
+});

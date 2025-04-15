@@ -45,7 +45,7 @@
                             :key="areaCode.id"
                             :value="areaCode.id"
                         >
-                            + {{ areaCode.code }}
+                            {{ areaCode.code }}
                         </option>
                     </select>
                     <label for="area_code_id">{{ __('Area code') }} *</label>

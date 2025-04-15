@@ -39,6 +39,14 @@ return new class extends Migration
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users');
+            $table->unsignedBigInteger('address_id');
+            $table->foreign('address_id')
+                ->references('id')
+                ->on('addresses');
+            $table->unsignedBigInteger('address_invoice_id')->nullable();
+            $table->foreign('address_invoice_id')
+                ->references('id')
+                ->on('addresses');
             $table->softDeletes();
             $table->timestamps();
         });

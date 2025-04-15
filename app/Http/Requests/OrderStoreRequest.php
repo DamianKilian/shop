@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Address;
 use Illuminate\Foundation\Http\FormRequest;
 
 class OrderStoreRequest extends FormRequest
@@ -13,9 +14,12 @@ class OrderStoreRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+        $rules = [
             'deliveryMethod' => 'required',
         ];
+        return $rules
+            + Address::createRules('address.')
+            + Address::createRules('addressInvoice.', 'required_if:addressInvoiceTheSame,false');
     }
 
     public function messages(): array

@@ -1,3 +1,11 @@
+export function addInputToForm(form, name, value, type = 'hidden') {
+    let input = document.createElement('input');
+    input.name = name;
+    input.value = value;
+    input.type = type;
+    form.appendChild(input);
+}
+
 export function goToCategory(e, index) {
     if (1 === this.breadcrumb.length) {
         return;

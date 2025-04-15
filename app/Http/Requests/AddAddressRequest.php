@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Address;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -23,16 +24,7 @@ class AddAddressRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'email' => 'required|email',
-            'name' => 'required',
-            'surname' => 'required',
-            'phone' => 'required|size:9',
-            'street' => 'required',
-            'house_number' => 'required',
-            'postal_code' => ['required', 'regex:/^\d{2}-?\d{3}$/'],
-            'area_code_id' => 'required',
-        ];
+        return Address::createRules();
     }
 
     protected function failedValidation(Validator $validator)

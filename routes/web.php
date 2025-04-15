@@ -21,10 +21,10 @@ Route::prefix('order')->group(function () {
 });
 Route::prefix('account')->group(function () {
     Route::get('/addresses', [App\Http\Controllers\AccountController::class, 'addresses'])->name('addresses');
-    Route::post('/get-area-codes', [App\Http\Controllers\AccountController::class, 'getAreaCodes'])->name('get-area-codes');
     Route::post('/get-addresses', [App\Http\Controllers\AccountController::class, 'getAddresses'])->name('get-addresses');
     Route::post('/add-address', [App\Http\Controllers\AccountController::class, 'addAddress'])->name('add-address');
     Route::post('/delete-addresses', [App\Http\Controllers\AccountController::class, 'deleteAddresses'])->name('delete-addresses');
+    Route::post('/set-default-address', [App\Http\Controllers\AccountController::class, 'setDefaultAddress'])->name('set-default-address');
 });
 
 Route::prefix('admin-panel')->middleware('can:admin')->group(function () {

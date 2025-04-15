@@ -12,7 +12,13 @@ class Order extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['price', 'delivery_method', 'user_id'];
+    protected $fillable = [
+        'price',
+        'delivery_method',
+        'user_id',
+        'address_id',
+        'address_invoice_id',
+    ];
 
     public function products(): BelongsToMany
     {

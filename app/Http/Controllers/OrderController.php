@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderStoreRequest;
+use App\Models\Address;
 use App\Models\Order;
 use App\Services\BasketService;
 use App\Services\DeliveryMethodsService;
@@ -22,13 +23,21 @@ class OrderController extends Controller
     {
         $productsInBasketArr = json_decode($request->productsInBasket, true);
         $summary = BasketService::getBasketSummary($productsInBasketArr, $request->deliveryMethod, $deliveryMethodsService);
-        $order = Order::create([
-            'price' => $summary['raw']['totalPrice'],
-            'delivery_method' => $request->deliveryMethod,
-            'user_id' => Auth::check() ? auth()->user()->id : null,
-        ]);
-        $order->products()->attach($productsInBasketArr);
         $deliveryMethod = json_encode($deliveryMethodsService->deliveryMethods[$request->deliveryMethod]);
+        $order = new Order;
+        DB::transaction(function () use ($order, $summary, $request, $productsInBasketArr) {
+            $order->price = $summary['raw']['totalPrice'];
+            $order->delivery_method = $request->deliveryMethod;
+            $order->user_id = Auth::check() ? auth()->user()->id : null;
+            $address = $this->createAddress($request->address);
+            $order->address_id = $address->id;
+            if ('false' === $request->addressInvoiceTheSame) {
+                $addressInvoice = $this->createAddress($request->addressInvoice);
+                $order->address_invoice_id = $addressInvoice->id;
+            }
+            $order->save();
+            $order->products()->attach($productsInBasketArr);
+        });
         session([
             'summary' => $summary,
             'productsInBasketArr' => $productsInBasketArr,
@@ -36,6 +45,24 @@ class OrderController extends Controller
             'orderPaymentAccess' => $order->id,
         ]);
         return redirect()->route('order-payment', ['order' => $order->id]);
+    }
+
+    protected function createAddress($data)
+    {
+        return Address::create([
+            "email" => $data['email'],
+            "name" => $data['name'],
+            "surname" => $data['surname'],
+            "nip" => $data['nip'],
+            "company_name" => $data['company_name'],
+            "phone" => $data['phone'],
+            "street" => $data['street'],
+            "house_number" => $data['house_number'],
+            "apartment_number" => $data['apartment_number'],
+            "postal_code" => $data['postal_code'],
+            "city" => $data['city'],
+            "area_code_id" => $data['area_code_id'],
+        ]);
     }
 
     public function orderPayment(Request $request, DeliveryMethodsService $deliveryMethodsService, int $orderId)

@@ -26,4 +26,18 @@ class Address extends Model
         'user_id',
         'city',
     ];
+
+    public static function createRules($prefix = '', $required = 'required')
+    {
+        return [
+            $prefix . 'email' => [$required, 'email'],
+            $prefix . 'name' => [$required],
+            $prefix . 'surname' => [$required],
+            $prefix . 'phone' => [$required, 'size:9'],
+            $prefix . 'street' => [$required],
+            $prefix . 'house_number' => [$required],
+            $prefix . 'postal_code' => [$required, 'regex:/^\d{2}-?\d{3}$/'],
+            $prefix . 'area_code_id' => [$required],
+        ];
+    }
 }

@@ -1,6 +1,6 @@
 <script>
     window.appEnv = '{{ env('APP_ENV') }}';
-    window.appEnv = 'production';
+    // window.appEnv = 'production';
 </script>
 
 <script>

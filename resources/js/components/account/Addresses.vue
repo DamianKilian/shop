@@ -3,7 +3,7 @@
         <div class="mt-3 actions-global clearfix">
             <button
                 v-if="areaCodes.length"
-                @click="editAddress = null"
+                @click="clearAddress(address)"
                 data-bs-toggle="modal"
                 data-bs-target="#addAddress"
                 class="btn btn-success float-end mt-1 mt-sm-0"
@@ -16,14 +16,35 @@
             >
                 <i class="fa-solid fa-trash"></i> {{ __('Remove') }}
             </button>
+            <div class="float-start">
+                <AddressesSelect
+                    @default-address-id-change="defaultAddressIdChange"
+                    :setAddressId="newAddressId"
+                    :addresses="addresses"
+                    :initDefaultAddressId="initDefaultAddressId"
+                    :label="__('Default address')"
+                />
+                <AddressesSelect
+                    @default-address-id-change="
+                        defaultAddressIdChange(
+                            $event,
+                            'defaultAddressInvoiceId'
+                        )
+                    "
+                    :setAddressId="newAddressId"
+                    :addresses="addresses"
+                    :initDefaultAddressId="initDefaultAddressInvoiceId"
+                    :label="__('Default invoice address')"
+                />
+            </div>
         </div>
         <AddAddress
             v-if="areaCodes.length"
+            @address-created="(id) => newAddressId = id"
             :getAddresses="getAddresses"
-            :editAddress="editAddress"
             :addAddressUrl="addAddressUrl"
-            :defaultAreaCode="defaultAreaCode"
             :areaCodes="areaCodes"
+            :address="address"
         />
         <div
             v-if="addresses.length"
@@ -31,23 +52,23 @@
             class="clearfix pt-3 addresses"
         >
             <div
-                v-for="(address, index) in addresses"
-                :key="address.id"
-                :class="{ 'bg-primary bg-opacity-75': address.selected }"
+                v-for="editAddress in addresses"
+                :key="editAddress.id"
+                :class="{ 'bg-primary bg-opacity-75': editAddress.selected }"
                 class="product filter pt-1 pb-1"
             >
                 <div class="card">
                     <div
-                        @click="address.selected = !address.selected"
+                        @click="editAddress.selected = !editAddress.selected"
                         style="height: 30px"
                     >
                         <input
                             class="m-1 form-check-input position-absolute"
                             type="checkbox"
-                            v-model="address.selected"
+                            v-model="editAddress.selected"
                         />
                         <button
-                            @click.stop="editAddress = address"
+                            @click.stop="address = editAddress"
                             data-bs-toggle="modal"
                             data-bs-target="#addAddress"
                             class="btn btn-warning btn-sm edit-product"
@@ -59,7 +80,7 @@
                     <div class="card-body">
                         <AddAddressFormContent
                             :failedValidation="{}"
-                            :address="address"
+                            :address="editAddress"
                             :areaCodes="areaCodes"
                             :readonly="true"
                         />
@@ -76,24 +97,31 @@
 <script>
 import AddAddress from './AddAddress.vue';
 import AddAddressFormContent from './AddAddressFormContent.vue';
+import AddressesSelect from './AddressesSelect.vue';
+import getAddresses from './getAddresses.js';
 
 export default {
-    components: { AddAddress, AddAddressFormContent },
+    mixins: [getAddresses],
+    components: { AddAddress, AddAddressFormContent, AddressesSelect },
     props: [
-        'getAreaCodesUrl',
-        'getAddressesUrl',
         'addAddressUrl',
         'deleteAddressesUrl',
+        'setDefaultAddressUrl',
+        'initDefaultAddressId',
+        'initDefaultAddressInvoiceId',
     ],
     data() {
         return {
-            editAddress: null,
-            defaultAreaCode: null,
-            areaCodes: [],
-            addresses: [],
+            address: {},
+            newAddressId: null,
         };
     },
     methods: {
+        defaultAddressIdChange: function (id, type = 'defaultAddressId') {
+            axios.post(this.setDefaultAddressUrl, {
+                [type]: id,
+            });
+        },
         deleteAddresses: function () {
             var that = this;
             axios
@@ -117,40 +145,6 @@ export default {
                 }
             });
             return selectedAddresses;
-        },
-        getAddressesWithAreaCodes: function () {
-            var that = this;
-            axios
-                .post(this.getAreaCodesUrl)
-                .then(function (response) {
-                    that.areaCodes = response.data.areaCodes;
-                    that.defaultAreaCode = response.data.defaultAreaCode;
-                    that.getAddresses();
-                })
-                .catch(function (error) {
-                    that.globalError = error.message;
-                    console.log(error.message);
-                });
-        },
-        getAddresses: function () {
-            this.addresses = [];
-            var that = this;
-            axios
-                .post(this.getAddressesUrl)
-                .then(function (response) {
-                    that.addresses = response.data.addresses;
-                    that.arrangeAddresses();
-                })
-                .catch(function (error) {
-                    that.globalError = error.message;
-                    console.log(error.message);
-                });
-        },
-        arrangeAddresses: function () {
-            var that = this;
-            _.forEach(this.addresses, function (address) {
-                address.selected = false;
-            });
         },
     },
     created() {

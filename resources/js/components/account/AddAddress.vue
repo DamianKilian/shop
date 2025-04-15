@@ -70,15 +70,13 @@ import AddAddressFormContent from './AddAddressFormContent.vue';
 export default {
     components: { AddAddressFormContent },
     props: [
-        'editAddress',
         'addAddressUrl',
         'getAddresses',
-        'defaultAreaCode',
         'areaCodes',
+        'address',
     ],
     data() {
         return {
-            address: this.clearAddress(),
             addingAddress: false,
             globalError: '',
             globalSuccess: '',
@@ -86,35 +84,7 @@ export default {
             title: __('Add address'),
         };
     },
-    watch: {
-        editAddress(editAddress) {
-            if (!editAddress) {
-                this.title = __('Add address');
-                this.address = this.clearAddress();
-            } else {
-                this.title = __('Edit address');
-                this.address = editAddress;
-            }
-        },
-    },
     methods: {
-        clearAddress: function () {
-            return {
-                id: null,
-                email: '',
-                name: '',
-                surname: '',
-                nip: '',
-                company_name: '',
-                area_code_id: this.defaultAreaCode.id || '',
-                phone: '',
-                street: '',
-                house_number: '',
-                apartment_number: '',
-                postal_code: '',
-                city: '',
-            };
-        },
         addAddress: function (e) {
             var that = this;
             this.addingAddress = true;
@@ -123,8 +93,10 @@ export default {
             axios
                 .post(this.addAddressUrl, formData)
                 .then(function (response) {
-                    that.globalSuccess = __('saved!');
                     that.getAddresses();
+                    if(response.data.newAddressId){
+                        that.$emit('address-created', response.data.newAddressId);
+                    }
                     that.$refs.closeModal.click();
                 })
                 .catch(function (error) {
@@ -136,7 +108,7 @@ export default {
                     }
                 })
                 .then(() => {
-                    this.addingAddress = false;
+                    that.addingAddress = false;
                 });
         },
     },

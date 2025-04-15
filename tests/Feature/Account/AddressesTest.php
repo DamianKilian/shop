@@ -76,14 +76,25 @@ class AddressesTest extends TestCase
         Address::factory()->count(3)->create([
             'user_id' => $user2->id,
         ]);
+        $a1 = Address::factory()->create([
+            'user_id' => $user->id,
+        ]);
+        $a2 = Address::factory()->create([
+            'user_id' => $user->id,
+        ]);
+        $user->default_address_id = $a1->id;
+        $user->default_address_invoice_id = $a2->id;
+        $user->save();
 
         $response = $this->actingAs($user)->post("/account/delete-addresses", [
-            'addresses' => $addresses->toArray()
+            'addresses' => array_merge($addresses->toArray(), [$a1->toArray(), $a2->toArray()])
         ]);
         $softDeleted = Address::onlyTrashed()->get();
 
-        $this->assertDatabaseCount('addresses', 9);
-        assertEquals(3, count($softDeleted));
+        $this->assertDatabaseCount('addresses', 11);
+        assertEquals(5, count($softDeleted));
+        assertEquals(null, $user->default_address_id);
+        assertEquals(null, $user->default_address_invoice_id);
         $response->assertStatus(200);
     }
 
@@ -106,11 +117,15 @@ class AddressesTest extends TestCase
             "city" => 'City',
             "area_code_id" => $areaCode->id,
         ]);
+        $newAddressId = $response['newAddressId'];
 
         $this->assertDatabaseHas('addresses', [
+            "id" => $newAddressId,
             "email" => 'example@example.com',
             "user_id" => $user->id,
         ]);
+        assertEquals($newAddressId, $user->default_address_id);
+        assertEquals($newAddressId, $user->default_address_invoice_id);
         $response->assertSuccessful();
     }
 
@@ -144,6 +159,24 @@ class AddressesTest extends TestCase
             "email" => 'example@example.com2',
             "user_id" => $user->id,
         ]);
+        $response->assertSuccessful();
+    }
+
+    public function test_setDefaultAddress(): void
+    {
+        $user = User::factory()->create();
+        $address = Address::factory()->create();
+        $address2 = Address::factory()->create();
+
+        $response = $this->actingAs($user)->post("/account/set-default-address", [
+            'defaultAddressId' => $address->id,
+        ]);
+        $response = $this->actingAs($user)->post("/account/set-default-address", [
+            'defaultAddressInvoiceId' => $address2->id,
+        ]);
+
+        assertEquals($address->id, $user->default_address_id);
+        assertEquals($address2->id, $user->default_address_invoice_id);
         $response->assertSuccessful();
     }
 }

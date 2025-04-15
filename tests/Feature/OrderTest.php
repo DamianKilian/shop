@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Address;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
@@ -32,7 +33,9 @@ class OrderTest extends TestCase
             'price' => 1000.30,
             'category_id' => $category->id,
         ]);
-
+        $addressData = $this->getAddressData();
+        $addressDataInvoice = $addressData;
+        $addressDataInvoice['email'] = "adsa@dad.asdaInvoice";
         $response = $this->post("/order/store", [
             'productsInBasket' => json_encode([
                 $p1->id => ['num' => 3],
@@ -40,9 +43,19 @@ class OrderTest extends TestCase
                 $p3->id => ['num' => 1],
             ]),
             'deliveryMethod' => 'inpost',
+            "addressInvoiceTheSame" => "false",
+            "address" => $addressData,
+            "addressInvoice" => $addressDataInvoice,
         ]);
         $order = Order::with('products')->latest()->first();
+        $address = Address::where('email', 'adsa@dad.asd')->first();
+        $addressInvoice = Address::where('email', 'adsa@dad.asdaInvoice')->first();
 
+        assertTrue($order->address_id === $address->id);
+        assertTrue($order->address_invoice_id === $addressInvoice->id);
+        $this->assertDatabaseHas('addresses', [
+            'email' => 'adsa@dad.asdaInvoice',
+        ]);
         assertTrue(3 === $order->products()->count());
         $response->assertSessionHas('summary', function ($value) {
             return $value['formatted'] == [
@@ -65,6 +78,24 @@ class OrderTest extends TestCase
             return $value == $order->id;
         });
         $response->assertRedirect();
+    }
+
+    protected function getAddressData()
+    {
+        return [
+            "email" => "adsa@dad.asd",
+            "name" => "Damian",
+            "surname" => "Surname",
+            "nip" => "123123",
+            "company_name" => "company",
+            "phone" => "111222333",
+            "street" => "street",
+            "house_number" => "123",
+            "apartment_number" => "123",
+            "postal_code" => "22-222",
+            "city" => "Rzeszów",
+            "area_code_id" => "1",
+        ];
     }
 
     public function test_orderPayment_followingRedirect(): void
@@ -94,6 +125,8 @@ class OrderTest extends TestCase
                 $p3->id => ['num' => 1],
             ]),
             'deliveryMethod' => 'inpost',
+            "addressInvoiceTheSame" => "true",
+            "address" => $this->getAddressData(),
         ]);
         $order = Order::latest()->first(['id']);
         $productsInBasketData = json_decode($response['productsInBasketData'], true);
@@ -125,8 +158,8 @@ class OrderTest extends TestCase
             'price' => 1000.30,
             'category_id' => $category->id,
         ]);
-        $user = User::factory()->make();
-        $order = Order::create([
+        $user = User::factory()->create();
+        $order = Order::factory()->create([
             'price' => 1231.00,
             'delivery_method' => 'inpost',
             'user_id' => $user->id,
@@ -137,14 +170,7 @@ class OrderTest extends TestCase
             $p3->id => ['num' => 1],
         ]);
 
-        $response = $this->actingAs($user)->get("/order/payment/$order->id", [
-            'productsInBasket' => json_encode([
-                $p1->id => ['num' => 3],
-                $p2->id => ['num' => 2],
-                $p3->id => ['num' => 1],
-            ]),
-            'deliveryMethod' => 'inpost',
-        ]);
+        $response = $this->actingAs($user)->get("/order/payment/$order->id");
         $productsInBasketData = json_decode($response['productsInBasketData'], true);
         $summary = json_decode($response['summary'], true);
         $deliveryMethod = json_decode($response['deliveryMethod'], true);
@@ -173,7 +199,7 @@ class OrderTest extends TestCase
             'price' => 1000.30,
             'category_id' => $category->id,
         ]);
-        $order = Order::create([
+        $order = Order::factory()->create([
             'price' => 1231.00,
             'delivery_method' => 'inpost',
         ]);
@@ -183,14 +209,7 @@ class OrderTest extends TestCase
             $p3->id => ['num' => 1],
         ]);
 
-        $response = $this->get("/order/payment/$order->id", [
-            'productsInBasket' => json_encode([
-                $p1->id => ['num' => 3],
-                $p2->id => ['num' => 2],
-                $p3->id => ['num' => 1],
-            ]),
-            'deliveryMethod' => 'inpost',
-        ]);
+        $response = $this->get("/order/payment/$order->id");
 
         $response->assertRedirect('login');
     }
@@ -217,9 +236,8 @@ class OrderTest extends TestCase
         $user = User::factory()->create();
         $user2 = User::factory()->create();
 
-        $order = Order::create([
+        $order = Order::factory()->create([
             'price' => 1231.00,
-            'delivery_method' => 'inpost',
             'user_id' => $user->id,
         ]);
         $order->products()->attach([
@@ -228,14 +246,7 @@ class OrderTest extends TestCase
             $p3->id => ['num' => 1],
         ]);
 
-        $response = $this->actingAs($user2)->get("/order/payment/$order->id", [
-            'productsInBasket' => json_encode([
-                $p1->id => ['num' => 3],
-                $p2->id => ['num' => 2],
-                $p3->id => ['num' => 1],
-            ]),
-            'deliveryMethod' => 'inpost',
-        ]);
+        $response = $this->actingAs($user2)->get("/order/payment/$order->id");
 
         $response->assertStatus(403);
     }

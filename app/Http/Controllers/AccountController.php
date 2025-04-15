@@ -14,6 +14,17 @@ class AccountController extends Controller
         $this->middleware('auth');
     }
 
+    public function setDefaultAddress(Request $request)
+    {
+        $user = auth()->user();
+        if ($request->defaultAddressId) {
+            $user->default_address_id = $request->defaultAddressId;
+        } elseif ($request->defaultAddressInvoiceId) {
+            $user->default_address_invoice_id = $request->defaultAddressInvoiceId;
+        }
+        $user->save();
+    }
+
     public function addresses(Request $request)
     {
         return view('account.addresses');
@@ -39,10 +50,20 @@ class AccountController extends Controller
 
     public function deleteAddresses(Request $request)
     {
+        $user = auth()->user();
+        $defaultAddressId = $user->default_address_id;
+        $defaultAddressInvoiceId = $user->default_address_invoice_id;
         foreach ($request->addresses as $address) {
             $addressIds[] = $address['id'];
+            if ((int)$address['id'] === $defaultAddressId) {
+                $user->default_address_id = null;
+            }
+            if ((int)$address['id'] === $defaultAddressInvoiceId) {
+                $user->default_address_invoice_id = null;
+            }
         }
-        Address::whereUserId(auth()->user()->id)
+        $user->save();
+        Address::whereUserId($user->id)
             ->whereIn('id', $addressIds)
             ->delete();
     }
@@ -71,6 +92,13 @@ class AccountController extends Controller
         } else {
             $addressData['user_id'] = auth()->user()->id;
             $address = Address::create($addressData);
+            $user = auth()->user();
+            $user->default_address_id = $address->id;
+            $user->default_address_invoice_id = $address->id;
+            $user->save();
+            return response()->json([
+                'newAddressId' => $address->id,
+            ]);
         }
     }
 }
