@@ -35,7 +35,7 @@ class AddressesTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post("/account/get-area-codes");
+        $response = $this->actingAs($user)->post("/api/account/get-area-codes");
 
         assertTrue('48' === $response['areaCodes'][0]['code']);
         assertTrue('48' === $response['defaultAreaCode']['code']);

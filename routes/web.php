@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Account\AddressController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
@@ -20,11 +21,11 @@ Route::prefix('order')->group(function () {
     Route::get('/payment/{order}', [App\Http\Controllers\OrderController::class, 'orderPayment'])->name('order-payment');
 });
 Route::prefix('account')->group(function () {
-    Route::get('/addresses', [App\Http\Controllers\AccountController::class, 'addresses'])->name('addresses');
-    Route::post('/get-addresses', [App\Http\Controllers\AccountController::class, 'getAddresses'])->name('get-addresses');
-    Route::post('/add-address', [App\Http\Controllers\AccountController::class, 'addAddress'])->name('add-address');
-    Route::post('/delete-addresses', [App\Http\Controllers\AccountController::class, 'deleteAddresses'])->name('delete-addresses');
-    Route::post('/set-default-address', [App\Http\Controllers\AccountController::class, 'setDefaultAddress'])->name('set-default-address');
+    Route::get('/addresses', [AddressController::class, 'addresses'])->name('addresses');
+    Route::post('/get-addresses', [AddressController::class, 'getAddresses'])->name('get-addresses');
+    Route::post('/add-address', [AddressController::class, 'addAddress'])->name('add-address');
+    Route::post('/delete-addresses', [AddressController::class, 'deleteAddresses'])->name('delete-addresses');
+    Route::post('/set-default-address', [AddressController::class, 'setDefaultAddress'])->name('set-default-address');
 });
 
 Route::prefix('admin-panel')->middleware('can:admin')->group(function () {

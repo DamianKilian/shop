@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Account;
 
 use App\Http\Requests\AddAddressRequest;
 use App\Models\Address;
 use App\Models\AreaCode;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class AccountController extends Controller
+class AddressController extends Controller
 {
     public function __construct()
     {
