@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
@@ -26,6 +27,7 @@ class OrderController extends Controller
         $deliveryMethod = json_encode($deliveryMethodsService->deliveryMethods[$request->deliveryMethod]);
         $order = new Order;
         DB::transaction(function () use ($order, $summary, $request, $productsInBasketArr) {
+            $order->session_Id = Str::random(100);
             $order->price = $summary['raw']['totalPrice'];
             $order->delivery_method = $request->deliveryMethod;
             $order->user_id = Auth::check() ? auth()->user()->id : null;

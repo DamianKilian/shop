@@ -28,6 +28,8 @@ return new class extends Migration
 
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('order_id')->nullable();
+            $table->string('session_Id', length: 100);
             $table->decimal('price');
             $table->string('delivery_method');
             // $table->string('payment_type');
