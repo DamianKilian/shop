@@ -18,7 +18,7 @@ class EditorjsTest extends TestCase
 
     protected function getFileData($fileType, $file, $maxWidth = 1920)
     {
-        $hash = hash_file(env('HASH_FILE_ALGO'), $file);
+        $hash = hash_file(config('my.hash_file_algo'), $file);
         $folder = FileService::getStorageFolder($fileType);
         if ($extension = $file->guessExtension()) {
             $extension = '.' . $extension;
@@ -29,7 +29,7 @@ class EditorjsTest extends TestCase
             'name' => $name,
             'folder' => $folder,
             'url' => $url,
-            'urlFull' => env('APP_URL') . Storage::url($url),
+            'urlFull' => config('app.url') . Storage::url($url),
         ];
     }
 
@@ -124,7 +124,7 @@ class EditorjsTest extends TestCase
         list($width, $height) = getimagesize($urlAbsolute);
         $turl = null;
         if ($thumbnail) {
-            $tfolder = env('THUMBNAILS_FOLDER');
+            $tfolder = config('my.thumbnails_folder');
             $turl = $publicStorage->files($tfolder)[0];
             $turlAbsolute = $publicStorage->path($turl);
             list($twidth, $theight) = getimagesize($turlAbsolute);
@@ -172,7 +172,7 @@ class EditorjsTest extends TestCase
 
     public function uploadFile_twice($thumbnailPresence): void
     {
-        $tfolder = env('THUMBNAILS_FOLDER');
+        $tfolder = config('my.thumbnails_folder');
         $publicStorage = Storage::fake('public');
         $image = UploadedFile::fake()->image('image.jpg', 3840, 2000);
         $fileData = $this->getFileData('image', $image);
@@ -214,7 +214,7 @@ class EditorjsTest extends TestCase
 
     public function test_fetchUrl(): void
     {
-        $folder = env('IMAGES_FOLDER');
+        $folder = config('my.images_folder');
         $publicStorage = Storage::fake('public');
         $tempStorage = Storage::fake('temp');
         $url = 'https://fastly.picsum.photos/id/879/200/300.jpg?hmac=07llkorYxtpw0EwxaeqFKPC5woveWVLykQVnIOyiwd8';
@@ -223,7 +223,7 @@ class EditorjsTest extends TestCase
             'url' => $url,
         ]);
         $url = $publicStorage->files($folder)[0];
-        $urlFull = env('APP_URL') . Storage::url($url);
+        $urlFull = config('app.url') . Storage::url($url);
 
         $response
             ->assertStatus(200)

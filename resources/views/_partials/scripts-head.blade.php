@@ -1,5 +1,5 @@
 <script>
-    window.appEnv = '{{ env('APP_ENV') }}';
+    window.appEnv = '{{ config('app.env') }}';
     // window.appEnv = 'production';
 </script>
 

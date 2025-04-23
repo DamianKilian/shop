@@ -19,8 +19,8 @@ class Logs extends Mailable
 
     public function __construct()
     {
-        $this->appUrl = env('APP_URL');
-        $this->appName = env('APP_NAME');
+        $this->appUrl = config('app.url');
+        $this->appName = config('app.name');
     }
 
     /**

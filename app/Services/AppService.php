@@ -14,14 +14,14 @@ class AppService
 {
     public static function logsSend()
     {
-        $email = env('LOG_SEND_EMAILS');
+        $email = config('my.log_send_emails');
         if (!$email) {
             return;
         }
         if (!filesize(storage_path('logs/laravel-error.log'))) {
             return;
         }
-        Mail::to(explode(',', env('LOG_SEND_EMAILS')))->send(new Logs());
+        Mail::to(explode(',', config('my.log_send_emails')))->send(new Logs());
     }
 
     protected static function footerToHtml($dataKey, $editorJS)

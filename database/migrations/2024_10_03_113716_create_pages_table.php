@@ -28,7 +28,7 @@ return new class extends Migration
 
         Page::create([
             'title' => 'Preview page',
-            'slug' => env('PREVIEW_SLUG'),
+            'slug' => config('my.preview_slug'),
             'body' => '{"time":1731146119711,"blocks":[{"id":"xmvRdvrELy","type":"paragraph","data":{"text":"Preview page<br>"}}],"version":"2.30.6"}',
             'active' => true,
         ]);

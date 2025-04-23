@@ -46,7 +46,7 @@ class ProductService
     {
         $pf = self::getProductsFilters($request);
         return Product::select(['id', 'title', 'description_str', 'active', 'price', 'quantity', 'slug', 'category_id'])
-            ->where('slug', '!=', env('PREVIEW_SLUG'))
+            ->where('slug', '!=', config('my.preview_slug'))
             ->with(['productImages' => function (Builder $query) {
                 $query->whereDisplayType('productPhotosGallery')->orderBy('position');
             }])->when($pf['searchValue'], function ($query, $searchValue) {

@@ -46,5 +46,5 @@ Artisan::command('prune:attachments', function () {
 
 Artisan::command('logs:send', function () {
     AppService::logsSend();
-    $this->comment('Logs have been sent to: "' . env('LOG_SEND_EMAILS') . '"');
+    $this->comment('Logs have been sent to: "' . config('my.log_send_emails') . '"');
 })->purpose('Send logs to email')->hourly();

@@ -83,14 +83,14 @@ class MainTest extends TestCase
 
     public function test_index_when_PREVIEW_SLUG_and_user_unauth(): void
     {
-        $response = $this->get("/".env('PREVIEW_SLUG'));
+        $response = $this->get("/".config('my.preview_slug'));
 
         $response->assertRedirect('/login');
     }
 
     public function test_product_when_PREVIEW_SLUG_and_user_unauth(): void
     {
-        $slug = env('PREVIEW_SLUG');
+        $slug = config('my.preview_slug');
         $category = Category::factory()->create();
         Product::factory()->create([
             'slug' => $slug,

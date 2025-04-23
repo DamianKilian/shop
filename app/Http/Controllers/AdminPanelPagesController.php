@@ -31,14 +31,14 @@ class AdminPanelPagesController extends Controller
         $pageId = $page ? $page->id : null;
         return response()->json([
             'pageId' => $pageId,
-            'previewUrl' => $request->preview ? route('home', ['slug' => env('PREVIEW_SLUG')]) : '',
+            'previewUrl' => $request->preview ? route('home', ['slug' => config('my.preview_slug')]) : '',
         ]);
     }
 
     protected function createPage(Request $request)
     {
         if ('true' === $request->preview) {
-            $page = Page::whereSlug(env('PREVIEW_SLUG'))->first();
+            $page = Page::whereSlug(config('my.preview_slug'))->first();
             $page->update([
                 'title' => $request->title,
                 'body_prod' => $request->body,
@@ -73,7 +73,7 @@ class AdminPanelPagesController extends Controller
 
     public function getPages()
     {
-        $pages = Page::where('slug', '!=', env('PREVIEW_SLUG'))->orWhere('slug', null)->get(['id', 'title', 'active', 'slug']);
+        $pages = Page::where('slug', '!=', config('my.preview_slug'))->orWhere('slug', null)->get(['id', 'title', 'active', 'slug']);
         return response()->json([
             'pages' => $pages,
         ]);

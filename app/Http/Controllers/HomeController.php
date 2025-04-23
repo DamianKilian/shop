@@ -119,7 +119,7 @@ class HomeController extends Controller
                 $product->categories = CategoryService::getParentCategories($product->category_id, $categories);
             }
         }
-        $isPreview = $slug === env('PREVIEW_SLUG');
+        $isPreview = $slug === config('my.preview_slug');
         if ($isPreview && !Auth::check()) {
             return redirect()->guest('login');
         }
@@ -141,7 +141,7 @@ class HomeController extends Controller
 
     public function product(Request $request, EditorJSService $editorJS, $slug)
     {
-        if ($slug === env('PREVIEW_SLUG') && !Auth::check()) {
+        if ($slug === config('my.preview_slug') && !Auth::check()) {
             return redirect()->guest('login');
         }
         $product = Product::where('slug', $slug)->whereActive(true)

@@ -267,7 +267,7 @@ class EditorJSService
                 $img = $doc->createElement('img');
                 $img->setAttribute('alt', $item->caption ?: self::$title);
                 $urlExplode = explode('/', $item->url);
-                $img->setAttribute('src', '/storage/' . env('THUMBNAILS_FOLDER') . '/' . end($urlExplode));
+                $img->setAttribute('src', '/storage/' . config('my.thumbnails_folder') . '/' . end($urlExplode));
                 $a->appendChild($img);
                 $gallery->appendChild($a);
             }

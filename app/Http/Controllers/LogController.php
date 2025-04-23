@@ -15,7 +15,7 @@ class LogController extends Controller
 
     public function logJs(Request $request)
     {
-        if(env('LOG_JS')){
+        if(config('my.log_js')){
             $msg = 'Javascript error:' . json_encode($request->all());
             self::log($msg, 'log_js');
         }

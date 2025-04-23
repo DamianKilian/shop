@@ -31,7 +31,7 @@ class PageFactory extends Factory
                     'withBackground' => false,
                     'stretched' => false,
                     'file' => array(
-                        'url' => env('APP_URL') . '/storage/pages/Ohg9PuiEHYqDUVNlsWT9OXA0pvbuTbZfXlyMhgpc.jpg',
+                        'url' => config('app.url') . '/storage/pages/Ohg9PuiEHYqDUVNlsWT9OXA0pvbuTbZfXlyMhgpc.jpg',
                         'urlDb' => 'pages/Ohg9PuiEHYqDUVNlsWT9OXA0pvbuTbZfXlyMhgpc.jpg',
                     ),
                 ),
@@ -44,7 +44,7 @@ class PageFactory extends Factory
                     'withBackground' => false,
                     'stretched' => false,
                     'file' => array(
-                        'url' => env('APP_URL') . '/storage/pages/1dv9n7O5lo2yRuAYlKjCFg8nU2JHChA53cAAJpeO.jpg',
+                        'url' => config('app.url') . '/storage/pages/1dv9n7O5lo2yRuAYlKjCFg8nU2JHChA53cAAJpeO.jpg',
                         'urlDb' => 'pages/1dv9n7O5lo2yRuAYlKjCFg8nU2JHChA53cAAJpeO.jpg',
                     ),
                 ),

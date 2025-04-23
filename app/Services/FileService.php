@@ -15,9 +15,9 @@ class FileService
     public static function getStorageFolder($fileType)
     {
         if ('attachment' === $fileType) {
-            return env('ATTACHMENTS_FOLDER');
+            return config('my.attachments_folder');
         } elseif ('image' === $fileType) {
-            return env('IMAGES_FOLDER');
+            return config('my.images_folder');
         }
     }
 
@@ -56,7 +56,7 @@ class FileService
 
     public static function saveFile($file, $displayType, $fileType, $thumbnail, $position = null, $maxWidth = 1920, $thumbnailMaxSize = null, $productId = null)
     {
-        $hash = hash_file(env('HASH_FILE_ALGO'), $file);
+        $hash = hash_file(config('my.hash_file_algo'), $file);
         $folder = self::getStorageFolder($fileType);
         if ($extension = $file->guessExtension()) {
             $extension = '.' . $extension;
@@ -85,7 +85,7 @@ class FileService
         if ('image' === $fileType) {
             $thumbnailMaxSize = $thumbnailMaxSize ?: sett('THUMBNAIL_MAX_SIZE');
             $tname = $hyphenedName . '-' . $hash . '_' . $thumbnailMaxSize . $extension;
-            $tfolder = env('THUMBNAILS_FOLDER');
+            $tfolder = config('my.thumbnails_folder');
             $turl = "$tfolder/$tname";
             $urlThumbnail = $thumbnail ? $turl : null;
             if ($urlThumbnail) {
@@ -104,7 +104,7 @@ class FileService
             Attachment::create(['url' => $url, 'hash' => $hash, 'product_id' => $productId]);
         }
         return [
-            'url' => env('APP_URL') . Storage::url($url),
+            'url' => config('app.url') . Storage::url($url),
             'urlDb' => $url,
             'size' => $file->getSize(),
         ];

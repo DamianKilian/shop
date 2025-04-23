@@ -32,7 +32,7 @@ class AdminPanelFooterController extends Controller
             ]);
         }
         return response()->json([
-            'previewUrl' => 'html_preview' === $dataKey ? route('home', ['slug' => env('PREVIEW_SLUG')]) : '',
+            'previewUrl' => 'html_preview' === $dataKey ? route('home', ['slug' => config('my.preview_slug')]) : '',
         ]);
     }
 

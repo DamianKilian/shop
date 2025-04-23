@@ -277,7 +277,7 @@ class ProductsTest extends TestCase
                         'withBackground' => false,
                         'stretched' => false,
                         'file' => array(
-                            'url' => env('APP_URL') . '/storage/' . $url,
+                            'url' => config('app.url') . '/storage/' . $url,
                             'urlDb' => $url,
                         ),
                     ),
@@ -308,7 +308,7 @@ class ProductsTest extends TestCase
                     'data' => [
                         'title' => 'ttt',
                         'file' => array(
-                            'url' => env('APP_URL') . '/storage/' . $url,
+                            'url' => config('app.url') . '/storage/' . $url,
                             'urlDb' => $url,
                         ),
                     ],

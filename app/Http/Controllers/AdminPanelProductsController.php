@@ -101,7 +101,7 @@ class AdminPanelProductsController extends Controller
         $productId = $product ? $product->id : null;
         return response()->json([
             'productId' => $productId,
-            'previewUrl' => $request->preview ? route('product', ['slug' => env('PREVIEW_SLUG')]) : '',
+            'previewUrl' => $request->preview ? route('product', ['slug' => config('my.preview_slug')]) : '',
         ]);
     }
 
@@ -118,8 +118,8 @@ class AdminPanelProductsController extends Controller
         ];
         if ('true' === $request->preview) {
             $props['description_prod'] = $request->description;
-            $props['slug'] = env('PREVIEW_SLUG');
-            $product = Product::whereSlug(env('PREVIEW_SLUG'))->first();
+            $props['slug'] = config('my.preview_slug');
+            $product = Product::whereSlug(config('my.preview_slug'))->first();
             if ($product) {
                 $product->productImages()->delete();
                 $product->update($props);

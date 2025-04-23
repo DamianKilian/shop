@@ -24,7 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        if (env('LOG_HTTP')) {
+        if (config('my.log_http')) {
             $exceptions->render(function (HttpException $e, Request $request) {
                 $msg = $e->getStatusCode() . ': ' . $request->url() . ' (' . url()->previous() . ')';
                 LogController::log($msg, 'log_http');

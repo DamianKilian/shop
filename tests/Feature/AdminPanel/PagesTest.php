@@ -40,7 +40,7 @@ class PagesTest extends TestCase
                     'withBackground' => false,
                     'stretched' => false,
                     'file' => array(
-                        'url' => env('APP_URL') . '/storage/' . $urlDbOld,
+                        'url' => config('app.url') . '/storage/' . $urlDbOld,
                         'urlDb' => $urlDbOld,
                     ),
                 ),
@@ -53,7 +53,7 @@ class PagesTest extends TestCase
                     'withBackground' => false,
                     'stretched' => false,
                     'file' => array(
-                        'url' => env('APP_URL') . '/storage/' . $urlDbRemoved,
+                        'url' => config('app.url') . '/storage/' . $urlDbRemoved,
                         'urlDb' => $urlDbRemoved,
                     ),
                 ),
@@ -102,7 +102,7 @@ class PagesTest extends TestCase
                     'withBackground' => false,
                     'stretched' => false,
                     'file' => array(
-                        'url' => env('APP_URL') . '/storage/' . $urlDbOld,
+                        'url' => config('app.url') . '/storage/' . $urlDbOld,
                         'urlDb' => $urlDbOld,
                     ),
                 ),
@@ -115,7 +115,7 @@ class PagesTest extends TestCase
                     'withBackground' => false,
                     'stretched' => false,
                     'file' => array(
-                        'url' => env('APP_URL') . '/storage/' . $urlDbNew,
+                        'url' => config('app.url') . '/storage/' . $urlDbNew,
                         'urlDb' => $urlDbNew,
                     ),
                 ),
@@ -184,7 +184,7 @@ class PagesTest extends TestCase
                     'withBackground' => false,
                     'stretched' => false,
                     'file' => array(
-                        'url' => env('APP_URL') . '/storage/' . $urlDb1,
+                        'url' => config('app.url') . '/storage/' . $urlDb1,
                         'urlDb' => $urlDb1,
                     ),
                 ),
@@ -197,7 +197,7 @@ class PagesTest extends TestCase
                     'withBackground' => false,
                     'stretched' => false,
                     'file' => array(
-                        'url' => env('APP_URL') . '/storage/' . $urlDb2,
+                        'url' => config('app.url') . '/storage/' . $urlDb2,
                         'urlDb' => $urlDb2,
                     ),
                 ),
@@ -247,12 +247,12 @@ class PagesTest extends TestCase
             'preview' => 'true',
             'body' => $pageBody,
         ]);
-        $previewPage = Page::whereSlug(env('PREVIEW_SLUG'))->first();
+        $previewPage = Page::whereSlug(config('my.preview_slug'))->first();
 
         $response
             ->assertStatus(200)
             ->assertJson([
-                'previewUrl' => route('home', ['slug' => env('PREVIEW_SLUG')]),
+                'previewUrl' => route('home', ['slug' => config('my.preview_slug')]),
             ]);
         $this->assertEquals($previewPage->body_prod, $pageBody);
         $this->assertEquals($previewPage->title, 'title');

@@ -92,12 +92,12 @@ class ProductsActionBtnsTest extends TestCase
             'files' => [],
             'filesArr' => json_encode([]),
         ]);
-        $previewProduct = Product::whereSlug(env('PREVIEW_SLUG'))->first();
+        $previewProduct = Product::whereSlug(config('my.preview_slug'))->first();
 
         $response
             ->assertStatus(200)
             ->assertJson([
-                'previewUrl' => route('product', ['slug' => env('PREVIEW_SLUG')]),
+                'previewUrl' => route('product', ['slug' => config('my.preview_slug')]),
             ]);
         $this->assertEquals($previewProduct->description_prod, $description);
         $this->assertEquals($previewProduct->title, 'title');

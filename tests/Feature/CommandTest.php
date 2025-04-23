@@ -14,7 +14,7 @@ use Illuminate\Mail\Mailables\Attachment as MailablesAttachment;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
-use Illuminate\Support\Env;
+use Illuminate\Support\Facades\Config;
 
 class CommandTest extends TestCase
 {
@@ -24,7 +24,7 @@ class CommandTest extends TestCase
     {
         Mail::fake();
         file_put_contents(storage_path('logs/laravel-error.log'), "logs contents");
-        Env::getRepository()->set('LOG_SEND_EMAILS', 'example@example.com');
+        Config::set('my.log_send_emails', 'example@example.com');
 
         $this->artisan('logs:send')->assertExitCode(0);
         Mail::assertSent(Logs::class, function (Logs $mail) {
@@ -38,7 +38,7 @@ class CommandTest extends TestCase
     {
         Mail::fake();
         file_put_contents(storage_path('logs/laravel-error.log'), "logs contents");
-        Env::getRepository()->set('LOG_SEND_EMAILS', '');
+        Config::set('my.log_send_emails', '');
 
         $this->artisan('logs:send')->assertExitCode(0);
         Mail::assertNotSent(Logs::class);
@@ -48,7 +48,7 @@ class CommandTest extends TestCase
     {
         Mail::fake();
         file_put_contents(storage_path('logs/laravel-error.log'), "");
-        Env::getRepository()->set('LOG_SEND_EMAILS', 'example@example.com');
+        Config::set('my.log_send_emails', 'example@example.com');
 
         $this->artisan('logs:send')->assertExitCode(0);
         Mail::assertNotSent(Logs::class);
