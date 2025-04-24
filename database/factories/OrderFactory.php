@@ -19,6 +19,7 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
+            'session_Id' => fake()->regexify('[a-z]{100}'),
             'price' => fake()->randomFloat(2, 20, 4000),
             'delivery_method' => 'inpost',
             'user_id' => User::factory(),

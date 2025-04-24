@@ -17,8 +17,8 @@ Route::prefix('basket')->group(function () {
     Route::get('/index', [App\Http\Controllers\BasketController::class, 'basketIndex'])->name('basket-index');
 });
 Route::prefix('order')->group(function () {
-    Route::post('/store', [App\Http\Controllers\OrderController::class, 'orderStore'])->name('order-store');
-    Route::get('/payment/{order}', [App\Http\Controllers\OrderController::class, 'orderPayment'])->name('order-payment');
+    Route::post('/store', [App\Http\Controllers\BasketController::class, 'orderStore'])->name('order-store');
+    Route::get('/payment/{order}', [App\Http\Controllers\BasketController::class, 'orderPayment'])->name('order-payment');
 });
 Route::prefix('account')->group(function () {
     Route::get('/addresses', [AddressController::class, 'addresses'])->name('addresses');
