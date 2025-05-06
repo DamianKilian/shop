@@ -30,6 +30,7 @@ class AddressFactory extends Factory
             'postal_code' => fake()->numerify('##-###'),
             'city' => fake()->word(),
             'area_code_id' => AreaCode::factory(),
+            'country_id' => fake()->numberBetween(1, 249),
         ];
     }
 }

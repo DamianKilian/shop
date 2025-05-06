@@ -16,6 +16,14 @@ class OrderTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_orderCompleted(): void
+    {
+        $order = Order::factory()->create();
+        $response = $this->get('order/completed/'.$order->id);
+
+        $response->assertSuccessful();
+    }
+
     public function test_orderStore(): void
     {
         $category = Category::factory()->create([
@@ -74,7 +82,7 @@ class OrderTest extends TestCase
         $response->assertSessionHas('deliveryMethod', function ($value) {
             return $value == '{"name":"InPost","price":"0"}';
         });
-        $response->assertSessionHas('orderPaymentAccess', function ($value) use ($order) {
+        $response->assertSessionHas('orderId', function ($value) use ($order) {
             return $value == $order->id;
         });
         $response->assertRedirect();
@@ -95,6 +103,7 @@ class OrderTest extends TestCase
             "postal_code" => "22-222",
             "city" => "Rzeszów",
             "area_code_id" => "1",
+            "country_id" => rand(1, 249),
         ];
     }
 
@@ -137,7 +146,7 @@ class OrderTest extends TestCase
         assertTrue('title1' === $productsInBasketData[$p1->id]['title']);
         assertTrue('1 231,00' === $summary['totalPrice']);
         assertTrue('InPost' === $deliveryMethod['name']);
-        assertTrue($order->id === session()->get('orderPaymentAccess'));
+        assertTrue($order->id === session()->get('orderId'));
     }
 
     public function test_orderPayment(): void

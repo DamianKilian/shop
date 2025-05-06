@@ -5,6 +5,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LogController;
 use Illuminate\Support\Facades\Route;
 
+require __DIR__ . '/apiPrzelewy24.php';
+
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
 // })->middleware('auth:sanctum');

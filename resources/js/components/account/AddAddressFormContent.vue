@@ -258,7 +258,7 @@
             </div>
         </div>
         <div class="row g-2 mb-2">
-            <div class="col-6">
+            <div class="col-4">
                 <div class="form-floating float-start w-100">
                     <input
                         v-model="address.postal_code"
@@ -282,7 +282,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-6">
+            <div class="col-4">
                 <div class="form-floating float-start w-100">
                     <input
                         v-model="address.city"
@@ -306,13 +306,30 @@
                     </div>
                 </div>
             </div>
+            <div class="col-4">
+                <CountrySelect
+                    :countries="countries"
+                    :address="address"
+                    :failedValidation="failedValidation"
+                    :readonly="readonly"
+                />
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+import CountrySelect from './CountrySelect.vue';
+
 export default {
-    props: ['failedValidation', 'address', 'areaCodes', 'readonly'],
+    components: { CountrySelect },
+    props: [
+        'failedValidation',
+        'address',
+        'areaCodes',
+        'countries',
+        'readonly',
+    ],
     mounted() {},
 };
 </script>

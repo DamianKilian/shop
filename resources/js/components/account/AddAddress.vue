@@ -26,6 +26,8 @@
                 >
                     <div class="modal-body">
                         <AddAddressFormContent
+                            v-if="getAreaCodesDone"
+                            :countries="countries"
                             :failedValidation="failedValidation"
                             :address="address"
                             :areaCodes="areaCodes"
@@ -74,6 +76,8 @@ export default {
         'getAddresses',
         'areaCodes',
         'address',
+        'countries',
+        'getAreaCodesDone',
     ],
     data() {
         return {
@@ -94,8 +98,11 @@ export default {
                 .post(this.addAddressUrl, formData)
                 .then(function (response) {
                     that.getAddresses();
-                    if(response.data.newAddressId){
-                        that.$emit('address-created', response.data.newAddressId);
+                    if (response.data.newAddressId) {
+                        that.$emit(
+                            'address-created',
+                            response.data.newAddressId
+                        );
                     }
                     that.$refs.closeModal.click();
                 })

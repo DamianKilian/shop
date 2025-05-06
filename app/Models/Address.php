@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Address extends Model
@@ -25,6 +26,7 @@ class Address extends Model
         'area_code_id',
         'user_id',
         'city',
+        'country_id',
     ];
 
     public static function createRules($prefix = '', $required = 'required')
@@ -39,5 +41,15 @@ class Address extends Model
             $prefix . 'postal_code' => [$required, 'regex:/^\d{2}-?\d{3}$/'],
             $prefix . 'area_code_id' => [$required],
         ];
+    }
+
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
+    }
+
+    public function areaCode(): BelongsTo
+    {
+        return $this->belongsTo(AreaCode::class);
     }
 }

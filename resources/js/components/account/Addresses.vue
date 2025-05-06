@@ -39,8 +39,10 @@
             </div>
         </div>
         <AddAddress
-            v-if="areaCodes.length"
-            @address-created="(id) => newAddressId = id"
+            v-if="getAreaCodesDone"
+            @address-created="(id) => (newAddressId = id)"
+            :countries="countries"
+            :getAreaCodesDone="getAreaCodesDone"
             :getAddresses="getAddresses"
             :addAddressUrl="addAddressUrl"
             :areaCodes="areaCodes"
@@ -68,7 +70,7 @@
                             v-model="editAddress.selected"
                         />
                         <button
-                            @click.stop="address = editAddress"
+                            @click.stop="address = { ...editAddress }"
                             data-bs-toggle="modal"
                             data-bs-target="#addAddress"
                             class="btn btn-warning btn-sm edit-product"
@@ -79,6 +81,8 @@
                     </div>
                     <div class="card-body">
                         <AddAddressFormContent
+                            v-if="getAreaCodesDone"
+                            :countries="countries"
                             :failedValidation="{}"
                             :address="editAddress"
                             :areaCodes="areaCodes"
@@ -148,7 +152,7 @@ export default {
         },
     },
     created() {
-        this.getAddressesWithAreaCodes();
+        this.getAddressesAndData();
     },
     updated() {},
     mounted() {},

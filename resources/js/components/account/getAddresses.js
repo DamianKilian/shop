@@ -5,10 +5,13 @@ export default {
     ],
     data() {
         return {
+            defaultCountry: null,
+            countries: [],
             defaultAreaCode: null,
             areaCodes: [],
             addresses: [],
             getAddressesDone: false,
+            getAreaCodesDone: false,
         };
     },
     methods: {
@@ -20,6 +23,7 @@ export default {
             address.nip = '';
             address.company_name = '';
             address.area_code_id = this.defaultAreaCode.id;
+            address.country_id = this.defaultCountry.id;
             address.phone = '';
             address.street = '';
             address.house_number = '';
@@ -38,14 +42,17 @@ export default {
             });
             return address;
         },
-        getAddressesWithAreaCodes: function (getAddresses = true) {
+        getAddressesAndData: function (getAddresses = true) {
             var that = this;
             return axios
                 .post(this.getAreaCodesUrl)
                 .then(function (response) {
                     that.areaCodes = response.data.areaCodes;
                     that.defaultAreaCode = response.data.defaultAreaCode;
+                    that.countries = response.data.countries;
+                    that.defaultCountry = response.data.defaultCountry;
                     that.clearAddress(that.address);
+                    that.getAreaCodesDone = true;
                     if(getAddresses){
                         that.getAddresses();
                     }

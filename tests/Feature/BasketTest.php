@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Integrations\Przelewy24;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 use function PHPUnit\Framework\assertTrue;
@@ -12,6 +14,17 @@ use function PHPUnit\Framework\assertTrue;
 class BasketTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_transactionRegister(): void
+    {
+        $this->mock(Przelewy24::class, function (MockInterface $mock) {
+            $mock->shouldReceive('transactionRegister')->once();
+        });
+
+        $response = $this->post("przelewy24/transaction-register");
+
+        $response->assertSuccessful();
+    }
 
     public function test_getBasketSummary(): void
     {

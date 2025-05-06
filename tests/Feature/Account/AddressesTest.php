@@ -39,6 +39,8 @@ class AddressesTest extends TestCase
 
         assertTrue('48' === $response['areaCodes'][0]['code']);
         assertTrue('48' === $response['defaultAreaCode']['code']);
+        assertTrue(isset($response['defaultCountry']['code']));
+        assertTrue(isset($response['countries'][1]['code']));
         $response->assertStatus(200);
     }
 
@@ -116,6 +118,7 @@ class AddressesTest extends TestCase
             "postal_code" => '22-222',
             "city" => 'City',
             "area_code_id" => $areaCode->id,
+            "country_id" => rand(1, 249),
         ]);
         $newAddressId = $response['newAddressId'];
 
@@ -151,6 +154,7 @@ class AddressesTest extends TestCase
             "postal_code" => '22-222',
             "city" => 'City',
             "area_code_id" => $areaCode->id,
+            "country_id" => rand(1, 249),
             "addressId" => $address->id,
         ]);
 

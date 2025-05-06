@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests\OrderStoreRequest;
 use App\Models\Address;
 use App\Models\Order;
+use App\Services\AppService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 class BasketController extends Controller
@@ -49,11 +49,13 @@ class BasketController extends Controller
     {
         $productsInBasketArr = json_decode($request->productsInBasket, true);
         $summary = BasketService::getBasketSummary($productsInBasketArr, $request->deliveryMethod, $deliveryMethodsService);
-        $deliveryMethod = json_encode($deliveryMethodsService->deliveryMethods[$request->deliveryMethod]);
+        $deliveryMethod = $deliveryMethodsService->deliveryMethods[$request->deliveryMethod];
+        $deliveryPrice = (int)AppService::toPennies($deliveryMethod['price']);
         $order = new Order;
-        DB::transaction(function () use ($order, $summary, $request, $productsInBasketArr) {
+        DB::transaction(function () use ($order, $summary, $request, $productsInBasketArr, $deliveryPrice) {
             $order->session_Id = Str::random(100);
             $order->price = $summary['raw']['totalPrice'];
+            $order->delivery_price = $deliveryPrice;
             $order->delivery_method = $request->deliveryMethod;
             $order->user_id = Auth::check() ? auth()->user()->id : null;
             $address = $this->createAddress($request->address);
@@ -65,12 +67,7 @@ class BasketController extends Controller
             $order->save();
             $order->products()->attach($productsInBasketArr);
         });
-        session([
-            'summary' => $summary,
-            'productsInBasketArr' => $productsInBasketArr,
-            'deliveryMethod' => $deliveryMethod,
-            'orderPaymentAccess' => $order->id,
-        ]);
+        $this->setSession($summary, $productsInBasketArr, $deliveryMethod, $order->id);
         return redirect()->route('order-payment', ['order' => $order->id]);
     }
 
@@ -89,24 +86,38 @@ class BasketController extends Controller
             "postal_code" => $data['postal_code'],
             "city" => $data['city'],
             "area_code_id" => $data['area_code_id'],
+            "country_id" => $data['country_id'],
+        ]);
+    }
+
+    protected function setSession($summary, $productsInBasketArr, $deliveryMethod, $orderId)
+    {
+        session([
+            'summary' => $summary,
+            'productsInBasketArr' => $productsInBasketArr,
+            'deliveryMethod' => json_encode($deliveryMethod),
+            'orderId' => $orderId,
         ]);
     }
 
     public function orderPayment(Request $request, DeliveryMethodsService $deliveryMethodsService, int $orderId)
     {
-        
-        if ($orderId !== session()->get('orderPaymentAccess')) {
-            $order = Order::whereId($orderId)->with('products')->first();
+        if ($orderId !== session()->get('orderId')) {
+            if (Auth::guest()) {
+                return redirect()->route('login');
+            }
+            $order = Order::whereId($orderId)
+                ->whereUserId(auth()->user()->id)
+                ->with('products')
+                ->first();
+            if (!$order) {
+                abort(403);
+            }
             $productsInBasket = DB::table('order_product')->whereOrderId($order->id)->get(['product_id', 'num'])->keyBy('product_id');
             $productsInBasketArr = $productsInBasket->map(fn($row) => (array)$row)->all();
             $summary = BasketService::getBasketSummary($productsInBasketArr, $order->delivery_method, $deliveryMethodsService);
             $deliveryMethod = json_encode($deliveryMethodsService->deliveryMethods[$order->delivery_method]);
-            if (Auth::guest()) {
-                return redirect()->route('login');
-            }
-            if (!Gate::allows('orderPaymentAccess', $order)) {
-                abort(403);
-            }
+            $this->setSession($summary, $productsInBasketArr, $deliveryMethod, $order->id);
         } else {
             $productsInBasketArr = session()->get('productsInBasketArr');
             $summary = session()->get('summary');
@@ -119,5 +130,10 @@ class BasketController extends Controller
             'summary' => json_encode($summary['formatted']),
             'deliveryMethod' => $deliveryMethod,
         ]);
+    }
+
+    public function orderCompleted(Request $request, int $orderId)
+    {
+        return view('basket.completed', []);
     }
 }

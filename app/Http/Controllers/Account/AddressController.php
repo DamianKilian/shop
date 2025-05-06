@@ -7,6 +7,7 @@ use App\Models\Address;
 use App\Models\AreaCode;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Country;
 
 class AddressController extends Controller
 {
@@ -35,9 +36,13 @@ class AddressController extends Controller
     {
         $areaCodes = AreaCode::all();
         $defaultAreaCode = AreaCode::whereCode('48')->first();
+        $countries = Country::all(['id', 'code', 'name'])->keyBy('id');
+        $defaultCountry = Country::whereCode('PL')->first();
         return response()->json([
             'areaCodes' => $areaCodes,
             'defaultAreaCode' => $defaultAreaCode,
+            'countries' => $countries,
+            'defaultCountry' => $defaultCountry,
         ]);
     }
 
@@ -84,6 +89,7 @@ class AddressController extends Controller
             "apartment_number" => $request->apartment_number,
             "postal_code" => $request->postal_code,
             "city" => $request->city,
+            "country_id" => $request->country_id,
         ];
         if ($request->addressId) {
             $address = Address::whereId($request->addressId)

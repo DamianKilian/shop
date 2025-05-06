@@ -130,4 +130,29 @@ class SettingsTest extends TestCase
             'value' => 'newValue',
         ]);
     }
+
+    public function test_saveSetting_inpost_price(): void
+    {
+        $price = '12. 34 ,56,789';
+        $expected = '123456.78';
+        SettingCategory::truncate();
+        Setting::truncate();
+        SettingValue::truncate();
+        $setting = Setting::factory()->create([
+            'name' => 'INPOST_PRICE',
+            'value' => '123',
+            'default_value' => 'default_value',
+        ]);
+
+        $response = $this->actingAs(parent::getAdmin())->postJson('/admin-panel/save-setting', [
+            'settingId' => $setting->id,
+            'value' => $price,
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('settings', [
+            'id' => $setting->id,
+            'value' => $expected,
+        ]);
+    }
 }

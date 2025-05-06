@@ -1,0 +1,12 @@
+.country-options{
+    overflow-y: auto;
+    position: absolute;
+    background-color: #fff;
+    z-index: 100;
+    .c-opt{
+        padding: 4px 0 4px 4px;
+        &:hover{
+            background-color: whitesmoke;
+        }
+    }
+}

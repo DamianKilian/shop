@@ -32,7 +32,7 @@ class DeliveryMethodsService
         $this->deliveryMethods = $deliveryMethods;
     }
 
-    public function getDeliveryPrice($deliveryMethod)
+    public function getDeliveryPrice(?string $deliveryMethod)
     {
         $deliveryPrice = null;
         if (isset($this->deliveryMethods[$deliveryMethod])) {

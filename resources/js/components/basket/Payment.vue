@@ -80,14 +80,37 @@
                         <b class="float-end">{{ summary.totalPrice }}</b>
                     </div>
                 </div>
-                <form :action="orderStoreUrl" method="post">
+                <form :action="przelewy24TransactionRegisterUrl" method="post">
                     <input type="hidden" name="_token" :value="csrfToken" />
                     <button
+                        :disabled="!regulationAccept"
                         type="submit"
                         class="btn btn-primary btn-lg w-100 mt-2"
                     >
                         {{ __('Pay') }}
                     </button>
+                    <div class="form-check py-2">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            name="regulationAccept"
+                            v-model="regulationAccept"
+                        />
+                        <label class="form-check-label">
+                            <b>
+                                „Oświadczam, że zapoznałem się z
+                                <a href="https://www.przelewy24.pl/regulamin"
+                                    >regulaminem</a
+                                >
+                                i
+                                <a
+                                    href="https://www.przelewy24.pl/obowiazek-informacyjny-platnik"
+                                    >obowiązkiem informacyjnym</a
+                                >
+                                serwisu Przelewy24”</b
+                            >
+                        </label>
+                    </div>
                 </form>
             </div>
         </div>
@@ -101,9 +124,11 @@ export default {
         'productsInBasket',
         'summary',
         'deliveryMethod',
+        'przelewy24TransactionRegisterUrl',
     ],
     data() {
         return {
+            regulationAccept: false,
             csrfToken: document.querySelector("meta[name='csrf-token']")
                 .content,
         };

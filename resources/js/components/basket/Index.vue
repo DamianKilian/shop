@@ -131,6 +131,8 @@
                     </div>
                     <br />
                     <AddAddressFormContent
+                        v-if="getAreaCodesDone"
+                        :countries="countries"
                         :failedValidation="addressErr"
                         :address="address"
                         :areaCodes="areaCodes"
@@ -164,6 +166,8 @@
                         </div>
                         <br />
                         <AddAddressFormContent
+                            v-if="getAreaCodesDone"
+                            :countries="countries"
                             :failedValidation="addressInvoiceErr"
                             :address="addressInvoice"
                             :areaCodes="areaCodes"
@@ -443,9 +447,9 @@ export default {
         },
     },
     created() {
+        var that = this;
         if (this.authenticated) {
-            this.getAddressesWithAreaCodes();
-            var that = this;
+            this.getAddressesAndData();
             this.$watch('getAddressesDone', (newValue) => {
                 this.addresses.push(this.clearAddress({}));
                 if (newValue) {
@@ -453,8 +457,11 @@ export default {
                 }
             });
         } else {
-            let r = this.getAddressesWithAreaCodes(false);
-            r.then(() => this.clearAddress(this.addressInvoice));
+            let r = this.getAddressesAndData(false);
+            r.then(function () {
+                that.clearAddress(that.addressInvoice);
+                that.getAddressesFromLocalStorage();
+            });
             this.getAddressesDone = true;
         }
     },

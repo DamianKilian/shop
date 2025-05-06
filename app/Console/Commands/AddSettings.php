@@ -168,7 +168,7 @@ class AddSettings extends Command
             'desc' => 'Price for inPost delivery method',
             'input_type' => 'text',
             'value' => '0',
-            'default_value' => '0',
+            'default_value' => '0.00',
             'order_priority' => 1000,
             'setting_category_id' => $deliveryMethodsSett->id,
         ]);
@@ -186,7 +186,7 @@ class AddSettings extends Command
             'desc' => 'Price for courier delivery method',
             'input_type' => 'text',
             'value' => '0',
-            'default_value' => '0',
+            'default_value' => '0.00',
             'order_priority' => 3000,
             'setting_category_id' => $deliveryMethodsSett->id,
         ]);

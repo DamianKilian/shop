@@ -16,9 +16,6 @@ class AuthzServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Gate::define('orderPaymentAccess', function (User $user, Order $order) {
-            return $user->id === $order->user_id;
-        });
         Gate::define('admin', function (User $user) {
             return $this->hasPermission('admin', $user);
         });

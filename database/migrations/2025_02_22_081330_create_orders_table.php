@@ -29,8 +29,10 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id')->nullable();
-            $table->string('session_Id', length: 100);
+            $table->string('session_id', length: 100);
             $table->decimal('price');
+            $table->integer('delivery_price');
+            $table->string('currency')->default('PLN');
             $table->string('delivery_method');
             // $table->string('payment_type');
             $table->unsignedBigInteger('order_status_id')->nullable();

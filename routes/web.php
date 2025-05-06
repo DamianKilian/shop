@@ -4,6 +4,8 @@ use App\Http\Controllers\Account\AddressController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
+require __DIR__ . '/webPrzelewy24.php';
+
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -19,6 +21,7 @@ Route::prefix('basket')->group(function () {
 Route::prefix('order')->group(function () {
     Route::post('/store', [App\Http\Controllers\BasketController::class, 'orderStore'])->name('order-store');
     Route::get('/payment/{order}', [App\Http\Controllers\BasketController::class, 'orderPayment'])->name('order-payment');
+    Route::get('/completed/{order}', [App\Http\Controllers\BasketController::class, 'orderCompleted'])->name('order-completed');
 });
 Route::prefix('account')->group(function () {
     Route::get('/addresses', [AddressController::class, 'addresses'])->name('addresses');

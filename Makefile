@@ -13,4 +13,4 @@ fresh:
 	docker-compose run --rm artisan migrate:fresh --seed
 
 ngk:
-	ngrok http --url=massive-wallaby-specially.ngrok-free.app 8080
+	ngrok http --url=massive-wallaby-specially.ngrok-free.app 8080 --response-header-add='Content-Security-Policy: upgrade-insecure-requests'

@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Mail;
 
 class AppService
 {
+    public static function toPennies(string $price)
+    {
+        return str_replace(".", "", $price);
+    }
+
     public static function logsSend()
     {
         $email = config('my.log_send_emails');

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Integrations\Przelewy24;
 use App\Services\SettingService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Pagination\Paginator;
@@ -14,8 +15,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(SettingService::class, function (Application $app) {
-            return new SettingService();
+        $this->app->singleton(Przelewy24::class, function (Application $app) {
+            return new Przelewy24();
         });
         $this->app->singleton(SettingService::class, function (Application $app) {
             return new SettingService();

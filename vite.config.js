@@ -5,7 +5,15 @@ import { glob } from 'glob';
 
 export default defineConfig({
     server: {
+        hmr: {
+            host: 'localhost',
+            port: 5173,
+        },
+        watch: {
+            usePolling: true,
+        },
         host: '0.0.0.0',
+        port: 5173,
     },
     plugins: [
         laravel({

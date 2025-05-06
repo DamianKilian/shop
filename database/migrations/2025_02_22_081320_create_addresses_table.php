@@ -25,6 +25,10 @@ return new class extends Migration
             $table->foreign('area_code_id')
                 ->references('id')
                 ->on('area_codes');
+            $table->unsignedBigInteger('country_id');
+            $table->foreign('country_id')
+                ->references('id')
+                ->on('countries');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')
                 ->references('id')

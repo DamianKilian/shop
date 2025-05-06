@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\SettingCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SettingFactory extends Factory
@@ -15,6 +16,7 @@ class SettingFactory extends Factory
             'value' => fake()->word(),
             'default_value' => fake()->word(),
             'order_priority' => fake()->randomNumber(4, false),
+            'setting_category_id' => SettingCategory::factory(),
         ];
     }
 }
