@@ -121,7 +121,7 @@
                 <h2><b>Addresses</b></h2>
                 <h4>{{ __('Delivery address') }}</h4>
                 <div v-if="getAddressesDone">
-                    <div class="clearfix" v-if="authenticated">
+                    <div class="clearfix pb-2" v-if="authenticated">
                         <AddressesSelect
                             @default-address-id-change="addressIdChange"
                             :addresses="addresses"
@@ -129,7 +129,6 @@
                             :label="__('Select address')"
                         />
                     </div>
-                    <br />
                     <AddAddressFormContent
                         v-if="getAreaCodesDone"
                         :countries="countries"
@@ -154,7 +153,7 @@
                         >
                     </div>
                     <div v-if="!addressInvoiceTheSame">
-                        <div class="clearfix" v-if="authenticated">
+                        <div class="clearfix pb-2" v-if="authenticated">
                             <AddressesSelect
                                 @default-address-id-change="
                                     addressIdChange($event, 'addressInvoice')
@@ -164,7 +163,6 @@
                                 :label="__('Select address')"
                             />
                         </div>
-                        <br />
                         <AddAddressFormContent
                             v-if="getAreaCodesDone"
                             :countries="countries"

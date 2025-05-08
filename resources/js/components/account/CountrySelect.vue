@@ -70,7 +70,11 @@ export default {
                 this.countries[this.address.country_id].name;
         },
         optionSelect: function (countryId) {
-            this.address.country_id = countryId;
+            if (this.address.country_id !== countryId) {
+                this.address.country_id = countryId;
+            } else {
+                this.setCountryValueById();
+            }
             this.resetInput();
         },
         onInputInput: function () {
@@ -92,13 +96,13 @@ export default {
         onInputBlur: function () {
             if (!this.hoverOptions) {
                 this.resetInput();
+                this.setCountryValueById();
             }
         },
         resetInput: function () {
             this.bottom = null;
             this.maxCountryOptionsHeight = this.countryOptionsHeight;
             this.showOptions = false;
-            this.setCountryValueById();
         },
         onInputFocus: function () {
             this.$refs.country.value = '';

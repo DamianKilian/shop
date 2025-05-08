@@ -36,7 +36,7 @@ export default {
             var address = null;
             _.forEach(this.addresses, function (addr) {
                 if (id === addr.id) {
-                    address = addr;
+                    address = { ...addr };
                     return false;
                 }
             });
@@ -53,7 +53,7 @@ export default {
                     that.defaultCountry = response.data.defaultCountry;
                     that.clearAddress(that.address);
                     that.getAreaCodesDone = true;
-                    if(getAddresses){
+                    if (getAddresses) {
                         that.getAddresses();
                     }
                 }).catch(function (error) {
