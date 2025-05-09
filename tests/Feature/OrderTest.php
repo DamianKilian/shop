@@ -88,11 +88,11 @@ class OrderTest extends TestCase
         $response->assertRedirect();
     }
 
-    protected function getAddressData()
+    protected function getAddressData($name = 'Jan')
     {
         return [
             "email" => "adsa@dad.asd",
-            "name" => "Damian",
+            "name" => $name,
             "surname" => "Surname",
             "nip" => "123123",
             "company_name" => "company",
@@ -134,15 +134,18 @@ class OrderTest extends TestCase
                 $p3->id => ['num' => 1],
             ]),
             'deliveryMethod' => 'inpost',
-            "addressInvoiceTheSame" => "true",
+            "addressInvoiceTheSame" => "false",
             "address" => $this->getAddressData(),
+            "addressInvoice" => $this->getAddressData('Jan2'),
         ]);
         $order = Order::latest()->first(['id']);
         $productsInBasketData = json_decode($response['productsInBasketData'], true);
         $summary = json_decode($response['summary'], true);
         $deliveryMethod = json_decode($response['deliveryMethod'], true);
+        $addresses = json_decode($response['addresses']);
 
         $response->assertStatus(200);
+        assertTrue($addresses->address->id !== $addresses->addressInvoice->id);
         assertTrue('title1' === $productsInBasketData[$p1->id]['title']);
         assertTrue('1 231,00' === $summary['totalPrice']);
         assertTrue('InPost' === $deliveryMethod['name']);
@@ -183,8 +186,10 @@ class OrderTest extends TestCase
         $productsInBasketData = json_decode($response['productsInBasketData'], true);
         $summary = json_decode($response['summary'], true);
         $deliveryMethod = json_decode($response['deliveryMethod'], true);
+        $addresses = json_decode($response['addresses']);
 
         $response->assertStatus(200);
+        assertTrue($addresses->address->id !== $addresses->addressInvoice->id);
         assertTrue('title1' === $productsInBasketData[$p1->id]['title']);
         assertTrue('1 231,00' === $summary['totalPrice']);
         assertTrue('InPost' === $deliveryMethod['name']);

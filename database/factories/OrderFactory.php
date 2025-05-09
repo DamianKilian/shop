@@ -28,6 +28,7 @@ class OrderFactory extends Factory
             'delivery_method' => $deliveryMethod,
             'user_id' => User::factory(),
             'address_id' => Address::factory(),
+            'address_invoice_id' => Address::factory(),
             'delivery_price' => (int)AppService::toPennies($deliveryMethodsService->getDeliveryPrice($deliveryMethod)),
         ];
     }

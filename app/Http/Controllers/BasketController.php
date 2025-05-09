@@ -52,7 +52,8 @@ class BasketController extends Controller
         $deliveryMethod = $deliveryMethodsService->deliveryMethods[$request->deliveryMethod];
         $deliveryPrice = (int)AppService::toPennies($deliveryMethod['price']);
         $order = new Order;
-        DB::transaction(function () use ($order, $summary, $request, $productsInBasketArr, $deliveryPrice) {
+        $addressIds = [];
+        DB::transaction(function () use ($order, $summary, $request, $productsInBasketArr, $deliveryPrice, &$addressIds) {
             $order->session_Id = Str::random(100);
             $order->price = $summary['raw']['totalPrice'];
             $order->delivery_price = $deliveryPrice;
@@ -60,14 +61,16 @@ class BasketController extends Controller
             $order->user_id = Auth::check() ? auth()->user()->id : null;
             $address = $this->createAddress($request->address);
             $order->address_id = $address->id;
+            $addressIds['address'] = $address->id;
             if ('false' === $request->addressInvoiceTheSame) {
                 $addressInvoice = $this->createAddress($request->addressInvoice);
                 $order->address_invoice_id = $addressInvoice->id;
+                $addressIds['addressInvoice'] = $addressInvoice->id;
             }
             $order->save();
             $order->products()->attach($productsInBasketArr);
         });
-        $this->setSession($summary, $productsInBasketArr, $deliveryMethod, $order->id);
+        $this->setSession($summary, $productsInBasketArr, $deliveryMethod, $order->id, $addressIds);
         return redirect()->route('order-payment', ['order' => $order->id]);
     }
 
@@ -90,13 +93,14 @@ class BasketController extends Controller
         ]);
     }
 
-    protected function setSession($summary, $productsInBasketArr, $deliveryMethod, $orderId)
+    protected function setSession($summary, $productsInBasketArr, $deliveryMethod, $orderId, $addressIds)
     {
         session([
             'summary' => $summary,
             'productsInBasketArr' => $productsInBasketArr,
             'deliveryMethod' => json_encode($deliveryMethod),
             'orderId' => $orderId,
+            'addressIds' => $addressIds,
         ]);
     }
 
@@ -113,15 +117,25 @@ class BasketController extends Controller
             if (!$order) {
                 abort(403);
             }
+            $addressIds['address'] = $order->address_id;
+            if ($order->address_invoice_id) {
+                $addressIds['addressInvoice'] = $order->address_invoice_id;
+            }
             $productsInBasket = DB::table('order_product')->whereOrderId($order->id)->get(['product_id', 'num'])->keyBy('product_id');
             $productsInBasketArr = $productsInBasket->map(fn($row) => (array)$row)->all();
             $summary = BasketService::getBasketSummary($productsInBasketArr, $order->delivery_method, $deliveryMethodsService);
             $deliveryMethod = json_encode($deliveryMethodsService->deliveryMethods[$order->delivery_method]);
-            $this->setSession($summary, $productsInBasketArr, $deliveryMethod, $order->id);
+            $this->setSession($summary, $productsInBasketArr, $deliveryMethod, $order->id, $addressIds);
         } else {
             $productsInBasketArr = session()->get('productsInBasketArr');
             $summary = session()->get('summary');
             $deliveryMethod = session()->get('deliveryMethod');
+            $addressIds = session()->get('addressIds');
+        }
+        $addressesDb = Address::whereIn('id', array_values($addressIds))->with(['areaCode', 'country'])->get()->keyBy('id');
+        $addresses = [];
+        foreach ($addressIds as $key => $addressId) {
+            $addresses[$key] = $addressesDb[$addressId];
         }
         $productsInBasketData = BasketService::getProductsInBasketData($productsInBasketArr);
         BasketService::productsInBasketDataForList($productsInBasketData);
@@ -129,6 +143,7 @@ class BasketController extends Controller
             'productsInBasketData' => $productsInBasketData->toJson(),
             'summary' => json_encode($summary['formatted']),
             'deliveryMethod' => $deliveryMethod,
+            'addresses' => json_encode($addresses),
         ]);
     }
 

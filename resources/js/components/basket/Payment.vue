@@ -42,7 +42,7 @@
                     </tr>
                 </tbody>
             </table>
-            <div id="deliveryMethods">
+            <div id="deliveryMethods" class="mb-4">
                 <h2><b>Delivery method:</b></h2>
                 <div class="list-group">
                     <label
@@ -50,12 +50,46 @@
                     >
                         <div class="d-flex w-100 justify-content-between">
                             <span class="fs-3">
-                                <input class="form-check-input" type="radio" />
                                 {{ deliveryMethod.name }}
                             </span>
                             <span class="fs-3">{{ deliveryMethod.price }}</span>
                         </div>
                     </label>
+                </div>
+            </div>
+            <div id="addresses" class="mb-4">
+                <h2><b>Addresses</b></h2>
+                <h4>{{ __('Delivery address') }}</h4>
+                <AddAddressFormContent
+                    :countries="{
+                        [addresses.address.country.id]:
+                            addresses.address.country,
+                    }"
+                    :failedValidation="{}"
+                    :address="addresses.address"
+                    :areaCodes="[addresses.address.area_code]"
+                    :readonly="true"
+                />
+                <h4>{{ __('Invoice address') }}</h4>
+                <div
+                    v-if="addressInvoiceTheSame"
+                    class="form-check form-switch p-0"
+                >
+                    <label class="form-check-label">{{
+                        __('Invoice address same as delivery address')
+                    }}</label>
+                </div>
+                <div v-else>
+                    <AddAddressFormContent
+                        :countries="{
+                            [addresses.addressInvoice.country.id]:
+                                addresses.addressInvoice.country,
+                        }"
+                        :failedValidation="{}"
+                        :address="addresses.addressInvoice"
+                        :areaCodes="[addresses.addressInvoice.area_code]"
+                        :readonly="true"
+                    />
                 </div>
             </div>
         </div>
@@ -118,8 +152,12 @@
 </template>
 
 <script>
+import AddAddressFormContent from '../account/AddAddressFormContent.vue';
+
 export default {
+    components: { AddAddressFormContent },
     props: [
+        'addresses',
         'productsInBasketData',
         'productsInBasket',
         'summary',
@@ -132,6 +170,11 @@ export default {
             csrfToken: document.querySelector("meta[name='csrf-token']")
                 .content,
         };
+    },
+    computed: {
+        addressInvoiceTheSame() {
+            return _.isUndefined(this.addresses.addressInvoice);
+        },
     },
     methods: {},
     mounted() {},
