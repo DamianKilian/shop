@@ -67,6 +67,11 @@ Route::prefix('admin-panel')->middleware('can:admin')->group(function () {
     Route::post('/apply-changes', [App\Http\Controllers\AdminPanelPagesController::class, 'applyChanges'])->name('admin-panel-apply-changes');
     Route::post('/delete-page', [App\Http\Controllers\AdminPanelPagesController::class, 'deletePage'])->name('admin-panel-delete-page');
 
+    Route::get('/delivery-methods', [App\Http\Controllers\AdminPanelDeliveryMethodsController::class, 'deliveryMethods'])->name('admin-panel-delivery-methods');
+    Route::post('/add-delivery-method', [App\Http\Controllers\AdminPanelDeliveryMethodsController::class, 'addDeliveryMethod'])->name('admin-panel-add-delivery-method');
+    Route::post('/get-delivery-methods', [App\Http\Controllers\AdminPanelDeliveryMethodsController::class, 'getDeliveryMethods'])->name('admin-panel-get-delivery-methods');
+    Route::post('/delete-delivery-methods', [App\Http\Controllers\AdminPanelDeliveryMethodsController::class, 'deleteDeliveryMethods'])->name('admin-panel-delete-delivery-methods');
+
     Route::post('/editorjs/upload-attachment', [App\Http\Controllers\AdminPanelEditorjsController::class, 'uploadAttachment'])->name('admin-panel-upload-attachment')->withoutMiddleware([VerifyCsrfToken::class]);
     Route::post('/editorjs/upload-file', [App\Http\Controllers\AdminPanelEditorjsController::class, 'uploadFile'])->name('admin-panel-upload-file')->withoutMiddleware([VerifyCsrfToken::class]);
     Route::post('/editorjs/fetch-url', [App\Http\Controllers\AdminPanelEditorjsController::class, 'fetchUrl'])->name('admin-panel-fetch-url')->withoutMiddleware([VerifyCsrfToken::class]);

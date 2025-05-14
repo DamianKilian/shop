@@ -91,15 +91,15 @@ class AddressController extends Controller
             "city" => $request->city,
             "country_id" => $request->country_id,
         ];
+        $user = auth()->user();
         if ($request->addressId) {
             $address = Address::whereId($request->addressId)
-                ->whereUserId(auth()->user()->id)
+                ->whereUserId($user->id)
                 ->first();
             $address->update($addressData);
         } else {
-            $addressData['user_id'] = auth()->user()->id;
+            $addressData['user_id'] = $user->id;
             $address = Address::create($addressData);
-            $user = auth()->user();
             $user->default_address_id = $address->id;
             $user->default_address_invoice_id = $address->id;
             $user->save();

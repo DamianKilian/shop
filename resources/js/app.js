@@ -55,6 +55,8 @@ import AdminPanelFooter from './components/AdminPanelFooter.vue'
 app.component('admin-panel-footer', AdminPanelFooter);
 import AdminPanelUsers from './components/AdminPanelUsers.vue';
 app.component('admin-panel-users', AdminPanelUsers);
+import AdminPanelDeliveryMethods from './components/AdminPanelDeliveryMethods.vue';
+app.component('admin-panel-delivery-methods', AdminPanelDeliveryMethods);
 
 //basket
 import NumBadge from './components/basket/NumBadge.vue';

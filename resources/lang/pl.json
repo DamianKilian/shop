@@ -1,4 +1,6 @@
 {
+    "No delivery methods": "Brak metod dostawy",
+    "Add": "Dodaj",
     "New address": "Nowy adres",
     "Default invoice address": "Domyślny adres faktury",
     "Default address": "Domyślny adres",
@@ -30,7 +32,8 @@
     "Price for courier delivery method": "Cena za dostawę kurierską",
     "Enable/disable courier delivery method": "Włącz/wyłącz metodę dostawy kurierskiej",
     "Price for inPost delivery method": "Cena za metodę dostawy inPost",
-    "Delivery methods settings": "Ustawienia metod dostawy",
+    "Delivery methods": "Metody dostawy",
+    "Delivery method": "Metoda dostawy",
     "Add to basket": "Dodaj do koszyka",
     "Set as Admin": "Ustaw jako admin",
     "Unset as Admin": "Usuń jako admin",
