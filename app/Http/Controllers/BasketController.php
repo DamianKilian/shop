@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Services\BasketService;
-use App\Services\DeliveryMethodsService;
 use Illuminate\Http\Request;
 use App\Http\Requests\OrderStoreRequest;
 use App\Models\Address;
+use App\Models\DeliveryMethod;
 use App\Models\Order;
-use App\Services\AppService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -20,10 +19,11 @@ class BasketController extends Controller
         // $this->middleware('auth');
     }
 
-    public function basketIndex(DeliveryMethodsService $deliveryMethodsService)
+    public function basketIndex()
     {
+        $deliveryMethods = DeliveryMethod::whereActive(true)->get()->keyBy('id');
         return view('basket.index', [
-            'deliveryMethods' => json_encode($deliveryMethodsService->deliveryMethods),
+            'deliveryMethods' => json_encode($deliveryMethods),
         ]);
     }
 
@@ -36,28 +36,28 @@ class BasketController extends Controller
         ]);
     }
 
-    public function getBasketSummary(Request $request, DeliveryMethodsService $deliveryMethodsService)
+    public function getBasketSummary(Request $request)
     {
-        $summary = BasketService::getBasketSummary($request->productsInBasket, $request->deliveryMethod, $deliveryMethodsService);
+        $deliveryMethod = DeliveryMethod::whereId($request->deliveryMethodId)->first();
+        $summary = BasketService::getBasketSummary($request->productsInBasket, $deliveryMethod);
         return response()->json([
             'basketLastChange' => $request->basketLastChange,
             'summary' => $summary['formatted'],
         ]);
     }
 
-    public function orderStore(OrderStoreRequest $request, DeliveryMethodsService $deliveryMethodsService)
+    public function orderStore(OrderStoreRequest $request)
     {
         $productsInBasketArr = json_decode($request->productsInBasket, true);
-        $summary = BasketService::getBasketSummary($productsInBasketArr, $request->deliveryMethod, $deliveryMethodsService);
-        $deliveryMethod = $deliveryMethodsService->deliveryMethods[$request->deliveryMethod];
-        $deliveryPrice = (int)AppService::toPennies($deliveryMethod['price']);
+        $deliveryMethod = DeliveryMethod::whereId($request->deliveryMethodId)->first();
+        $summary = BasketService::getBasketSummary($productsInBasketArr, $deliveryMethod);
         $order = new Order;
         $addressIds = [];
-        DB::transaction(function () use ($order, $summary, $request, $productsInBasketArr, $deliveryPrice, &$addressIds) {
+        DB::transaction(function () use ($order, $summary, $request, $productsInBasketArr, $deliveryMethod, &$addressIds) {
             $order->session_Id = Str::random(100);
             $order->price = $summary['raw']['totalPrice'];
-            $order->delivery_price = $deliveryPrice;
-            $order->delivery_method = $request->deliveryMethod;
+            $order->delivery_price = $deliveryMethod->price;
+            $order->delivery_method_id = $request->deliveryMethodId;
             $order->user_id = Auth::check() ? auth()->user()->id : null;
             $address = $this->createAddress($request->address);
             $order->address_id = $address->id;
@@ -104,7 +104,7 @@ class BasketController extends Controller
         ]);
     }
 
-    public function orderPayment(Request $request, DeliveryMethodsService $deliveryMethodsService, int $orderId)
+    public function orderPayment(int $orderId)
     {
         if ($orderId !== session()->get('orderId')) {
             if (Auth::guest()) {
@@ -113,6 +113,7 @@ class BasketController extends Controller
             $order = Order::whereId($orderId)
                 ->whereUserId(auth()->user()->id)
                 ->with('products')
+                ->with('deliveryMethod')
                 ->first();
             if (!$order) {
                 abort(403);
@@ -123,8 +124,8 @@ class BasketController extends Controller
             }
             $productsInBasket = DB::table('order_product')->whereOrderId($order->id)->get(['product_id', 'num'])->keyBy('product_id');
             $productsInBasketArr = $productsInBasket->map(fn($row) => (array)$row)->all();
-            $summary = BasketService::getBasketSummary($productsInBasketArr, $order->delivery_method, $deliveryMethodsService);
-            $deliveryMethod = json_encode($deliveryMethodsService->deliveryMethods[$order->delivery_method]);
+            $deliveryMethod = $order->deliveryMethod();
+            $summary = BasketService::getBasketSummary($productsInBasketArr, $deliveryMethod);
             $this->setSession($summary, $productsInBasketArr, $deliveryMethod, $order->id, $addressIds);
         } else {
             $productsInBasketArr = session()->get('productsInBasketArr');

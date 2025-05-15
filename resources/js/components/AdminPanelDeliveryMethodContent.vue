@@ -11,6 +11,8 @@
                     class="form-check-input"
                     type="radio"
                     name="deliveryMethod"
+                    :value="deliveryMethod.id"
+                    @input="$emit('update:modelValue', $event.target.value)"
                 />
                 {{ deliveryMethod.name }}
             </span>
@@ -21,9 +23,9 @@
 </template>
 
 <script>
-// v-for="(method, id) in deliveryMethods"
 export default {
-    props: ['deliveryMethod', 'deliveryMethodChange', 'active'],
+    props: ['deliveryMethod', 'deliveryMethodChange', 'active', 'modelValue'],
+    emits: ['update:modelValue'],
     mounted() {},
 };
 </script>

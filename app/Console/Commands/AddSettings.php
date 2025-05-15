@@ -155,49 +155,5 @@ class AddSettings extends Command
         $GalleryImageFit->settingValues()->attach([$fill->id, $contain->id, $cover->id, $none->id, $scaleDown->id]);
         $GalleryImageFitMasonry->settingValues()->attach([$fill->id, $contain->id, $cover->id, $none->id, $scaleDown->id]);
         $CarouselImageFit->settingValues()->attach([$fill->id, $contain->id, $cover->id, $none->id, $scaleDown->id]);
-        $this->deliveryMethodsSett();
-    }
-
-    public function deliveryMethodsSett() {
-        $deliveryMethodsSett = SettingCategory::create([
-            'name' => 'Delivery methods settings',
-            'order_priority' => 2000,
-        ]);
-        Setting::create([
-            'name' => 'INPOST_PRICE',
-            'desc' => 'Price for inPost delivery method',
-            'input_type' => 'text',
-            'value' => '0',
-            'default_value' => '0.00',
-            'order_priority' => 1000,
-            'setting_category_id' => $deliveryMethodsSett->id,
-        ]);
-        Setting::create([
-            'name' => 'INPOST_ENABLED',
-            'desc' => 'Enable/disable inPost delivery method',
-            'input_type' => 'checkbox',
-            'value' => '1',
-            'default_value' => '1',
-            'order_priority' => 2000,
-            'setting_category_id' => $deliveryMethodsSett->id,
-        ]);
-        Setting::create([
-            'name' => 'COURIER_PRICE',
-            'desc' => 'Price for courier delivery method',
-            'input_type' => 'text',
-            'value' => '0',
-            'default_value' => '0.00',
-            'order_priority' => 3000,
-            'setting_category_id' => $deliveryMethodsSett->id,
-        ]);
-        Setting::create([
-            'name' => 'COURIER_ENABLED',
-            'desc' => 'Enable/disable courier delivery method',
-            'input_type' => 'checkbox',
-            'value' => '1',
-            'default_value' => '1',
-            'order_priority' => 4000,
-            'setting_category_id' => $deliveryMethodsSett->id,
-        ]);
     }
 }

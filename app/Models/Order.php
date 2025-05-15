@@ -19,6 +19,7 @@ class Order extends Model
         'user_id',
         'address_id',
         'address_invoice_id',
+        'delivery_method_id',
     ];
 
     public function products(): BelongsToMany
@@ -29,5 +30,10 @@ class Order extends Model
     public function address()
     {
         return $this->belongsTo(Address::class);
+    }
+
+    public function deliveryMethod()
+    {
+        return $this->belongsTo(DeliveryMethod::class);
     }
 }

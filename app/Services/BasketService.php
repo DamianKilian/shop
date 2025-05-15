@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\DeliveryMethod;
 use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
 
@@ -30,7 +31,7 @@ class BasketService
         };
     }
 
-    public static function getBasketSummary($productsInBasket, $deliveryMethod, DeliveryMethodsService $deliveryMethodsService)
+    public static function getBasketSummary($productsInBasket, $deliveryMethod)
     {
         $summary = [
             'productsPrice' => 0,
@@ -41,7 +42,7 @@ class BasketService
         foreach ($productsInBasketData as $product) {
             $summary['productsPrice'] += $product->price * $productsInBasket[$product->id]['num'];
         };
-        $summary['deliveryPrice'] = $deliveryMethodsService->getDeliveryPrice($deliveryMethod);
+        $summary['deliveryPrice'] = $deliveryMethod ? $deliveryMethod->price : 0;
         $summary['totalPrice'] = $summary['deliveryPrice'] + $summary['productsPrice'];
         $raw = $summary;
         foreach ($summary as &$value) {

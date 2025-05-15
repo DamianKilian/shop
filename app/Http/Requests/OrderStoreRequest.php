@@ -15,7 +15,7 @@ class OrderStoreRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'deliveryMethod' => 'required',
+            'deliveryMethodId' => 'required',
         ];
         return $rules
             + Address::createRules('address.')
@@ -25,7 +25,7 @@ class OrderStoreRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'deliveryMethod.required' => __('The delivery method is required'),
+            'deliveryMethodId.required' => __('The delivery method is required'),
         ];
     }
 }

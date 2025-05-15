@@ -95,26 +95,13 @@
             <div id="deliveryMethods" class="mb-4">
                 <h2><b>Delivery methods</b></h2>
                 <div class="list-group">
-                    <label
-                        v-for="(method, key) in deliveryMethods"
-                        class="list-group-item list-group-item-action"
-                        :class="{ active: deliveryMethod === key }"
-                    >
-                        <div class="d-flex w-100 justify-content-between">
-                            <span class="fs-3">
-                                <input
-                                    @change="deliveryMethodChange"
-                                    class="form-check-input"
-                                    type="radio"
-                                    :name="key"
-                                    :value="key"
-                                    v-model="deliveryMethod"
-                                />
-                                {{ method.name }}
-                            </span>
-                            <span class="fs-3">{{ method.price }}</span>
-                        </div>
-                    </label>
+                    <AdminPanelDeliveryMethodContent
+                        v-for="(method, id) in deliveryMethods"
+                        v-model="deliveryMethodId"
+                        :deliveryMethod="method"
+                        :deliveryMethodChange="deliveryMethodChange"
+                        :active="deliveryMethodId === id"
+                    />
                 </div>
             </div>
             <div id="addresses" class="mb-4">
@@ -187,9 +174,9 @@
                     </div>
                     <div class="fs-4">
                         {{ __('Delivery') }}
-                        <span v-if="deliveryMethod"
+                        <span v-if="deliveryMethodId"
                             >({{
-                                deliveryMethods[deliveryMethod]['name']
+                                deliveryMethods[deliveryMethodId]['name']
                             }})</span
                         >
                         <b class="float-end">{{ summary.deliveryPrice }}</b>
@@ -214,8 +201,8 @@
                     />
                     <input
                         type="hidden"
-                        name="deliveryMethod"
-                        :value="deliveryMethod"
+                        name="deliveryMethodId"
+                        :value="deliveryMethodId"
                     />
                     <button
                         :disabled="orderStoreSubmitBtnDisabled"
@@ -243,10 +230,15 @@ import AddAddressFormContent from '../account/AddAddressFormContent.vue';
 import getAddresses from '../account/getAddresses.js';
 import { addInputToForm } from '../commonFunctions.js';
 import AddressesSelect from '../account/AddressesSelect.vue';
+import AdminPanelDeliveryMethodContent from '../AdminPanelDeliveryMethodContent.vue';
 
 export default {
     mixins: [getAddresses],
-    components: { AddAddressFormContent, AddressesSelect },
+    components: {
+        AddAddressFormContent,
+        AddressesSelect,
+        AdminPanelDeliveryMethodContent,
+    },
     props: [
         'errors',
         'productsInBasket',
@@ -268,7 +260,7 @@ export default {
             basketLastChange: null,
             loadingCalculations: false,
             productsInBasketData: {},
-            deliveryMethod: '',
+            deliveryMethodId: null,
             summary: {
                 productsPrice: null,
                 deliveryPrice: null,
@@ -368,7 +360,7 @@ export default {
         },
         setDeliveryMethodInLocalStorage: function () {
             var deliveryMethodData = {
-                deliveryMethod: this.deliveryMethod,
+                deliveryMethodId: this.deliveryMethodId,
             };
             localStorage.setItem(
                 'deliveryMethodData',
@@ -378,8 +370,8 @@ export default {
         getDeliveryMethodFromLocalStorage: function () {
             let deliveryMethodData = localStorage.getItem('deliveryMethodData');
             if (deliveryMethodData) {
-                this.deliveryMethod =
-                    JSON.parse(deliveryMethodData).deliveryMethod;
+                this.deliveryMethodId =
+                    JSON.parse(deliveryMethodData).deliveryMethodId;
             }
         },
         productNum: function (num, id) {
@@ -418,7 +410,7 @@ export default {
                 .post(this.getBasketSummaryUrl, {
                     basketLastChange: this.basketLastChange,
                     productsInBasket: this.productsInBasket,
-                    deliveryMethod: this.deliveryMethod,
+                    deliveryMethodId: this.deliveryMethodId,
                 })
                 .then(function (response) {
                     if (

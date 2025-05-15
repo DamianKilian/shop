@@ -45,16 +45,10 @@
             <div id="deliveryMethods" class="mb-4">
                 <h2><b>Delivery method:</b></h2>
                 <div class="list-group">
-                    <label
-                        class="list-group-item list-group-item-action active"
-                    >
-                        <div class="d-flex w-100 justify-content-between">
-                            <span class="fs-3">
-                                {{ deliveryMethod.name }}
-                            </span>
-                            <span class="fs-3">{{ deliveryMethod.price }}</span>
-                        </div>
-                    </label>
+                    <AdminPanelDeliveryMethodContent
+                        :deliveryMethod="deliveryMethod"
+                        :active="true"
+                    />
                 </div>
             </div>
             <div id="addresses" class="mb-4">
@@ -153,9 +147,10 @@
 
 <script>
 import AddAddressFormContent from '../account/AddAddressFormContent.vue';
+import AdminPanelDeliveryMethodContent from '../AdminPanelDeliveryMethodContent.vue';
 
 export default {
-    components: { AddAddressFormContent },
+    components: { AddAddressFormContent, AdminPanelDeliveryMethodContent },
     props: [
         'addresses',
         'productsInBasketData',

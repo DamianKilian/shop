@@ -31,10 +31,8 @@ return new class extends Migration
             $table->unsignedBigInteger('order_id')->nullable();
             $table->string('session_id', length: 100);
             $table->decimal('price');
-            $table->integer('delivery_price');
+            $table->decimal('delivery_price');
             $table->string('currency')->default('PLN');
-            $table->string('delivery_method');
-            // $table->string('payment_type');
             $table->unsignedBigInteger('order_status_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('order_status_id')
@@ -51,6 +49,10 @@ return new class extends Migration
             $table->foreign('address_invoice_id')
                 ->references('id')
                 ->on('addresses');
+            $table->unsignedBigInteger('delivery_method_id')->nullable();
+            $table->foreign('delivery_method_id')
+                ->references('id')
+                ->on('delivery_methods');
             $table->softDeletes();
             $table->timestamps();
         });
