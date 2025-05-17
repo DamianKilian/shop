@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Address;
 use App\Models\Category;
+use App\Models\DeliveryMethod;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
@@ -19,7 +20,7 @@ class OrderTest extends TestCase
     public function test_orderCompleted(): void
     {
         $order = Order::factory()->create();
-        $response = $this->get('order/completed/'.$order->id);
+        $response = $this->get('order/completed/' . $order->id);
 
         $response->assertSuccessful();
     }
@@ -41,6 +42,10 @@ class OrderTest extends TestCase
             'price' => 1000.30,
             'category_id' => $category->id,
         ]);
+        $deliveryMethod = DeliveryMethod::factory([
+            'name' => 'InPost',
+            'price' => 100,
+        ])->create();
         $addressData = $this->getAddressData();
         $addressDataInvoice = $addressData;
         $addressDataInvoice['email'] = "adsa@dad.asdaInvoice";
@@ -50,7 +55,7 @@ class OrderTest extends TestCase
                 $p2->id => ['num' => 2],
                 $p3->id => ['num' => 1],
             ]),
-            'deliveryMethod' => 'inpost',
+            'deliveryMethodId' => $deliveryMethod->id,
             "addressInvoiceTheSame" => "false",
             "address" => $addressData,
             "addressInvoice" => $addressDataInvoice,
@@ -68,8 +73,8 @@ class OrderTest extends TestCase
         $response->assertSessionHas('summary', function ($value) {
             return $value['formatted'] == [
                 "productsPrice" => "1 231,00",
-                "deliveryPrice" => "0,00",
-                "totalPrice" => "1 231,00",
+                "deliveryPrice" => "100,00",
+                "totalPrice" => "1 331,00",
             ];
         });
         $response->assertSessionHas('productsInBasketArr', function ($value) use ($p1, $p2, $p3) {
@@ -80,7 +85,8 @@ class OrderTest extends TestCase
             ];
         });
         $response->assertSessionHas('deliveryMethod', function ($value) {
-            return $value == '{"name":"InPost","price":"0"}';
+            $dmArr = json_decode($value);
+            return 'InPost' == $dmArr->name;
         });
         $response->assertSessionHas('orderId', function ($value) use ($order) {
             return $value == $order->id;
@@ -125,6 +131,10 @@ class OrderTest extends TestCase
             'price' => 1000.30,
             'category_id' => $category->id,
         ]);
+        $deliveryMethod = DeliveryMethod::factory([
+            'name' => 'InPost',
+            'price' => 100,
+        ])->create();
 
         $this->followingRedirects();
         $response = $this->post("/order/store", [
@@ -133,7 +143,7 @@ class OrderTest extends TestCase
                 $p2->id => ['num' => 2],
                 $p3->id => ['num' => 1],
             ]),
-            'deliveryMethod' => 'inpost',
+            'deliveryMethodId' => $deliveryMethod->id,
             "addressInvoiceTheSame" => "false",
             "address" => $this->getAddressData(),
             "addressInvoice" => $this->getAddressData('Jan2'),
@@ -147,7 +157,7 @@ class OrderTest extends TestCase
         $response->assertStatus(200);
         assertTrue($addresses->address->id !== $addresses->addressInvoice->id);
         assertTrue('title1' === $productsInBasketData[$p1->id]['title']);
-        assertTrue('1 231,00' === $summary['totalPrice']);
+        assertTrue('1 331,00' === $summary['totalPrice']);
         assertTrue('InPost' === $deliveryMethod['name']);
         assertTrue($order->id === session()->get('orderId'));
     }
@@ -171,9 +181,13 @@ class OrderTest extends TestCase
             'category_id' => $category->id,
         ]);
         $user = User::factory()->create();
+        $deliveryMethod = DeliveryMethod::factory([
+            'name' => 'InPost',
+            'price' => 100,
+        ])->create();
         $order = Order::factory()->create([
             'price' => 1231.00,
-            'delivery_method' => 'inpost',
+            'delivery_method_id' => $deliveryMethod->id,
             'user_id' => $user->id,
         ]);
         $order->products()->attach([
@@ -191,7 +205,7 @@ class OrderTest extends TestCase
         $response->assertStatus(200);
         assertTrue($addresses->address->id !== $addresses->addressInvoice->id);
         assertTrue('title1' === $productsInBasketData[$p1->id]['title']);
-        assertTrue('1 231,00' === $summary['totalPrice']);
+        assertTrue('1 331,00' === $summary['totalPrice']);
         assertTrue('InPost' === $deliveryMethod['name']);
     }
 
@@ -213,9 +227,13 @@ class OrderTest extends TestCase
             'price' => 1000.30,
             'category_id' => $category->id,
         ]);
+        $deliveryMethod = DeliveryMethod::factory([
+            'name' => 'InPost',
+            'price' => 100,
+        ])->create();
         $order = Order::factory()->create([
             'price' => 1231.00,
-            'delivery_method' => 'inpost',
+            'delivery_method_id' => $deliveryMethod->id,
         ]);
         $order->products()->attach([
             $p1->id => ['num' => 3],

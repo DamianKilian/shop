@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Integrations\Przelewy24;
 use App\Models\Category;
+use App\Models\DeliveryMethod;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery\MockInterface;
@@ -64,15 +65,14 @@ class BasketTest extends TestCase
 
     public function test_basketIndex(): void
     {
+        $dm = DeliveryMethod::factory([
+            'name' => 'InPost',
+        ])->create();
         $response = $this->get("/basket/index");
 
-        $response->assertViewHas('deliveryMethods', function ($deliveryMethods) {
+        $response->assertViewHas('deliveryMethods', function ($deliveryMethods) use ($dm) {
             $deliveryMethodsArr = json_decode($deliveryMethods, true);
-            $inpost = [
-                'name' => 'InPost',
-                'price' => 0
-            ];
-            return $inpost == $deliveryMethodsArr['inpost'];
+            return 'InPost' == $deliveryMethodsArr[$dm->id]['name'];
         });
         $response->assertSee('InPost');
         $response->assertSuccessful();

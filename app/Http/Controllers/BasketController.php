@@ -124,7 +124,7 @@ class BasketController extends Controller
             }
             $productsInBasket = DB::table('order_product')->whereOrderId($order->id)->get(['product_id', 'num'])->keyBy('product_id');
             $productsInBasketArr = $productsInBasket->map(fn($row) => (array)$row)->all();
-            $deliveryMethod = $order->deliveryMethod();
+            $deliveryMethod = $order->deliveryMethod;
             $summary = BasketService::getBasketSummary($productsInBasketArr, $deliveryMethod);
             $this->setSession($summary, $productsInBasketArr, $deliveryMethod, $order->id, $addressIds);
         } else {
