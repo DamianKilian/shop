@@ -20,6 +20,8 @@ class Order extends Model
         'address_id',
         'address_invoice_id',
         'delivery_method_id',
+        'order_status_id',
+        'created_in_admin_panel',
     ];
 
     public function products(): BelongsToMany

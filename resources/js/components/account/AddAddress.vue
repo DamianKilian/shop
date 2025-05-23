@@ -105,6 +105,7 @@ export default {
                         );
                     }
                     that.$refs.closeModal.click();
+                    that.failedValidation = {};
                 })
                 .catch(function (error) {
                     if (_.has(error, 'response.data.failedValidation')) {

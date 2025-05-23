@@ -3,6 +3,7 @@
 namespace Tests\Feature\Account;
 
 use App\Models\DeliveryMethod;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -22,6 +23,15 @@ class DeliveryMethodsTest extends TestCase
         $response = $this->get("admin-panel/delivery-methods");
 
         $response->assertRedirect(route('login'));
+    }
+
+    public function test_deliveryMethods_not_an_admin_cant_access(): void
+    {
+        $user = User::factory()->create();
+        
+        $response = $this->actingAs($user)->get("admin-panel/delivery-methods");
+
+        $response->assertStatus(403);
     }
 
     public function test_getDeliveryMethods(): void

@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\DeliveryMethod;
 use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
 

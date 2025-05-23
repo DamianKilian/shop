@@ -27,12 +27,12 @@ class AddressController extends Controller
         $user->save();
     }
 
-    public function addresses(Request $request)
+    public function addresses()
     {
         return view('account.addresses');
     }
 
-    public function getAreaCodes(Request $request)
+    public function getAreaCodes()
     {
         $areaCodes = AreaCode::all();
         $defaultAreaCode = AreaCode::whereCode('48')->first();
@@ -46,7 +46,7 @@ class AddressController extends Controller
         ]);
     }
 
-    public function getAddresses(Request $request)
+    public function getAddresses()
     {
         $addresses = Address::whereUserId(auth()->user()->id)->get();
         return response()->json([

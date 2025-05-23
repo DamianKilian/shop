@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Account\AddressController;
+use App\Http\Controllers\Account\OrderController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +30,9 @@ Route::prefix('account')->group(function () {
     Route::post('/add-address', [AddressController::class, 'addAddress'])->name('add-address');
     Route::post('/delete-addresses', [AddressController::class, 'deleteAddresses'])->name('delete-addresses');
     Route::post('/set-default-address', [AddressController::class, 'setDefaultAddress'])->name('set-default-address');
+
+    Route::get('/orders', [OrderController::class, 'orders'])->name('orders');
+    Route::post('/get-orders', [OrderController::class, 'getOrders'])->name('get-orders');
 });
 
 Route::prefix('admin-panel')->middleware('can:admin')->group(function () {
@@ -71,6 +75,11 @@ Route::prefix('admin-panel')->middleware('can:admin')->group(function () {
     Route::post('/add-delivery-method', [App\Http\Controllers\AdminPanelDeliveryMethodsController::class, 'addDeliveryMethod'])->name('admin-panel-add-delivery-method');
     Route::post('/get-delivery-methods', [App\Http\Controllers\AdminPanelDeliveryMethodsController::class, 'getDeliveryMethods'])->name('admin-panel-get-delivery-methods');
     Route::post('/delete-delivery-methods', [App\Http\Controllers\AdminPanelDeliveryMethodsController::class, 'deleteDeliveryMethods'])->name('admin-panel-delete-delivery-methods');
+
+    Route::get('/orders', [App\Http\Controllers\AdminPanelOrdersController::class, 'orders'])->name('admin-panel-orders');
+    Route::post('/add-order', [App\Http\Controllers\AdminPanelOrdersController::class, 'addOrder'])->name('admin-panel-add-order');
+    Route::post('/get-orders', [App\Http\Controllers\AdminPanelOrdersController::class, 'getOrders'])->name('admin-panel-get-orders');
+    Route::post('/delete-orders', [App\Http\Controllers\AdminPanelOrdersController::class, 'deleteOrders'])->name('admin-panel-delete-orders');
 
     Route::post('/editorjs/upload-attachment', [App\Http\Controllers\AdminPanelEditorjsController::class, 'uploadAttachment'])->name('admin-panel-upload-attachment')->withoutMiddleware([VerifyCsrfToken::class]);
     Route::post('/editorjs/upload-file', [App\Http\Controllers\AdminPanelEditorjsController::class, 'uploadFile'])->name('admin-panel-upload-file')->withoutMiddleware([VerifyCsrfToken::class]);

@@ -1,4 +1,8 @@
 {
+    "Status": "Status",
+    "Date": "Data",
+    "Order status": "Status zamówienia",
+    "Orders": "Zamówienia",
     "No delivery methods": "Brak metod dostawy",
     "Add": "Dodaj",
     "New address": "Nowy adres",

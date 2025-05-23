@@ -1,7 +1,7 @@
 <template>
     <div
         class="modal fade"
-        id="addDeliveryMethod"
+        id="addOrder"
         tabindex="-1"
         aria-labelledby="modalLabel"
         aria-hidden="true"
@@ -19,8 +19,8 @@
                     ></button>
                 </div>
                 <form
-                    @submit="addDeliveryMethod"
-                    ref="addDeliveryMethod"
+                    @submit="addOrder"
+                    ref="addOrder"
                     method="post"
                     class="position-relative"
                 >
@@ -28,43 +28,16 @@
                         <div class="clearfix">
                             <input
                                 type="hidden"
-                                name="deliveryMethodId"
-                                v-model="deliveryMethod.id"
+                                name="orderId"
+                                v-model="order.id"
                             />
                             <div class="row g-2 mb-2">
-                                <div class="col-sm-4">
+                                <div class="col-sm-6">
                                     <div
                                         class="form-floating float-start w-100"
                                     >
                                         <input
-                                            v-model="deliveryMethod.name"
-                                            name="name"
-                                            ref="name"
-                                            :class="{
-                                                'is-invalid':
-                                                    failedValidation.name,
-                                            }"
-                                            class="form-control"
-                                            :placeholder="__('Name')"
-                                        />
-                                        <label for="name"
-                                            >{{ __('Name') }} *</label
-                                        >
-                                        <div class="invalid-feedback">
-                                            {{
-                                                failedValidation.name
-                                                    ? failedValidation.name[0]
-                                                    : ''
-                                            }}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div
-                                        class="form-floating float-start w-100"
-                                    >
-                                        <input
-                                            v-model="deliveryMethod.price"
+                                            v-model="order.price"
                                             name="price"
                                             ref="price"
                                             :class="{
@@ -86,37 +59,42 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-4">
-                                    <div class="form-check">
-                                        <input
-                                            v-model="deliveryMethod.active"
-                                            name="active"
-                                            value='true'
-                                            class="form-check-input"
-                                            type="checkbox"
-                                            id="active"
-                                        />
-                                        <label
-                                            class="form-check-label"
-                                            for="active"
+                                <div class="col-sm-6">
+                                    <div class="form-floating">
+                                        <select
+                                            v-model="order.order_status_id"
+                                            name="orderStatusId"
+                                            ref="order_status_id"
+                                            :class="{
+                                                'is-invalid':
+                                                    failedValidation.order_status_id,
+                                                'form-control-plaintext':
+                                                    readonly,
+                                                'border-0': readonly,
+                                            }"
+                                            class="form-select w-100"
+                                            :readonly="readonly"
                                         >
-                                            {{ __('Active') }}
-                                        </label>
+                                            <option
+                                                v-for="orderStatus in orderStatuses"
+                                                :key="orderStatus.id"
+                                                :value="orderStatus.id"
+                                            >
+                                                {{ orderStatus.name }}
+                                            </option>
+                                        </select>
+                                        <label for="order_status_id"
+                                            >{{ __('Order status') }} *</label
+                                        >
+                                        <div class="invalid-feedback">
+                                            {{
+                                                failedValidation.order_status_id
+                                                    ? failedValidation
+                                                          .order_status_id[0]
+                                                    : ''
+                                            }}
+                                        </div>
                                     </div>
-                                </div>
-                                <div>
-                                    <label
-                                        for="description"
-                                        class="form-label"
-                                        >{{ __('Description') }}</label
-                                    >
-                                    <textarea
-                                        v-model="deliveryMethod.description"
-                                        name="description"
-                                        class="form-control"
-                                        id="description"
-                                        rows="3"
-                                    ></textarea>
                                 </div>
                             </div>
                         </div>
@@ -147,7 +125,7 @@
                             {{ globalSuccess }}
                         </div>
                     </div>
-                    <loading-overlay v-if="addingDeliveryMethod" />
+                    <loading-overlay v-if="addingOrder" />
                 </form>
             </div>
         </div>
@@ -156,10 +134,10 @@
 
 <script>
 export default {
-    props: ['addDeliveryMethodUrl', 'getDeliveryMethods', 'deliveryMethod'],
+    props: ['adminPanelAddOrderUrl', 'getOrders', 'order', 'orderStatuses'],
     data() {
         return {
-            addingDeliveryMethod: false,
+            addingOrder: false,
             globalError: '',
             globalSuccess: '',
             failedValidation: {},
@@ -167,15 +145,15 @@ export default {
         };
     },
     methods: {
-        addDeliveryMethod: function (e) {
+        addOrder: function (e) {
             var that = this;
-            this.addingDeliveryMethod = true;
+            this.addingOrder = true;
             e.preventDefault();
-            let formData = new FormData(this.$refs.addDeliveryMethod);
+            let formData = new FormData(this.$refs.addOrder);
             axios
-                .post(this.addDeliveryMethodUrl, formData)
+                .post(this.adminPanelAddOrderUrl, formData)
                 .then(function (response) {
-                    that.getDeliveryMethods();
+                    that.getOrders();
                     that.$refs.closeModal.click();
                     that.failedValidation = {};
                 })
@@ -188,12 +166,12 @@ export default {
                     }
                 })
                 .then(() => {
-                    that.addingDeliveryMethod = false;
+                    that.addingOrder = false;
                 });
         },
     },
     updated() {
-        console.debug('updated addDeliveryMethod');
+        console.debug('updated addOrder');
     },
     created() {},
     mounted() {},

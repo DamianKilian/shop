@@ -57,6 +57,8 @@ import AdminPanelUsers from './components/AdminPanelUsers.vue';
 app.component('admin-panel-users', AdminPanelUsers);
 import AdminPanelDeliveryMethods from './components/AdminPanelDeliveryMethods.vue';
 app.component('admin-panel-delivery-methods', AdminPanelDeliveryMethods);
+import AdminPanelOrders from './components/AdminPanelOrders.vue';
+app.component('admin-panel-orders', AdminPanelOrders);
 
 //basket
 import NumBadge from './components/basket/NumBadge.vue';
@@ -67,6 +69,8 @@ import BasketPayment from './components/basket/Payment.vue';
 app.component('basket-payment', BasketPayment);
 
 //account
+import Orders from './components/account/Orders.vue';
+app.component('orders', Orders);
 import Addresses from './components/account/Addresses.vue';
 app.component('addresses', Addresses);
 

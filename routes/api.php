@@ -24,3 +24,6 @@ Route::post('/log-js', [LogController::class, 'logJs'])->name('log-js');
 Route::prefix('account')->group(function () {
     Route::post('/get-area-codes', [App\Http\Controllers\Account\AddressController::class, 'getAreaCodes'])->name('get-area-codes')->withoutMiddleware(['auth']);
 });
+Route::prefix('admin-panel')->group(function () {
+    Route::post('/get-order-data', [App\Http\Controllers\AdminPanelOrdersController::class, 'getOrderData'])->name('admin-panel-get-order-data')->withoutMiddleware(['auth']);
+});

@@ -1,0 +1,11 @@
+#orders {
+    .product {
+        .dropdown-toggle {
+            border-radius: 19px;
+            width: 37px;
+            &::after {
+                display: none;
+            }
+        }
+    }
+}

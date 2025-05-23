@@ -105,7 +105,7 @@ export default {
             return deliveryMethod;
         },
         getDeliveryMethods: function () {
-            this.deliveryMethods = [];
+            this.deliveryMethods = {};
             var that = this;
             axios
                 .post(this.getDeliveryMethodsUrl)
