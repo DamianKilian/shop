@@ -73,16 +73,17 @@
                 @section('nav')
                     @can('admin')
                         <nav class="nav flex-column">
-                            <a class="nav-link _products" aria-current="page"
-                                href="{{ route('admin-panel-products') }}">{{ __('Products') }}</a>
                             <a class="nav-link _categories"
                                 href="{{ route('admin-panel-categories') }}">{{ __('Categories') }}</a>
+                            <a class="nav-link _delivery-methods"
+                                href="{{ route('admin-panel-delivery-methods') }}">{{ __('Delivery methods') }}</a>
                             <a class="nav-link _filters" href="{{ route('admin-panel-filters') }}">{{ __('Filters') }}</a>
-                            <a class="nav-link _pages" href="{{ route('admin-panel-pages') }}">{{ __('Pages') }}</a>
-                            <a class="nav-link _delivery-methods" href="{{ route('admin-panel-delivery-methods') }}">{{ __('Delivery methods') }}</a>
-                            <a class="nav-link _orders" href="{{ route('admin-panel-orders') }}">{{ __('Orders') }}</a>
-                            <a class="nav-link _settings" href="{{ route('admin-panel-settings') }}">{{ __('Settings') }}</a>
                             <a class="nav-link _footer" href="{{ route('admin-panel-footer') }}">{{ __('Footer') }}</a>
+                            <a class="nav-link _orders" href="{{ route('admin-panel-orders') }}">{{ __('Orders') }}</a>
+                            <a class="nav-link _pages" href="{{ route('admin-panel-pages') }}">{{ __('Pages') }}</a>
+                            <a class="nav-link _products" aria-current="page"
+                                href="{{ route('admin-panel-products') }}">{{ __('Products') }}</a>
+                            <a class="nav-link _settings" href="{{ route('admin-panel-settings') }}">{{ __('Settings') }}</a>
                             @can('usersManagement')
                                 <a class="nav-link _users" href="{{ route('admin-panel-users') }}">{{ __('Users') }}</a>
                             @endcan
