@@ -2,10 +2,11 @@
 
 namespace App\Integrations;
 
+use App\Payment\PaymentInterface;
 use App\Services\AppService;
 use Illuminate\Support\Facades\Http;
 
-class Przelewy24
+class Przelewy24 implements PaymentInterface
 {
     public readonly string $baseUrl;
     public readonly array $config;
@@ -15,15 +16,15 @@ class Przelewy24
         $this->config = config('przelewy24');
     }
 
-    public function transactionRegister($order, $regulationAccept)
+    public function pay($order, $regulationAccept = false)
     {
         $urlReturn = route('order-completed', ['order' => $order->id]);
-        $urlStatus = route('przelewy24-transaction-status');
+        $urlStatus = route('payment-transaction-status');
         if (app()->isLocal()) {
             $urlReturn = str_replace(config('app.url'), config('my.ngrok_url'), $urlReturn);
             $urlStatus = str_replace(config('app.url'), config('my.ngrok_url'), $urlStatus);
         }
-        $sign = $this->transactionRegisterSign($order);
+        $sign = $this->sign($order);
         $url = $this->config['base_url'] . '/api/v1/transaction/register';
         $a = $order->address;
         $params = [
@@ -92,7 +93,7 @@ class Przelewy24
         return $l;
     }
 
-    protected function transactionRegisterSign($order)
+    protected function sign($order)
     {
         $params = [
             'sessionId' => $order->session_id, // Tutaj należy umieścić unikalne wygenerowane ID sesji

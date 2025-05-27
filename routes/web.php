@@ -5,7 +5,7 @@ use App\Http\Controllers\Account\OrderController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
-require __DIR__ . '/webPrzelewy24.php';
+require __DIR__ . '/webPayment.php';
 
 // Route::get('/', function () {
 //     return view('welcome');

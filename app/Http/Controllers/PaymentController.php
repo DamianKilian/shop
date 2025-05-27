@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Integrations\Przelewy24;
+use App\Payment\PaymentManager;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class Przelewy24Controller extends Controller
+class PaymentController extends Controller
 {
     public function __construct()
     {
         // $this->middleware('auth');
     }
 
-    public function transactionRegister(Request $request, Przelewy24 $przelewy24)
+    public function pay(Request $request, PaymentManager $paymentManager)
     {
         $order = Order::with(['address.country', 'address.areaCode'])
             ->whereId(session('orderId'))
             ->first();
-        $przelewy24->transactionRegister($order, !!$request->regulationAccept);
+        $paymentManager->pay($order, !!$request->regulationAccept);
     }
 
     public function transactionStatus(Request $request)

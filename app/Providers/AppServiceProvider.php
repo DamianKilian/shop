@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Integrations\Przelewy24;
+use App\Payment\PaymentManager;
 use App\Services\SettingService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Pagination\Paginator;
@@ -15,11 +15,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(Przelewy24::class, function (Application $app) {
-            return new Przelewy24();
-        });
         $this->app->singleton(SettingService::class, function (Application $app) {
             return new SettingService();
+        });
+
+        $this->app->singleton(PaymentManager::class, function ($app) {
+            $paymentManager = new PaymentManager($app);
+            $paymentManager->extend('hotpay', fn() => new \App\Integrations\HotPay());
+            $paymentManager->extend('przelewy24', fn() => new \App\Integrations\Przelewy24());
+            return $paymentManager;
         });
     }
 

@@ -54,7 +54,7 @@ class BasketController extends Controller
         $order = new Order;
         $addressIds = [];
         DB::transaction(function () use ($order, $summary, $request, $productsInBasketArr, $deliveryMethod, &$addressIds) {
-            $order->session_Id = Str::random(100);
+            $order->session_Id = Str::random(50);
             $order->price = $summary['raw']['totalPrice'];
             $order->delivery_price = $deliveryMethod->price;
             $order->delivery_method_id = $request->deliveryMethodId;

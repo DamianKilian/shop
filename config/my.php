@@ -12,4 +12,6 @@ return [
     'log_send_emails' => env('MY_LOG_SEND_EMAILS'),
 
     'ngrok_url' => env('MY_NGROK_URL'),
+
+    'payment' => env('MY_PAYMENT'),
 ];

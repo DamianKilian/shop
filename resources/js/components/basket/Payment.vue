@@ -108,7 +108,7 @@
                         <b class="float-end">{{ summary.totalPrice }}</b>
                     </div>
                 </div>
-                <form :action="przelewy24TransactionRegisterUrl" method="post">
+                <form :action="paymentPayUrl" method="post">
                     <input type="hidden" name="_token" :value="csrfToken" />
                     <button
                         :disabled="!regulationAccept"
@@ -157,7 +157,7 @@ export default {
         'productsInBasket',
         'summary',
         'deliveryMethod',
-        'przelewy24TransactionRegisterUrl',
+        'paymentPayUrl',
     ],
     data() {
         return {

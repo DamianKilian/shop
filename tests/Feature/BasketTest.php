@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Integrations\Przelewy24;
+use App\Payment\PaymentManager;
 use App\Models\Category;
 use App\Models\DeliveryMethod;
 use App\Models\Product;
@@ -16,13 +16,13 @@ class BasketTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_transactionRegister(): void
+    public function test_pay(): void
     {
-        $this->mock(Przelewy24::class, function (MockInterface $mock) {
-            $mock->shouldReceive('transactionRegister')->once();
+        $this->mock(PaymentManager::class, function (MockInterface $mock) {
+            $mock->shouldReceive('pay')->once();
         });
 
-        $response = $this->post("przelewy24/transaction-register");
+        $response = $this->post("payment/pay");
 
         $response->assertSuccessful();
     }
