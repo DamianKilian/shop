@@ -18,19 +18,19 @@ services:
         depends_on:
             - php
             - redis
-            - mysql
+            - mysql-shop
             - mailhog
         networks:
             - laravel
 
-    mysql:
+    mysql-shop:
         image: mariadb:10.6
         restart: unless-stopped
         tty: true
         ports:
             - '4306:3306'
         volumes:
-            - ./dockerfiles/mysql:/var/lib/mysql
+            - ./dockerfiles/mysql-shop:/var/lib/mysql
         environment:
             MYSQL_DATABASE: shop
             MYSQL_USER: admin
@@ -100,7 +100,7 @@ services:
         volumes:
             - ./:/var/www/html:delegated
         depends_on:
-            - mysql
+            - mysql-shop
         entrypoint: ['php', '/var/www/html/artisan']
         networks:
             - laravel
