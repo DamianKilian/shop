@@ -34,10 +34,23 @@ RUN mkdir -p /usr/src/php/ext/redis \
     && echo 'redis' >> /usr/src/php-available-exts \
     && docker-php-ext-install redis
 
+# git
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y git
+
 # imagick
-RUN apt-get install -y libmagickwand-dev; \
-    pecl install imagick; \
-    docker-php-ext-enable imagick;
+RUN apt install -y libmagickwand-dev && \
+    git clone https://github.com/Imagick/imagick.git --depth 1 /tmp/imagick && \
+    cd /tmp/imagick && \
+    git fetch origin master && \
+    git switch master && \
+    cd /tmp/imagick && \
+    phpize && \
+    ./configure && \
+    make && \
+    make install && \
+    docker-php-ext-enable imagick
 
 # spatie/laravel-image-optimizer
 RUN apt-get install -y jpegoptim
