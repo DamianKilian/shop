@@ -5,7 +5,7 @@
                 <i class="fa-solid fa-basket-shopping"></i>
             </div>
             <div class="card-body">
-                <h5 class="card-title">{{ __('Your basket is epmty') }}</h5>
+                <h5 class="card-title">{{ __('Your basket is empty') }}</h5>
                 <a href="/" class="btn btn-primary">Go to homepage</a>
             </div>
         </div>
@@ -370,8 +370,10 @@ export default {
         getDeliveryMethodFromLocalStorage: function () {
             let deliveryMethodData = localStorage.getItem('deliveryMethodData');
             if (deliveryMethodData) {
-                this.deliveryMethodId =
-                    JSON.parse(deliveryMethodData).deliveryMethodId;
+                var parsed = JSON.parse(deliveryMethodData);
+                if (this.deliveryMethods[parsed.deliveryMethodId]) {
+                    this.deliveryMethodId = parsed.deliveryMethodId;
+                }
             }
         },
         productNum: function (num, id) {
