@@ -385,10 +385,12 @@ export default {
             this.setProductsInLocalStorage();
             this.getBasketSummary();
         },
-        removeFromBasket: function (id) {
+        removeFromBasket: function (id, getBasketSummary = true) {
             delete this.productsInBasket[id];
             this.setProductsInLocalStorage();
-            this.getBasketSummary();
+            if (getBasketSummary) {
+                this.getBasketSummary();
+            }
         },
         getProductsInBasketData: function () {
             var that = this;
@@ -399,6 +401,11 @@ export default {
                 .then(function (response) {
                     that.productsInBasketData =
                         response.data.productsInBasketData;
+                    _.forEach(that.productsInBasket, function (p, id) {
+                        if (!that.productsInBasketData[id]) {
+                            that.removeFromBasket(id, false);
+                        }
+                    });
                 });
         },
         getBasketSummary: function () {
