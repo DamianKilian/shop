@@ -406,6 +406,7 @@ export default {
                             that.removeFromBasket(id, false);
                         }
                     });
+                    that.getBasketSummary();
                 });
         },
         getBasketSummary: function () {
@@ -468,7 +469,6 @@ export default {
         if (Object.keys(this.productsInBasket).length) {
             this.getDeliveryMethodFromLocalStorage();
             this.getProductsInBasketData();
-            this.getBasketSummary();
         }
     },
 };
