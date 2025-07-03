@@ -8,9 +8,6 @@ services:
         build:
             context: ./dockerfiles
             dockerfile: nginx.dockerfile
-            args:
-                - UID=${UID:-1000}
-                - GID=${GID:-1000}
         ports:
             - '8080:80'
         volumes:
