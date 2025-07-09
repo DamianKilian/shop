@@ -2,9 +2,11 @@ FROM php:8.3.17-fpm
 
 ARG UID
 ARG GID
+ARG APP_PHP_INI_PATH
 
 ENV UID=${UID}
 ENV GID=${GID}
+ENV APP_PHP_INI_PATH=${APP_PHP_INI_PATH}
 
 RUN mkdir -p /var/www/html
 
@@ -23,6 +25,9 @@ RUN adduser --ingroup laravel --system --disabled-login -shell /bin/sh -u ${UID}
 RUN sed -i "s/user = www-data/user = laravel/g" /usr/local/etc/php-fpm.d/www.conf
 RUN sed -i "s/group = www-data/group = laravel/g" /usr/local/etc/php-fpm.d/www.conf
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf
+
+RUN cp ${APP_PHP_INI_PATH} /usr/local/etc/php/php.ini
+ADD ./php/my.ini /usr/local/etc/php/conf.d/
 
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y libzip-dev

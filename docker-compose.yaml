@@ -45,6 +45,7 @@ services:
             args:
                 - UID=${UID:-1000}
                 - GID=${GID:-1000}
+                - APP_PHP_INI_PATH=${APP_PHP_INI_PATH}
         ports:
             - '9000:9000'
         volumes:
@@ -67,6 +68,7 @@ services:
             args:
                 - UID=${UID:-1000}
                 - GID=${GID:-1000}
+                - APP_PHP_INI_PATH=${APP_PHP_INI_PATH}
         volumes:
             - ./:/var/www/html
         depends_on:
@@ -94,6 +96,7 @@ services:
             args:
                 - UID=${UID:-1000}
                 - GID=${GID:-1000}
+                - APP_PHP_INI_PATH=${APP_PHP_INI_PATH}
         volumes:
             - ./:/var/www/html:delegated
         depends_on:
