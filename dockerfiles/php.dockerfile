@@ -12,6 +12,7 @@ RUN mkdir -p /var/www/html
 
 WORKDIR /var/www/html
 
+COPY php-fpm/zz-docker.conf /usr/local/etc/php-fpm.d/
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # MacOS staff group's gid is 20, so is the dialout group in alpine linux. We're not using it, let's just remove it.
