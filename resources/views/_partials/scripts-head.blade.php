@@ -33,3 +33,5 @@
         } catch (e) {}
     }
 </script>
+
+@include('_partials.cookie-consent')
