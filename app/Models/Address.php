@@ -40,6 +40,7 @@ class Address extends Model
             $prefix . 'house_number' => [$required],
             $prefix . 'postal_code' => [$required, 'regex:/^\d{2}-?\d{3}$/'],
             $prefix . 'area_code_id' => [$required],
+            $prefix . 'city' => [$required],
         ];
     }
 

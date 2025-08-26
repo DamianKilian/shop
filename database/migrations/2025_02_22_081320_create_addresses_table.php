@@ -13,12 +13,12 @@ return new class extends Migration
             $table->string('email');
             $table->string('name');
             $table->string('surname');
-            $table->string('nip');
+            $table->string('nip')->nullable();
             $table->string('company_name');
             $table->string('phone');
             $table->string('street');
             $table->string('house_number');
-            $table->string('apartment_number');
+            $table->string('apartment_number')->nullable();
             $table->string('postal_code');
             $table->string('city');
             $table->unsignedBigInteger('area_code_id');

@@ -15,7 +15,6 @@
             @if (Route::has('register'))
                 <li><a class="dropdown-item" href="{{ route('register') }}">{{ __('Register') }}</a></li>
             @endif
-            <li><a class="dropdown-item" id="open_preferences_center">{{ __('Cookies') }}</a></li>
         @else
             @can('admin')
                 <a class="dropdown-item" href="{{ route('admin-panel-products') }}">{{ __('Admin panel') }}</a>
@@ -30,5 +29,6 @@
                 @csrf
             </form>
         @endguest
+        <li><a class="dropdown-item" id="open_preferences_center">{{ __('Cookies') }}</a></li>
     </div>
 </div>
