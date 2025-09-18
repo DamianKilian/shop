@@ -3,6 +3,7 @@
 use App\Http\Controllers\BasketController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__ . '/apiPayment.php';
@@ -27,3 +28,5 @@ Route::prefix('account')->group(function () {
 Route::prefix('admin-panel')->group(function () {
     Route::post('/get-order-data', [App\Http\Controllers\AdminPanelOrdersController::class, 'getOrderData'])->name('admin-panel-get-order-data')->withoutMiddleware(['auth']);
 });
+
+Route::get('transactions', [TransactionController::class, 'transactions'])->name('api-transactions');

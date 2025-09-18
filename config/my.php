@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'access_token' => env('MY_ACCESS_TOKEN'),
+
     'hash_file_algo' => env('MY_HASH_FILE_ALGO'),
     'images_folder' => env('MY_IMAGES_FOLDER'),
     'attachments_folder' => env('MY_ATTACHMENTS_FOLDER'),

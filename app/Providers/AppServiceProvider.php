@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use App\Payment\PaymentManager;
 use App\Services\SettingService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -34,5 +36,11 @@ class AppServiceProvider extends ServiceProvider
     {
         // Paginator::useBootstrapFive();
         Paginator::defaultView('vendor/pagination/shop-bootstrap-5');
+        Gate::define('access-token', function (?User $user, $accessToken = '') {
+            if (!$accessToken) {
+                return false;
+            }
+            return $accessToken === config('my.access_token');
+        });
     }
 }
