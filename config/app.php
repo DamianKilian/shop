@@ -123,4 +123,19 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+
+
+
+// my
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Test Mode
+    |--------------------------------------------------------------------------
+    |
+    | - Blocks SEO, site is not indexed by search engines
+    |
+    */
+
+    'test' => (bool) env('APP_TEST', false),
 ];
