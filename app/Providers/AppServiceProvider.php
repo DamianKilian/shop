@@ -2,7 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
+use App\Models\Page;
+use App\Models\Product;
 use App\Models\User;
+use App\Observers\CategoryObserver;
+use App\Observers\PageObserver;
+use App\Observers\ProductObserver;
 use App\Payment\PaymentManager;
 use App\Services\SettingService;
 use Illuminate\Contracts\Foundation\Application;
@@ -34,6 +40,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Page::observe(PageObserver::class);
+        Category::observe(CategoryObserver::class);
+        Product::observe(ProductObserver::class);
+
         // Paginator::useBootstrapFive();
         Paginator::defaultView('vendor/pagination/shop-bootstrap-5');
         Gate::define('access-token', function (?User $user, $accessToken = '') {

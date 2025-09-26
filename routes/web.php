@@ -13,17 +13,26 @@ require __DIR__ . '/webPayment.php';
 
 Auth::routes();
 
-Route::get('{slug?}', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/category/{slug}', [App\Http\Controllers\HomeController::class, 'category'])->name('category');
-Route::get('/product/{slug}', [App\Http\Controllers\HomeController::class, 'product'])->name('product');
+Route::get('{slug?}', [App\Http\Controllers\HomeController::class, 'index'])
+    ->name('home')
+    ->middleware('cacheResponse');
+Route::get('/category/{slug}', [App\Http\Controllers\HomeController::class, 'category'])
+    ->name('category')
+    ->middleware('cacheResponse');
+Route::get('/product/{slug}', [App\Http\Controllers\HomeController::class, 'product'])
+    ->name('product')
+    ->middleware('cacheResponse');
+
 Route::prefix('basket')->group(function () {
     Route::get('/index', [App\Http\Controllers\BasketController::class, 'basketIndex'])->name('basket-index');
 });
+
 Route::prefix('order')->group(function () {
     Route::post('/store', [App\Http\Controllers\BasketController::class, 'orderStore'])->name('order-store');
     Route::get('/payment/{order}', [App\Http\Controllers\BasketController::class, 'orderPayment'])->name('order-payment');
     Route::get('/completed/{order}', [App\Http\Controllers\BasketController::class, 'orderCompleted'])->name('order-completed');
 });
+
 Route::prefix('account')->group(function () {
     Route::get('/addresses', [AddressController::class, 'addresses'])->name('addresses');
     Route::post('/get-addresses', [AddressController::class, 'getAddresses'])->name('get-addresses');
