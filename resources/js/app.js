@@ -73,6 +73,10 @@ import Orders from './components/account/Orders.vue';
 app.component('orders', Orders);
 import Addresses from './components/account/Addresses.vue';
 app.component('addresses', Addresses);
+import User from './components/account/User.vue';
+app.component('user', User);
+import Password from './components/account/Password.vue';
+app.component('password', Password);
 
 /**
  * The following block of code may be used to automatically register your

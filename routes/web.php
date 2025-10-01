@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Account\AddressController;
 use App\Http\Controllers\Account\OrderController;
+use App\Http\Controllers\Account\UserController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,11 @@ Route::prefix('order')->group(function () {
 });
 
 Route::prefix('account')->group(function () {
+    Route::get('/user', [UserController::class, 'user'])->name('user');
+    Route::post('/update-user', [UserController::class, 'updateUser'])->name('update-user');
+    Route::get('/password', [UserController::class, 'password'])->name('password');
+    Route::post('/update-password', [UserController::class, 'updatePassword'])->name('update-password');
+
     Route::get('/addresses', [AddressController::class, 'addresses'])->name('addresses');
     Route::post('/get-addresses', [AddressController::class, 'getAddresses'])->name('get-addresses');
     Route::post('/add-address', [AddressController::class, 'addAddress'])->name('add-address');
