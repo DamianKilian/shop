@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Artisan::call('app:add-settings', [
+        Artisan::call('app:reset-settings', [
             '--isSqlite' => AppService::isSqlite($this),
         ]);
     }

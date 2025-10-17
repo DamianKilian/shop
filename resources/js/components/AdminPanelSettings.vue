@@ -79,6 +79,18 @@
                                 "
                                 class="form-control"
                             />
+                            <textarea
+                                v-else-if="'textarea' === setting.input_type"
+                                v-model="setting.value"
+                                @input="
+                                    settingChange(
+                                        setting,
+                                        settingCategoriesOrginal[indexC]
+                                            .settings[index]
+                                    )
+                                "
+                                class="form-control"
+                            ></textarea>
                             <input
                                 v-else-if="'checkbox' === setting.input_type"
                                 v-model="setting.value"
@@ -211,7 +223,7 @@ export default {
     methods: {
         settingChange: function (setting, settingOrginal, type = '') {
             setting.modified = settingOrginal.value !== setting.value;
-            if('checkbox' === type){
+            if ('checkbox' === type) {
                 setting.modified = !setting.modified;
             }
         },
