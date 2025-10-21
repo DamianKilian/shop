@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@section('titleAndDescription')
+    <title>{{ App\Services\AppService::generateTitleAndDescription('TITLE_MAIN') }}</title>
+    <meta name="description" content="{{ App\Services\AppService::generateTitleAndDescription('DESC_MAIN') }}">
+@endsection
+
 @section('content')
     <div id="products-app">
         <div class="products-view-container position-relative">

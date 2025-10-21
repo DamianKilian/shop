@@ -11,10 +11,10 @@ class AddSettings extends Command
 
     protected $description = 'Add settings';
 
-    public function handle(SettingService $settingService)
+    public function handle()
     {
         $kind = $this->argument('kind');
-        $msg = $settingService->addSettings($kind);
+        $msg = SettingService::addSettings($kind);
         $this->info($msg);
     }
 }

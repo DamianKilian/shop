@@ -88,4 +88,43 @@ class AppService
             $publicStorage->delete($model->{$urlColumn});
         }
     }
+
+    /**
+     * @param string $sett 'DESC_MAIN', 'DESC_CATEGORY', 'DESC_PRODUCT', 'TITLE_MAIN', 'TITLE_CATEGORY', 'TITLE_PRODUCT'
+     *
+     */
+    public static function generateTitleAndDescription($sett, $category = null, $product = null)
+    {
+        $text = '';
+        $settText = sett($sett);
+        // passible vars {cat}, {parentCat}, {parentParentCat}, {shopName}, {product}, {price}
+        $vars = [
+            '{shopName}' => config('app.name'),
+            '{cat}' => '',
+            '{parentCat}' => '',
+            '{parentParentCat}' => '',
+            '{product}' => '',
+            '{price}' => '',
+        ];
+        if ($category) {
+            $vars['{cat}'] = $category->name;
+            if ($category->parent_id) {
+                $parentCat = $category->categories[$category->parent_id];
+                $vars['{parentCat}'] = $parentCat->name;
+                if (null === $product && $parentCat->parent_id) {
+                    $parentParentCat = $category->categories[$parentCat->parent_id];
+                    $vars['{parentParentCat}'] = $parentParentCat->name;
+                }
+            }
+        }
+        if ($product) {
+            $vars['{product}'] = $product->title;
+            $vars['{price}'] = price($product, false);
+        }
+        $keys = array_keys($vars);
+        $values = array_values($vars);
+        $text = str_replace($keys, $values, $settText);
+        $text = str_replace(' ,', '', $text);
+        return $text;
+    }
 }

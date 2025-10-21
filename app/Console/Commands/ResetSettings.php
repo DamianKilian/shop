@@ -25,7 +25,7 @@ class ResetSettings extends Command
      */
     protected $description = 'Command description';
 
-    public function handle(SettingService $settingService)
+    public function handle()
     {
         if (!$this->option('isSqlite')) {
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
@@ -157,6 +157,6 @@ class ResetSettings extends Command
         $GalleryImageFitMasonry->settingValues()->attach([$fill->id, $contain->id, $cover->id, $none->id, $scaleDown->id]);
         $CarouselImageFit->settingValues()->attach([$fill->id, $contain->id, $cover->id, $none->id, $scaleDown->id]);
 
-        $settingService->addSettings('seo');
+        SettingService::addSettings('seo');
     }
 }

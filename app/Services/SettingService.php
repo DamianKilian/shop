@@ -18,7 +18,7 @@ class SettingService
         $this->settings = $settingsDb->pluck('value', 'name');
     }
 
-    public function createSettingCategory($name, $orderPriority = null)
+    public static function createSettingCategory($name, $orderPriority = null)
     {
         if (!$orderPriority) {
             $orderPriority = SettingCategory::max('order_priority') + 1000;
@@ -30,7 +30,7 @@ class SettingService
         return $category;
     }
 
-    public function createSetting($category, $name, $desc, $inputType, $defaultValue, $orderPriority = null)
+    public static function createSetting($category, $name, $desc, $inputType, $defaultValue, $orderPriority = null)
     {
         if (is_string($category)) {
             $category =  SettingCategory::where('name', $category)->first();
@@ -50,7 +50,7 @@ class SettingService
         return $setting;
     }
 
-    public function attachSettingValue($setting, $settingValueName, $value, $orderPriority = null)
+    public static function attachSettingValue($setting, $settingValueName, $value, $orderPriority = null)
     {
         if (is_string($setting)) {
             $setting =  Setting::where('name', $setting)->with('settingValues')->get();
@@ -67,26 +67,51 @@ class SettingService
         $setting->settingValues()->attach($settingValue->id);
     }
 
-    public function addSettings($kind)
+    public static function addSettings($kind)
     {
         $msg = '';
         DB::transaction(function () use ($kind, &$msg) {
             if ('seo' === $kind) {
-                $msg = $this->addSeoSettings($kind);
+                $msg = self::addSeoSettings($kind);
             }
         });
         return $msg;
     }
 
-    public function addSeoSettings($kind)
+    public static function addSeoSettings($kind)
     {
         $name = 'SEO settings';
         $category = SettingCategory::where('name', $name)->first();
         if($category){
             return 'settings already exist';
         }
-        $category = $this->createSettingCategory($name, 500);
-        $this->createSetting(
+        $category = self::createSettingCategory($name, 500);
+        self::createSetting(
+            $category,
+            'TITLE_MAIN',
+            'title of main page, {shopName}',
+            'textarea',
+            '{shopName}, niskie ceny, strona główna',
+            1000
+        );
+        self::createSetting(
+            $category,
+            'TITLE_CATEGORY',
+            'title of category, {cat}, {parentCat}, {parentParentCat}, {shopName}',
+            'textarea',
+            '{shopName}, kup w {cat}, {parentCat}, {parentParentCat}, niskie ceny',
+            2000
+        );
+        self::createSetting(
+            $category,
+            'TITLE_PRODUCT',
+            'title of products, {product}, {cat}, {parentCat}, {price}, {shopName}',
+            'textarea',
+            '{shopName}, kup {product} w {cat}, {parentCat}, niskie ceny',
+            3000
+        );
+
+        self::createSetting(
             $category,
             'DESC_MAIN',
             'desc of main page, {shopName}',
@@ -94,20 +119,20 @@ class SettingService
             '{shopName}, niskie ceny',
             1000
         );
-        $this->createSetting(
+        self::createSetting(
             $category,
             'DESC_CATEGORY',
-            'desc of category, {cat}, {subCat}, {subSubCat}, {shopName}',
+            'desc of category, {cat}, {parentCat}, {parentParentCat}, {shopName}',
             'textarea',
-            '{shopName}, kup w {cat}, {subCat}, {subSubCat}, niskie ceny',
+            '{shopName}, kup w {cat}, {parentCat}, {parentParentCat}, niskie ceny',
             2000
         );
-        $this->createSetting(
+        self::createSetting(
             $category,
             'DESC_PRODUCT',
-            'desc of products, {product}, {cat}, {subCat}, {price}, {shopName}',
+            'desc of products, {product}, {cat}, {parentCat}, {price}, {shopName}',
             'textarea',
-            '{shopName}, kup {product} za {price} w {cat}, {subCat}, niskie ceny',
+            '{shopName}, kup {product} za {price} w {cat}, {parentCat}, niskie ceny',
             3000
         );
         return $kind . ' settings was added!';

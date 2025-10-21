@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@section('titleAndDescription')
+    <title>{{ App\Services\AppService::generateTitleAndDescription('TITLE_CATEGORY', $category) }}</title>
+    <meta name="description" content="{{ App\Services\AppService::generateTitleAndDescription('DESC_CATEGORY', $category) }}">
+@endsection
+
 @section('content')
     <div id="products-app">
         <h1>{{ $category->name }}</h1>

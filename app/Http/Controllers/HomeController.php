@@ -54,6 +54,7 @@ class HomeController extends Controller
         }
         $parentCategoriesIds = array_keys(CategoryService::getParentCategories($category->id, $categories));
         $filters = CategoryService::getCategoryFilters($parentCategoriesIds);
+        $category->categories = CategoryService::getParentCategories($category->id, $categories);
         return view('category', [
             'filters' => $filters,
             'maxProductsPrice' => ProductService::getMaxProductsPrice($categoryChildrenIds),
@@ -154,8 +155,13 @@ class HomeController extends Controller
         if ($product->description_prod) {
             $product->bodyHtml = $editorJS->toHtml($product->description_prod, $product->title);
         }
+        $categories = CategoryService::getCategories();
+        $parentCategories = CategoryService::getParentCategories($product->category_id, $categories);
+        $category = $parentCategories[$product->category_id];
+        $category->categories = $parentCategories;
         return view('product', [
             'product' => $product,
+            'category' => $category,
             'searchUrl' => route('home'),
             'footerHtml' => AppService::getFooterHtml($editorJS),
         ]);
