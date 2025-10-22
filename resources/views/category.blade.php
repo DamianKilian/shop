@@ -7,7 +7,12 @@
 
 @section('content')
     <div id="products-app">
-        <h1>{{ $category->name }}</h1>
+        <div id="h1-container">
+            <h1>{{ $category->name }}</h1>
+            <div id="breadcrumb-container">
+                @include('_partials.breadcrumb', ['_type' => 'category'])
+            </div>
+        </div>
         <div class="products-view-container position-relative">
             <loading-overlay v-if='getingProductsView'></loading-overlay>
             <div id="products-top-panel">

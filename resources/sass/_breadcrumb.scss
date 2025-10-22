@@ -1,0 +1,12 @@
+#breadcrumb-container {
+    .breadcrumb-item {
+        white-space: nowrap;
+        > a {
+            display: inline-block;
+            padding: 4px 0;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+}
