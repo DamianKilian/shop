@@ -36,7 +36,7 @@
         <div class="bg-light fixed-top ">
             <nav class="container-xxl d-flex flex-wrap flex-sm-nowrap" id="nav">
                 <a class="navbar-brand order-1 p-2 align-self-center" href="{{ url('/') }}">
-                    <img src="{{ asset('storage/logo.svg') }}" width="48" height="24"
+                    <img src="/logo.svg" width="48" height="24"
                         alt="{{ config('app.name', 'Laravel') }}">
                 </a>
                 <div
