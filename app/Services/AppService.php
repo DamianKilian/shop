@@ -23,6 +23,9 @@ class AppService
         if (!$email) {
             return;
         }
+        if (!Storage::disk('logs')->exists('laravel-error.log')) {
+            return;
+        }
         if (!filesize(storage_path('logs/laravel-error.log'))) {
             return;
         }

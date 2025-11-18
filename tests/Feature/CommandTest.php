@@ -23,7 +23,7 @@ class CommandTest extends TestCase
     public function test_logs_send(): void
     {
         Mail::fake();
-        file_put_contents(storage_path('logs/laravel-error.log'), "logs contents");
+        Storage::disk('logs')->put('laravel-error.log', 'logs contents');
         Config::set('my.log_send_emails', 'example@example.com');
 
         $this->artisan('logs:send')->assertExitCode(0);
@@ -37,7 +37,7 @@ class CommandTest extends TestCase
     public function test_logs_send_empty_emails(): void
     {
         Mail::fake();
-        file_put_contents(storage_path('logs/laravel-error.log'), "logs contents");
+        Storage::disk('logs')->put('laravel-error.log', 'logs contents');
         Config::set('my.log_send_emails', '');
 
         $this->artisan('logs:send')->assertExitCode(0);
@@ -47,7 +47,17 @@ class CommandTest extends TestCase
     public function test_logs_send_empty_log_file(): void
     {
         Mail::fake();
-        file_put_contents(storage_path('logs/laravel-error.log'), "");
+        Storage::disk('logs')->put('laravel-error.log', '');
+        Config::set('my.log_send_emails', 'example@example.com');
+
+        $this->artisan('logs:send')->assertExitCode(0);
+        Mail::assertNotSent(Logs::class);
+    }
+
+    public function test_logs_send_no_log_file(): void
+    {
+        Mail::fake();
+        Storage::disk('logs')->delete('laravel-error.log');
         Config::set('my.log_send_emails', 'example@example.com');
 
         $this->artisan('logs:send')->assertExitCode(0);
