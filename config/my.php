@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'programmer_email' => env('MY_PROGRAMMER_EMAIL'),
+    'shop_email' => env('MY_SHOP_EMAIL'),
+
     'access_token' => env('MY_ACCESS_TOKEN'),
 
     'hash_file_algo' => env('MY_HASH_FILE_ALGO'),

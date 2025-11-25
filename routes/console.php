@@ -48,3 +48,7 @@ Artisan::command('logs:send', function () {
     AppService::logsSend();
     $this->comment('Logs have been sent to: "' . config('my.log_send_emails') . '"');
 })->purpose('Send logs to email')->hourly();
+
+// Artisan::command('test:test', function () {
+//     $this->comment('TEST COMMAND');
+// })->purpose('test')->everyThirtySeconds();
