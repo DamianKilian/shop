@@ -19,8 +19,8 @@ class AppService
 
     public static function logsSend()
     {
-        $email = config('my.log_send_emails');
-        if (!$email) {
+        $emails = config('my.log_to_emails');
+        if (!$emails) {
             return;
         }
         if (!Storage::disk('logs')->exists('laravel-error.log')) {
@@ -29,7 +29,7 @@ class AppService
         if (!filesize(storage_path('logs/laravel-error.log'))) {
             return;
         }
-        Mail::to(explode(',', config('my.log_send_emails')))->send(new Logs());
+        Mail::to(explode(',', config('my.log_to_emails')))->send(new Logs);
     }
 
     protected static function footerToHtml($dataKey, $editorJS)

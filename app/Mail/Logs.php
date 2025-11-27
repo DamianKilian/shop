@@ -29,8 +29,7 @@ class Logs extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: 'example@example.com',
-            subject: 'Logs in' . $this->appName . ' (' . $this->appUrl . ')',
+            subject: 'Logs in ' . $this->appName . ' (' . $this->appUrl . ')',
         );
     }
 

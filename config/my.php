@@ -14,7 +14,7 @@ return [
 
     'log_js' => env('MY_LOG_JS'),
     'log_http' => env('MY_LOG_HTTP'),
-    'log_send_emails' => env('MY_LOG_SEND_EMAILS'),
+    'log_to_emails' => env('MY_LOG_TO_EMAILS'),
 
     'ngrok_url' => env('MY_NGROK_URL'),
 
