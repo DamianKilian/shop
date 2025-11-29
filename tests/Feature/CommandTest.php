@@ -34,6 +34,17 @@ class CommandTest extends TestCase
         });
     }
 
+    public function test_logs_send_disabled(): void
+    {
+        Mail::fake();
+        Storage::disk('logs')->put('laravel-error.log', 'logs contents');
+        Config::set('my.log_to_emails', 'example@example.com');
+        Config::set('my.log_enabled', false);
+
+        $this->artisan('logs:send')->assertExitCode(0);
+        Mail::assertNotSent(Logs::class);
+    }
+
     public function test_logs_send_empty_emails(): void
     {
         Mail::fake();

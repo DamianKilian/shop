@@ -45,6 +45,10 @@ Artisan::command('prune:attachments', function () {
 })->purpose('Remove unused pageAttachments')->daily();
 
 Artisan::command('logs:send', function () {
+    if(!config('my.log_enabled')){
+        $this->comment('Sending logs disabled');
+        return;
+    }
     AppService::logsSend();
     $this->comment('Logs have been sent to: "' . config('my.log_to_emails') . '"');
 })->purpose('Send logs to email')->hourly();

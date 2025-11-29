@@ -12,6 +12,7 @@ return [
     'thumbnails_folder' => env('MY_THUMBNAILS_FOLDER'),
     'preview_slug' => env('MY_PREVIEW_SLUG'),
 
+    'log_enabled' => env('MY_LOG_ENABLED', true),
     'log_js' => env('MY_LOG_JS'),
     'log_http' => env('MY_LOG_HTTP'),
     'log_to_emails' => env('MY_LOG_TO_EMAILS'),
